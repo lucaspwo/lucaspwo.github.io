@@ -62,15 +62,15 @@
 
       <div class="row">
         <div class="col-md-6 col-md-offset-3 mb40 text-center">
-          <h2>Placa Gravadora para ATMEGA328P/8L e ATTINY85</h2>
-          <p>Postado em 24 de Fevereiro, 2020</p>
+          <h2>Burner Shield for ATMEGA328P/8L and ATTINY85</h2>
+          <p>Posted on February 24, 2020</p>
         </div>
         <div class="col-md-12">
-            <h3>Problema</h3>
+            <h3>The problem</h3>
           </div>
         <div class="col-md-12">
-          <p>Recentemente eu fiz uma placa para controlar um motor de passo com um display e alguns botões, e para isso decidi utilizar um ATMEGA328P devido a grande utilização de memória pelas bibliotecas e pela quantidade de portas que precisaria utilizar. Como a placa era para um uso bem específico, não precisaria ter pinos de programação expostos (fossem ICSP ou padrão FTDI), mas os testes que realizei em bancada só me permitiram testar os acionamentos e os testes de torque e velocidade do acionamento do motor só poderiam ser realizados na placa, já com todas as peças montadas.</p>
-          <p>A configuração ideal de velocidade do motor demorou demais para ser encontrada, tendo sido necessário retirar o microcontrolador da placa para um Arduino e de volta diversas vezes, ao custo de danificar algum pino ou mesmo o soquete estampado de 28 pinos. Então desde esse dia que eu imaginei a criação da placa shield deste post, para que eu pudesse programar qualquer microcontrolador que eu geralmente uso (podendo ser um ATMEGA328P, ou um ATMEGA8L ou um ATTINY85), sem a necessidade de fazer a ligação dos fios em uma protoboard e sem correr o risco de danificar algo no processo.</p>
+            <p>Recently I made a PCB to control a step motor with an LCD display and some buttons, and for that I decided to utilise an ATMEGA328P because of the large usage of memory by the libraries and because of the quantity of pins I'd need to use. Since the PCB was conceived for a very specific use, it wouldn't need the programming pins exposed (be it ICSP or the FTDI pattern), but the tests I made in the bench would only allow me to test the steps it was programmed to follow and the tests of torque and actuation speed could only be made in the PCB, with all the pieces installed.</p>
+            <p>The ideal motor speed configuration took too long to be found, having been necessary to remove the microcontroller off the PCB to an Arduino and back again too many times, at the cost of damaging a pin or even the 28 pin socket. So since that day I imagined the shield board of this post, for me to be able to program any microcontroller I usually use (an ATMEGA328P, or ATMEGA8L or an ATTINY85), without the need to make the connections in a protoboard and without the risk of damaging something in the process.</p>
           <div class="row">
             <div class="col-md-4 col-md-offset-4">
               <p>
@@ -78,17 +78,17 @@
                   <img src="projetos/placa_zif/soquete.png" class="img-responsive">
                   <!-- Soquete estampado DIP de 28 pinos. Fonte: <a href="https://www.filipeflop.com/produto/soquete-28-pinos-estampado-dip-28/">FilipeFlop</a> -->
                 </a>
-                Soquete estampado DIP de 28 pinos. Fonte: <a href="https://www.filipeflop.com/produto/soquete-28-pinos-estampado-dip-28/">FilipeFlop</a>
+                28 pin DIP socket. Source: <a href="https://www.filipeflop.com/produto/soquete-28-pinos-estampado-dip-28/">FilipeFlop</a>
               </p>
             </div>
           </div>
         </div>
         <div class="col-md-12">
-          <h3>Criando a placa no EAGLE</h3>
+          <h3>Making the PCB in EAGLE</h3>
         </div>
         <div class="col-md-12">
-          <p>Para fazer a placa no EAGLE eu utilizei o esquemático do Arduino Uno R3 criado pela <a href="https://www.adafruit.com/">Adafruit</a> (link para a biblioteca <a href="https://github.com/adafruit/Adafruit-Eagle-Library">aqui</a>), planejei as conexões necessárias para fazer a programação via ICSP tanto dos ATMEGAs quanto do ATTINY. Expus também as conexões com um cristal, para gravar já na frequência que desejaria utilizar. Adicionei um LED ao pino digital 13 para uma visualização do processo de gravação.</p>
-          <p>Já o soquete ZIF (zero insertion force) compatível com o que eu tinha veio da <a href="https://github.com/sparkfun/SparkFun-Eagle-Libraries">biblioteca SparkFun-Connectors</a>, feito pela <a href="https://www.sparkfun.com/">SparkFun</a>.</p>
+            <p>To make the PCB in EAGLE I used the Arduino Uno R3 schematic made by <a href="https://www.adafruit.com/">Adafruit</a> (<a href="https://github.com/adafruit/Adafruit-Eagle-Library">here's</a> the link for the library), I planned the necessary connections to make the programming via ICSP, on both the ATMEGAs and ATTINY. I also exposed the crystal connections, in order to burn the code already at the frequency I'd want to utilise. I added an LED to the digital pin 13 to visualize the programming process.</p>
+            <p>The ZIF (zero insertion force) socket compatible with what I had came from the <a href="https://github.com/sparkfun/SparkFun-Eagle-Libraries">SparkFun-Connectors library</a>, made by <a href="https://www.sparkfun.com/">SparkFun</a>.</p>
         </div>
       </div>
       <div class="row">
@@ -96,7 +96,7 @@
           <p>
             <a href="projetos/placa_zif/esq_zif.png" class="image-popup">
               <img src="projetos/placa_zif/esq_zif.png" class="img-responsive">
-              Esquemático do soquete ZIF
+              ZIF socket schematic
             </a>
           </p>
         </div>
@@ -104,7 +104,7 @@
           <p>
             <a href="projetos/placa_zif/esq_ard.png" class="image-popup">
               <img src="projetos/placa_zif/esq_ard.png" class="img-responsive">
-              Esquemático da placa Arduino, com soquete para o cristal
+              Arduino board schematic with a socket for the crystal
             </a>
           </p>
         </div>
@@ -112,15 +112,15 @@
             <p>
               <a href="projetos/placa_zif/brd_semTerra.png" class="image-popup">
                 <img src="projetos/placa_zif/brd_semTerra.png" class="img-responsive">
-                Layout da placa. GNDs desconectados porque há malha de terra
+                Board layout. The GNDs are disconnected because there is a ground plane
               </a>
             </p>
           </div>
       </div>
       <div class="row">
         <div class="col-md-12">
-          <h3>Placa pronta</h3>
-          <p>Submeti os arquivos EAGLE para fazer no <a href="http://protolab.imd.ufrn.br/">ProtoLab</a>, o laboratório de prototipagem rápida onde fui bolsista. Entreguei a placa de fibra de face dupla e soldei.</p>
+          <h3>PCB ready</h3>
+          <p>I submitted the EAGLE-generated files in the <a href="http://protolab.imd.ufrn.br/">ProtoLab</a> website, a rapid prototyping laboratory where I once had a scholarship. I gave them the dual layer fiber board and I solder it afterwards.</p>
         </div>
       </div>
       <div class="row">
@@ -128,7 +128,7 @@
             <p>
               <a href="projetos/placa_zif/placa_328.png" class="image-popup">
                 <img src="projetos/placa_zif/placa_328.png" class="img-responsive">
-                A placa finalizada, com um ATMEGA328P e um cristal de 16MHz
+                The finished PCB, with an ATMEGA328P and a 16MHz crystal
               </a>
             </p>
           </div>
@@ -136,7 +136,7 @@
             <p>
               <a href="projetos/placa_zif/placa_tiny85.png" class="image-popup">
                 <img src="projetos/placa_zif/placa_tiny85.png" class="img-responsive">
-                A placa com um ATTINY85
+                The board with an ATTINY85
               </a>
             </p>
           </div>
@@ -144,8 +144,7 @@
         <div class="row">
             <div class="col-md-12">
               <h3>Download</h3>
-              <p>Para baixar os arquivos EAGLE, <a href="https://github.com/lucaspwo/gravador_isp">aqui está um link para o meu repositório do GitHub do projeto</a>.</p>
-            </div>
+              <p>To download the EAGLE files, <a href="https://github.com/lucaspwo/gravador_isp">here is a link to my GitHub repository</a>.</p>
           </div>
     </div>
   </div>

@@ -62,17 +62,17 @@
 
       <div class="row">
         <div class="col-md-6 col-md-offset-3 mb40 text-center">
-          <h2>Processamento Digital de Imagens - Exercício 2.2</h2>
-          <p>Postado em 13 de Abril, 2019</p>
+          <h2>Digital Image Processing - Exercise 2.2</h2>
+          <p>Posted on April 13, 2019</p>
         </div>
         <div class="col-md-12">
-          <p>Os dois primeiros exercícios, para a disciplina de Processamento Digital de Imagens, consistiam em manipular a matriz de uma imagem de duas formas diferentes: o primeiro inverte os tons de cinza em uma região provida pelo usuário e o segundo troca os quadrantes que compõem a imagem.</p>
+          <p>The first two exercises, for Digital Image Processing class, consisted in manipulate the matrix of an image in two different ways: the first one should invert the gray scale in a specific region, provided by the user, and the second one should switch the quadrants which compose the image.</p>
         </div>
         <div class="col-md-12">
           <h3>Regions.cpp</h3>
         </div>
         <div class="col-md-12">
-          <p>Para o primeiro programa (regions.cpp, <a href = "https://github.com/lucaspwo/pdi/blob/master/exemplo2/regions.cpp">disponível aqui</a>), era necessário coletar do usuário dois pontos da imagem, ou seja: quatro coordenadas. Duas para o ponto 1 e duas para o ponto 2, como se pode ver no trecho abaixo.<br/><script src="https://gist.github.com/lucaspwo/3538300db2ec9c3933f888095d2ad781.js"></script>A partir da leitura, a coordenada X do ponto 1 está armazenada na variável xp1 e a coordenada Y do ponto 1 está armazenada na variável yp1, com o mesmo se repetindo para o ponto 2.<br/>Afim de evitar que o programa apresentasse algum problema durante o laço de repetição para pintar a área submetida, com o recebimento de coordenadas do ponto 2 menores que as do ponto 1, escrevi um trecho condicional para trocar os valores das variáveis.<br/><br/><script src="https://gist.github.com/lucaspwo/ea7087fe1460996e02d46cd08bd40233.js"></script>Com isso, os laços for aninhados podem partir do menor para o maior valor, tanto em X quanto em Y e subtrair de 255 o valor do tom de cinza existente em cada pixel da matriz.<br/><br/>Segue o código completo:<br/><br/><script src="https://gist.github.com/lucaspwo/7e26a3fd7d50b08293d0f6e73e53b1bd.js"></script></p>
+            <p>In the first program (regions.cpp, <a href = "https://github.com/lucaspwo/pdi/blob/master/exemplo2/regions.cpp">available in portuguese here</a>) it was necessary receive from the user two points in the image, that is: four coordinates. Two for the first point and two for the second point, as it can be seen below.<br/><script src="https://gist.github.com/lucaspwo/3538300db2ec9c3933f888095d2ad781.js"></script>After the input, the X coordinate from the first point will be stored in the xp1 variable and the Y coordinate from the first point will be stored in the yp1 variable, with the same being applied for the second point.<br/>In order to avoid some problem during the program's repetition structure to paint the inputed area, when receiving smaller coordinates values for the second point than the first point, I wrote a conditional code to change the variables values.<br/><br/><script src="https://gist.github.com/lucaspwo/ea7087fe1460996e02d46cd08bd40233.js"></script>With that, the nested loop should begin from the smaller coordinates to the bigger coordinates, both in X and Y and subtract from 255 the gray scale value existing in every pixel of the matrix.<br/>The complete code follows:<br/><br/><script src="https://gist.github.com/lucaspwo/7e26a3fd7d50b08293d0f6e73e53b1bd.js"></script></p>
         </div>
       </div>
       <div class="row">
@@ -80,7 +80,7 @@
           <p>
             <a href="projetos/pdi_e2.2/bono.png" class="image-popup">
               <img src="projetos/pdi_e2.2/bono.png" class="img-responsive">
-              Imagem original
+              Original image
             </a>
           </p>
         </div>
@@ -88,7 +88,7 @@
           <p>
             <a href="projetos/pdi_e2.2/resultRegions.png" class="image-popup">
               <img src="projetos/pdi_e2.2/resultRegions.png" class="img-responsive">
-              Imagem após o processamento do código
+              Image after code processing
             </a>
           </p>
         </div>
@@ -96,7 +96,7 @@
       <div class="row">
         <div class="col-md-12">
           <h3>Trocaregioes.cpp</h3>
-          <p>E para o <a href="https://github.com/lucaspwo/pdi/blob/master/exemplo2/trocaregioes.cpp">segundo programa</a>, era necessário que os quadrantes da imagem fossem substituídos diagonalmente.<br/><br/>A maior dificuldade aqui foi perceber que existem duas formas diferentes de copiar a matriz de uma imagem, no OpenCV. Uma delas é uma cópia "rasa", quando você atribui outro nome (nesse caso, variável) para a mesma matriz, e outra é a cópia "profunda", que cria matrizes distintas, para variáveis diferentes, através do comando clone().<br/><br/>Após conhecer essa diferença, o restante do código saiu depressa. Fiz uma cópia separada da imagem original (deep copy) e fiz um par de laços para cada quadrante, modificando a variável de saída de acordo com a posição original dos quadrantes, na imagem original.<br/><br/>Aqui está código final:<br/><script src="https://gist.github.com/lucaspwo/15ad51d9d12c2ed40b7d88ee0ef36bca.js"></script></p>
+          <p>And for the <a href="https://github.com/lucaspwo/pdi/blob/master/exemplo2/trocaregioes.cpp">second program</a>, it was necessary to diagonally switch the image quadrants.<br/><br/>The biggest difficulty here was realizing that existed two different ways to copy the matrix of an image, in OpenCV. One would make a "shallow" copy, when you assign another name (in this case, another variable name) to the same matrix, and the other is a "deep" copy, which creates a distinct matrix, to different variables, using the clone() command.<br/><br/>After noticing this difference, the remaining of the code flowed quickly. I made a separate copy of the original image (deep copy) and wrote a pair of loops for each quadrant, in the original image.<br/><br/>Here's the final code:<br/><script src="https://gist.github.com/lucaspwo/15ad51d9d12c2ed40b7d88ee0ef36bca.js"></script></p>          
         </div>
       </div>
       <div class="row">
@@ -104,7 +104,7 @@
             <p>
               <a href="projetos/pdi_e2.2/bono.png" class="image-popup">
                 <img src="projetos/pdi_e2.2/bono.png" class="img-responsive">
-                A imagem original, a mesma de antes
+                The original image, same as before
               </a>
             </p>
           </div>
@@ -112,7 +112,7 @@
             <p>
               <a href="projetos/pdi_e2.2/resultTrocaregioes.png" class="image-popup">
                 <img src="projetos/pdi_e2.2/resultTrocaregioes.png" class="img-responsive">
-                A imagem após o processamento do segundo código
+                The image after the processing of the second code
               </a>
             </p>
           </div>
