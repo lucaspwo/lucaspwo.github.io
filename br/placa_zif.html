@@ -1,58 +1,50 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Meu Laboratório de Experimentos</title>
-    <!-- <meta name="description" content="Free Bootstrap Theme by uicookies.com"> -->
-    <!-- <meta name="keywords" content="free website templates, free bootstrap themes, free template, free bootstrap, free website template"> -->
-    
-    <link href="https://fonts.googleapis.com/css?family=Abel" rel="stylesheet">
-    <link rel="stylesheet" href="../css/styles-merged.css">
-    <link rel="stylesheet" href="../css/style.min.css">
-    <link rel="stylesheet" href="../css/custom.css">
 
-    <!--[if lt IE 9]>
-      <script src="js/vendor/html5shiv.min.js"></script>
-      <script src="js/vendor/respond.min.js"></script>
-    <![endif]-->
-  </head>
-  <body>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Meu Laboratório de Experimentos</title>
+  <link href="https://fonts.googleapis.com/css?family=Abel" rel="stylesheet">
+  <link rel="stylesheet" href="../css/styles-merged.css">
+  <link rel="stylesheet" href="../css/style.min.css">
+  <link rel="stylesheet" href="../css/custom.css">
+</head>
+
+<body>
 
   <!-- START: header -->
-  
   <div class="probootstrap-loader"></div>
 
   <header role="banner" class="probootstrap-header">
     <div class="container">
-        <a href="index.html" class="probootstrap-logo">Meu Laboratório de Experimentos</span></a>
-        
-        <a href="#" class="probootstrap-burger-menu visible-xs" ><i>Menu</i></a>
-        <div class="mobile-menu-overlay"></div>
+      <a href="index.html" class="probootstrap-logo">Meu Laboratório de Experimentos</span></a>
 
-        <nav role="navigation" class="probootstrap-nav hidden-xs">
-          <ul class="probootstrap-main-nav">
-            <li class="active"><a href="index.html">Principal</a></li>
-            <li><a href="about.html">Sobre</a></li>
-            <li><a href="contact.html">Contato</a></li>
-            <li><a href="../index.html">&#x1F1FA;&#x1F1F8;</a></li>
+      <a href="#" class="probootstrap-burger-menu visible-xs"><i>Menu</i></a>
+      <div class="mobile-menu-overlay"></div>
+
+      <nav role="navigation" class="probootstrap-nav hidden-xs">
+        <ul class="probootstrap-main-nav">
+          <li class="active"><a href="index.html">Principal</a></li>
+          <li><a href="about.html">Sobre</a></li>
+          <li><a href="contact.html">Contato</a></li>
+          <li><a href="../placa_zif.html">&#x1F1FA;&#x1F1F8;</a></li>
+        </ul>
+        <div class="extra-text visible-xs">
+          <a href="#" class="probootstrap-burger-menu"><i>Menu</i></a>
+          <h5>Conecte-se</h5>
+          <ul class="social-buttons">
+            <li><a href="https://twitter.com/lucaspwo"><i class="icon-twitter"></i></a></li>
+            <li><a href="https://www.youtube.com/@lucaspwo"><i class="icon-youtube"></i></a></li>
+            <li><a href="https://www.linkedin.com/in/lucaspwo"><i class="icon-linkedin"></i></a></li>
+            <li><a href="https://github.com/lucaspwo"><i class="icon-github2"></i></a></li>
           </ul>
-          <div class="extra-text visible-xs"> 
-            <a href="https://www.instagram.com/lucaspwo/" class="probootstrap-burger-menu"><i>Menu</i></a>
-            <h5>Conecte-se</h5>
-            <ul class="social-buttons">
-              <li><a href="https://twitter.com/lucaspwo"><i class="icon-twitter"></i></a></li>
-              <li><a href="https://www.youtube.com/user/lpwobr"><i class="icon-youtube"></i></a></li>
-              <li><a href="https://www.instagram.com/lucaspwo/"><i class="icon-instagram2"></i></a></li>
-              <li><a href="https://www.linkedin.com/in/lucaspwo/"><i class="icon-linkedin"></i></a></li>
-              <li><a href="https://github.com/lucaspwo"><i class="icon-github"></i></a></li>
-            </ul>
-          </div>
-        </nav>
+        </div>
+      </nav>
     </div>
   </header>
   <!-- END: header -->
-  
+
   <div class="probootstrap-section">
     <div class="container">
 
@@ -62,19 +54,29 @@
           <p>Postado em 24 de Fevereiro, 2020</p>
         </div>
         <div class="col-md-12">
-            <h3>Problema</h3>
-          </div>
+          <h3>Problema</h3>
+        </div>
         <div class="col-md-12">
-          <p>Recentemente eu fiz uma placa para controlar um motor de passo com um display e alguns botões, e para isso decidi utilizar um ATMEGA328P devido a grande utilização de memória pelas bibliotecas e pela quantidade de portas que precisaria utilizar. Como a placa era para um uso bem específico, não precisaria ter pinos de programação expostos (fossem ICSP ou padrão FTDI), mas os testes que realizei em bancada só me permitiram testar os acionamentos e os testes de torque e velocidade do acionamento do motor só poderiam ser realizados na placa, já com todas as peças montadas.</p>
-          <p>A configuração ideal de velocidade do motor demorou demais para ser encontrada, tendo sido necessário retirar o microcontrolador da placa para um Arduino e de volta diversas vezes, ao custo de danificar algum pino ou mesmo o soquete estampado de 28 pinos. Então desde esse dia que eu imaginei a criação da placa shield deste post, para que eu pudesse programar qualquer microcontrolador que eu geralmente uso (podendo ser um ATMEGA328P, ou um ATMEGA8L ou um ATTINY85), sem a necessidade de fazer a ligação dos fios em uma protoboard e sem correr o risco de danificar algo no processo.</p>
+          <p>Recentemente eu fiz uma placa para controlar um motor de passo com um display e alguns botões, e para isso
+            decidi utilizar um ATMEGA328P devido a grande utilização de memória pelas bibliotecas e pela quantidade de
+            portas que precisaria utilizar. Como a placa era para um uso bem específico, não precisaria ter pinos de
+            programação expostos (fossem ICSP ou padrão FTDI), mas os testes que realizei em bancada só me permitiram
+            testar os acionamentos e os testes de torque e velocidade do acionamento do motor só poderiam ser realizados
+            na placa, já com todas as peças montadas.</p>
+          <p>A configuração ideal de velocidade do motor demorou demais para ser encontrada, tendo sido necessário
+            retirar o microcontrolador da placa para um Arduino e de volta diversas vezes, ao custo de danificar algum
+            pino ou mesmo o soquete estampado de 28 pinos. Então desde esse dia que eu imaginei a criação da placa
+            shield deste post, para que eu pudesse programar qualquer microcontrolador que eu geralmente uso (podendo
+            ser um ATMEGA328P, ou um ATMEGA8L ou um ATTINY85), sem a necessidade de fazer a ligação dos fios em uma
+            protoboard e sem correr o risco de danificar algo no processo.</p>
           <div class="row">
             <div class="col-md-4 col-md-offset-4">
               <p>
                 <a href="../projetos/placa_zif/soquete.png" class="image-popup">
                   <img src="../projetos/placa_zif/soquete.png" class="img-responsive">
-                  <!-- Soquete estampado DIP de 28 pinos. Fonte: <a href="https://www.filipeflop.com/produto/soquete-28-pinos-estampado-dip-28/">FilipeFlop</a> -->
                 </a>
-                Soquete estampado DIP de 28 pinos. Fonte: <a href="https://www.filipeflop.com/produto/soquete-28-pinos-estampado-dip-28/">FilipeFlop</a>
+                Soquete estampado DIP de 28 pinos. Fonte: <a
+                  href="https://www.filipeflop.com/produto/soquete-28-pinos-estampado-dip-28/">FilipeFlop</a>
               </p>
             </div>
           </div>
@@ -83,8 +85,15 @@
           <h3>Criando a placa no EAGLE</h3>
         </div>
         <div class="col-md-12">
-          <p>Para fazer a placa no EAGLE eu utilizei o esquemático do Arduino Uno R3 criado pela <a href="https://www.adafruit.com/">Adafruit</a> (link para a biblioteca <a href="https://github.com/adafruit/Adafruit-Eagle-Library">aqui</a>), planejei as conexões necessárias para fazer a programação via ICSP tanto dos ATMEGAs quanto do ATTINY. Expus também as conexões com um cristal, para gravar já na frequência que desejaria utilizar. Adicionei um LED ao pino digital 13 para uma visualização do processo de gravação.</p>
-          <p>Já o soquete ZIF (zero insertion force) compatível com o que eu tinha veio da <a href="https://github.com/sparkfun/SparkFun-Eagle-Libraries">biblioteca SparkFun-Connectors</a>, feito pela <a href="https://www.sparkfun.com/">SparkFun</a>.</p>
+          <p>Para fazer a placa no EAGLE eu utilizei o esquemático do Arduino Uno R3 criado pela <a
+              href="https://www.adafruit.com/">Adafruit</a> (link para a biblioteca <a
+              href="https://github.com/adafruit/Adafruit-Eagle-Library">aqui</a>), planejei as conexões necessárias para
+            fazer a programação via ICSP tanto dos ATMEGAs quanto do ATTINY. Expus também as conexões com um cristal,
+            para gravar já na frequência que desejaria utilizar. Adicionei um LED ao pino digital 13 para uma
+            visualização do processo de gravação.</p>
+          <p>Já o soquete ZIF (zero insertion force) compatível com o que eu tinha veio da <a
+              href="https://github.com/sparkfun/SparkFun-Eagle-Libraries">biblioteca SparkFun-Connectors</a>, feito pela
+            <a href="https://www.sparkfun.com/">SparkFun</a>.</p>
         </div>
       </div>
       <div class="row">
@@ -105,44 +114,46 @@
           </p>
         </div>
         <div class="col-md-4">
-            <p>
-              <a href="../projetos/placa_zif/brd_semTerra.png" class="image-popup">
-                <img src="../projetos/placa_zif/brd_semTerra.png" class="img-responsive">
-                Layout da placa. GNDs desconectados porque há malha de terra
-              </a>
-            </p>
-          </div>
+          <p>
+            <a href="../projetos/placa_zif/brd_semTerra.png" class="image-popup">
+              <img src="../projetos/placa_zif/brd_semTerra.png" class="img-responsive">
+              Layout da placa. GNDs desconectados porque há malha de terra
+            </a>
+          </p>
+        </div>
       </div>
       <div class="row">
         <div class="col-md-12">
           <h3>Placa pronta</h3>
-          <p>Submeti os arquivos EAGLE para fazer no <a href="http://protolab.imd.ufrn.br/">ProtoLab</a>, o laboratório de prototipagem rápida onde fui bolsista. Entreguei a placa de fibra de face dupla e soldei.</p>
+          <p>Submeti os arquivos EAGLE para fazer no <a href="http://protolab.imd.ufrn.br/">ProtoLab</a>, o laboratório
+            de prototipagem rápida onde fui bolsista. Entreguei a placa de fibra de face dupla e soldei.</p>
         </div>
       </div>
       <div class="row">
-          <div class="col-md-6">
-            <p>
-              <a href="../projetos/placa_zif/placa_328.png" class="image-popup">
-                <img src="../projetos/placa_zif/placa_328.png" class="img-responsive">
-                A placa finalizada, com um ATMEGA328P e um cristal de 16MHz
-              </a>
-            </p>
-          </div>
-          <div class="col-md-6">
-            <p>
-              <a href="../projetos/placa_zif/placa_tiny85.png" class="image-popup">
-                <img src="../projetos/placa_zif/placa_tiny85.png" class="img-responsive">
-                A placa com um ATTINY85
-              </a>
-            </p>
-          </div>
+        <div class="col-md-6">
+          <p>
+            <a href="../projetos/placa_zif/placa_328.png" class="image-popup">
+              <img src="../projetos/placa_zif/placa_328.png" class="img-responsive">
+              A placa finalizada, com um ATMEGA328P e um cristal de 16MHz
+            </a>
+          </p>
         </div>
-        <div class="row">
-            <div class="col-md-12">
-              <h3>Download</h3>
-              <p>Para baixar os arquivos EAGLE, <a href="https://github.com/lucaspwo/gravador_isp">aqui está um link para o meu repositório do GitHub do projeto</a>.</p>
-            </div>
-          </div>
+        <div class="col-md-6">
+          <p>
+            <a href="../projetos/placa_zif/placa_tiny85.png" class="image-popup">
+              <img src="../projetos/placa_zif/placa_tiny85.png" class="img-responsive">
+              A placa com um ATTINY85
+            </a>
+          </p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <h3>Download</h3>
+          <p>Para baixar os arquivos EAGLE, <a href="https://github.com/lucaspwo/gravador_isp">aqui está um link para o
+              meu repositório do GitHub do projeto</a>.</p>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -151,13 +162,11 @@
       <div class="row">
         <div class="col-md-12">
           <p>Template de site desenvolvido por <a href="https://uicookies.com">uiCookies</a>.</p>
-          <!-- <p class="probootstrap-copyright">&copy; 2017 <a href="https://uicookies.com/">uiCookies:Explorer</a> All Rights Reserved.</p> -->
           <ul class="probootstrap-social">
             <li><a href="https://twitter.com/lucaspwo"><i class="icon-twitter"></i></a></li>
-            <li><a href="https://www.youtube.com/user/lpwobr"><i class="icon-youtube"></i></a></li>
-            <li><a href="https://www.instagram.com/lucaspwo/"><i class="icon-instagram2"></i></a></li>
-            <li><a href="https://www.linkedin.com/in/lucaspwo/"><i class="icon-linkedin"></i></a></li>
-            <li><a href="https://github.com/lucaspwo"><i class="icon-github"></i></a></li>
+            <li><a href="https://www.youtube.com/@lucaspwo"><i class="icon-youtube"></i></a></li>
+            <li><a href="https://www.linkedin.com/in/lucaspwo"><i class="icon-linkedin"></i></a></li>
+            <li><a href="https://github.com/lucaspwo"><i class="icon-github2"></i></a></li>
           </ul>
         </div>
       </div>
@@ -167,11 +176,12 @@
   <div class="gototop js-top">
     <a href="#" class="js-gotop"><i class="icon-chevron-thin-up"></i></a>
   </div>
-  
+
 
   <script src="../js/scripts.min.js"></script>
   <script src="../js/main.min.js"></script>
   <script src="../js/custom.js"></script>
 
-  </body>
+</body>
+
 </html>
