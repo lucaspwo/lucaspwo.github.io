@@ -824,9 +824,13 @@ a:hover, a:focus {
 .img-bg .probootstrap-photo-details p {
   margin: 0;
   padding: 0;
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255);
   -webkit-transition: .3s all ease;
   transition: .3s all ease;
+}
+
+.title-main {
+  text-shadow: 0 0 3px black;
 }
 
 .img-bg:hover p, .img-bg:hover h2 {

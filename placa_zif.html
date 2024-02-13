@@ -49,7 +49,7 @@
     <div class="container">
 
       <div class="row">
-        <div class="col-md-6 col-md-offset-3 mb40 text-center">
+        <div class="col-md-8 col-md-offset-2 mb40 text-center">
           <h2>Burner Shield for ATMEGA328P/8L and ATTINY85</h2>
           <p>Posted on February 24, 2020</p>
         </div>
@@ -57,26 +57,29 @@
           <h3>The problem</h3>
         </div>
         <div class="col-md-12">
-          <p>Recently I made a PCB to control a step motor with an liquid crystal display and some buttons, and for that
+          <p class="text-justify">Recently I made a PCB to control a step motor with an liquid crystal display and some
+            buttons, and for that
             I decided to utilize an ATMEGA328P because of the large usage of memory by the libraries and because of the
             quantity of pins I'd need to use. Since the PCB was conceived for a very specific use, it wouldn't need the
             programming pins exposed (be it ICSP or the FTDI pattern), but the tests I made in the bench would only
             allow me to test the steps it was programmed to follow and the tests of torque and actuation speed could
             only be made in the PCB, with all the pieces installed.</p>
-          <p>The ideal motor speed configuration took too long to be found, having been necessary to remove the
+          <p class="text-justify">The ideal motor speed configuration took too long to be found, having been necessary
+            to remove the
             microcontroller off the PCB to an Arduino and back again too many times, at the cost of damaging a pin or
             even the 28 pin socket. So since that day I imagined the shield board of this post, for me to be able to
             program any microcontroller I usually use (an ATMEGA328P, or ATMEGA8L or an ATTINY85), without the need to
             make the connections in a protoboard and without the risk of damaging something in the process.</p>
           <div class="row">
-            <div class="col-md-4 col-md-offset-4">
-              <p>
-                <a href="projetos/placa_zif/soquete.png" class="image-popup">
+            <div class="col-md-12">
+              <div class="col-md-4 col-md-offset-4">
+                <a href="projetos/placa_zif/soquete.png" class="image-popup" style="margin-bottom: 1px;">
                   <img src="projetos/placa_zif/soquete.png" class="img-responsive">
                 </a>
-                28 pin DIP socket. Source: <a
-                  href="https://www.filipeflop.com/produto/soquete-28-pinos-estampado-dip-28/">FilipeFlop</a>
-              </p>
+                <p class="text-justify">28 pin DIP socket. Source: <a
+                    href="https://www.makerhero.com/produto/soquete-28-pinos-estampado-dip-28/">MakerHero</a>
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -84,74 +87,70 @@
           <h3>Making the PCB in EAGLE</h3>
         </div>
         <div class="col-md-12">
-          <p>To make the PCB in EAGLE I used the Arduino Uno R3 schematic made by <a
+          <p class="text-justify">To make the PCB in EAGLE I used the Arduino Uno R3 schematic made by <a
               href="https://www.adafruit.com/">Adafruit</a> (<a
               href="https://github.com/adafruit/Adafruit-Eagle-Library">here's</a> the link for the library), I planned
             the necessary connections to make the programming via ICSP, on both the ATMEGAs and ATTINY. I also exposed
             the crystal connections, in order to burn the code already at the frequency I'd want to utilize. I added an
             LED to the digital pin 13 to visualize the programming process.</p>
-          <p>The ZIF (zero insertion force) socket compatible with what I had come from the <a
+          <p class="text-justify">The ZIF (zero insertion force) socket compatible with what I had come from the <a
               href="https://github.com/sparkfun/SparkFun-Eagle-Libraries">SparkFun-Connectors library</a>, made by <a
               href="https://www.sparkfun.com/">SparkFun</a>.</p>
         </div>
       </div>
       <div class="row">
-        <div class="col-md-4">
-          <p>
-            <a href="projetos/placa_zif/esq_zif.png" class="image-popup">
+        <div class="col-md-12">
+          <div class="col-md-4">
+            <a href="projetos/placa_zif/esq_zif.png" class="image-popup" style="margin-bottom: 1px;">
               <img src="projetos/placa_zif/esq_zif.png" class="img-responsive">
-              ZIF socket schematic
             </a>
-          </p>
-        </div>
-        <div class="col-md-4">
-          <p>
-            <a href="projetos/placa_zif/esq_ard.png" class="image-popup">
+            <p class="text-justify">ZIF socket schematic</p>
+          </div>
+          <div class="col-md-4">
+            <a href="projetos/placa_zif/esq_ard.png" class="image-popup" style="margin-bottom: 1px;">
               <img src="projetos/placa_zif/esq_ard.png" class="img-responsive">
-              Arduino board schematic with a socket for the crystal
             </a>
-          </p>
-        </div>
-        <div class="col-md-4">
-          <p>
-            <a href="projetos/placa_zif/brd_semTerra.png" class="image-popup">
+            <p class="text-justify">Arduino board schematic with a socket for the crystal</p>
+          </div>
+          <div class="col-md-4">
+            <a href="projetos/placa_zif/brd_semTerra.png" class="image-popup" style="margin-bottom: 1px;">
               <img src="projetos/placa_zif/brd_semTerra.png" class="img-responsive">
-              Board layout. The GNDs are disconnected because there is a ground plane
             </a>
-          </p>
+            <p class="text-justify">Board layout. The GNDs are disconnected because there is a ground plane</p>
+          </div>
         </div>
       </div>
       <div class="row">
         <div class="col-md-12">
           <h3>PCB ready</h3>
-          <p>I submitted the EAGLE-generated files in the <a href="http://protolab.imd.ufrn.br/">ProtoLab</a> website, a
+          <p class="text-justify">I submitted the EAGLE-generated files in the <a
+              href="http://protolab.imd.ufrn.br/">ProtoLab</a> website, a
             fast prototyping laboratory where I once had a scholarship. I gave them the dual layer fiber board and I
             soldered everything to it afterward.</p>
         </div>
       </div>
       <div class="row">
-        <div class="col-md-6">
-          <p>
-            <a href="projetos/placa_zif/placa_328.png" class="image-popup">
-              <img src="projetos/placa_zif/placa_328.png" class="img-responsive">
-              The finished PCB, with an ATMEGA328P and a 16MHz crystal
-            </a>
-          </p>
-        </div>
-        <div class="col-md-6">
-          <p>
-            <a href="projetos/placa_zif/placa_tiny85.png" class="image-popup">
-              <img src="projetos/placa_zif/placa_tiny85.png" class="img-responsive">
-              The board with an ATTINY85
-            </a>
-          </p>
-        </div>
-      </div>
-      <div class="row">
         <div class="col-md-12">
-          <h3>Download</h3>
-          <p>To download the EAGLE files, <a href="https://github.com/lucaspwo/gravador_isp">here is a link to my GitHub
-              repository</a>.</p>
+          <div class="col-md-6">
+            <a href="projetos/placa_zif/placa_328.png" class="image-popup" style="margin-bottom: 1px;">
+              <img src="projetos/placa_zif/placa_328.png" class="img-responsive">
+            </a>
+            <p class="text-justify">The finished PCB, with an ATMEGA328P and a 16MHz crystal</p>
+          </div>
+          <div class="col-md-6">
+            <a href="projetos/placa_zif/placa_tiny85.png" class="image-popup" style="margin-bottom: 1px;">
+              <img src="projetos/placa_zif/placa_tiny85.png" class="img-responsive">
+            </a>
+            <p class="text-justify">The board with an ATTINY85</p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <h3>Download</h3>
+            <p class="text-justify">To download the EAGLE files, <a href="https://github.com/lucaspwo/gravador_isp">here
+                is a link to my GitHub
+                repository</a>.</p>
+          </div>
         </div>
       </div>
     </div>

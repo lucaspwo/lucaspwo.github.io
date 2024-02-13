@@ -49,12 +49,13 @@
     <div class="container">
 
       <div class="row">
-        <div class="col-md-6 col-md-offset-3 mb40 text-center">
+        <div class="col-md-8 col-md-offset-2 mb40 text-center">
           <h2>Processamento Digital de Imagens - Exercício 2.2</h2>
           <p>Postado em 13 de Abril, 2019</p>
         </div>
         <div class="col-md-12">
-          <p>Os dois primeiros exercícios, para a disciplina de Processamento Digital de Imagens, consistiam em
+          <p class="text-justify">Os dois primeiros exercícios, para a disciplina de Processamento Digital de Imagens,
+            consistiam em
             manipular a matriz de uma imagem de duas formas diferentes: o primeiro inverte os tons de cinza em uma
             região provida pelo usuário e o segundo troca os quadrantes que compõem a imagem.</p>
         </div>
@@ -62,73 +63,78 @@
           <h3>Regions.cpp</h3>
         </div>
         <div class="col-md-12">
-          <p>Para o primeiro programa (regions.cpp, <a
+          <p class="text-justify">Para o primeiro programa (regions.cpp, <a
               href="https://github.com/lucaspwo/pdi/blob/master/exemplo2/regions.cpp">disponível aqui</a>), era
             necessário coletar do usuário dois pontos da imagem, ou seja: quatro coordenadas. Duas para o ponto 1 e duas
-            para o ponto 2, como se pode ver no trecho abaixo.<br />
-            <script src="https://gist.github.com/lucaspwo/3538300db2ec9c3933f888095d2ad781.js"></script>A partir da
+            para o ponto 2, como se pode ver no trecho abaixo.</p>
+          <div class="col-md-12">
+            <script src="https://gist.github.com/lucaspwo/3538300db2ec9c3933f888095d2ad781.js"></script>
+          </div>
+          <p class="text-justify">A partir da
             leitura, a coordenada X do ponto 1 está armazenada na variável xp1 e a coordenada Y do ponto 1 está
-            armazenada na variável yp1, com o mesmo se repetindo para o ponto 2.<br />Afim de evitar que o programa
+            armazenada na variável yp1, com o mesmo se repetindo para o ponto 2. Afim de evitar que o programa
             apresentasse algum problema durante o laço de repetição para pintar a área submetida, com o recebimento de
             coordenadas do ponto 2 menores que as do ponto 1, escrevi um trecho condicional para trocar os valores das
-            variáveis.<br /><br />
-            <script src="https://gist.github.com/lucaspwo/ea7087fe1460996e02d46cd08bd40233.js"></script>Com isso, os
+            variáveis.</p>
+          <div class="col-md-12">
+            <script src="https://gist.github.com/lucaspwo/ea7087fe1460996e02d46cd08bd40233.js"></script>
+          </div>
+          <p class="text-justify">Com isso, os
             laços for aninhados podem partir do menor para o maior valor, tanto em X quanto em Y e subtrair de 255 o
-            valor do tom de cinza existente em cada pixel da matriz.<br /><br />Segue o código completo:<br /><br />
+            valor do tom de cinza existente em cada pixel da matriz. Segue o código completo:</p>
+          <div class="col-md-12">
             <script src="https://gist.github.com/lucaspwo/7e26a3fd7d50b08293d0f6e73e53b1bd.js"></script>
-          </p>
+          </div>
         </div>
       </div>
       <div class="row">
-        <div class="col-md-6">
-          <p>
-            <a href="../projetos/pdi_e2.2/bono.png" class="image-popup">
+        <div class="col-md-12">
+          <div class="col-md-6">
+            <a href="../projetos/pdi_e2.2/bono.png" class="image-popup" style="margin-bottom: 1px;">
               <img src="../projetos/pdi_e2.2/bono.png" class="img-responsive">
-              Imagem original
             </a>
-          </p>
-        </div>
-        <div class="col-md-6">
-          <p>
-            <a href="../projetos/pdi_e2.2/resultRegions.png" class="image-popup">
+            <p class="text-justify">Imagem original</p>
+          </div>
+          <div class="col-md-6">
+            <a href="../projetos/pdi_e2.2/resultRegions.png" class="image-popup" style="margin-bottom: 1px;">
               <img src="../projetos/pdi_e2.2/resultRegions.png" class="img-responsive">
-              Imagem após o processamento do código
             </a>
-          </p>
+            <p class="text-justify">Imagem após o processamento do código</p>
+          </div>
         </div>
       </div>
       <div class="row">
         <div class="col-md-12">
           <h3>Trocaregioes.cpp</h3>
-          <p>E para o <a href="https://github.com/lucaspwo/pdi/blob/master/exemplo2/trocaregioes.cpp">segundo
-              programa</a>, era necessário que os quadrantes da imagem fossem substituídos diagonalmente.<br /><br />A
+          <p class="text-justify">E para o <a
+              href="https://github.com/lucaspwo/pdi/blob/master/exemplo2/trocaregioes.cpp">segundo
+              programa</a>, era necessário que os quadrantes da imagem fossem substituídos diagonalmente. A
             maior dificuldade aqui foi perceber que existem duas formas diferentes de copiar a matriz de uma imagem, no
             OpenCV. Uma delas é uma cópia "rasa", quando você atribui outro nome (nesse caso, variável) para a mesma
             matriz, e outra é a cópia "profunda", que cria matrizes distintas, para variáveis diferentes, através do
-            comando clone().<br /><br />Após conhecer essa diferença, o restante do código saiu depressa. Fiz uma cópia
+            comando clone(). Após conhecer essa diferença, o restante do código saiu depressa. Fiz uma cópia
             separada da imagem original (deep copy) e fiz um par de laços para cada quadrante, modificando a variável de
-            saída de acordo com a posição original dos quadrantes, na imagem original.<br /><br />Aqui está código
-            final:<br />
+            saída de acordo com a posição original dos quadrantes, na imagem original. Aqui está código
+            final:</p>
+          <div class="col-md-12">
             <script src="https://gist.github.com/lucaspwo/15ad51d9d12c2ed40b7d88ee0ef36bca.js"></script>
-          </p>
+          </div>
         </div>
       </div>
       <div class="row">
-        <div class="col-md-6">
-          <p>
-            <a href="../projetos/pdi_e2.2/bono.png" class="image-popup">
+        <div class="col-md-12">
+          <div class="col-md-6">
+            <a href="../projetos/pdi_e2.2/bono.png" class="image-popup" style="margin-bottom: 1px;">
               <img src="../projetos/pdi_e2.2/bono.png" class="img-responsive">
-              A imagem original, a mesma de antes
             </a>
-          </p>
-        </div>
-        <div class="col-md-6">
-          <p>
-            <a href="../projetos/pdi_e2.2/resultTrocaregioes.png" class="image-popup">
+            <p class="text-justify">A imagem original, a mesma de antes</p>
+          </div>
+          <div class="col-md-6">
+            <a href="../projetos/pdi_e2.2/resultTrocaregioes.png" class="image-popup" style="margin-bottom: 1px;">
               <img src="../projetos/pdi_e2.2/resultTrocaregioes.png" class="img-responsive">
-              A imagem após o processamento do segundo código
             </a>
-          </p>
+            <p class="text-justify">A imagem após o processamento do segundo código</p>
+          </div>
         </div>
       </div>
     </div>

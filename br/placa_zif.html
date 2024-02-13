@@ -49,7 +49,7 @@
     <div class="container">
 
       <div class="row">
-        <div class="col-md-6 col-md-offset-3 mb40 text-center">
+        <div class="col-md-8 col-md-offset-2 mb40 text-center">
           <h2>Placa Gravadora para ATMEGA328P/8L e ATTINY85</h2>
           <p>Postado em 24 de Fevereiro, 2020</p>
         </div>
@@ -57,27 +57,30 @@
           <h3>Problema</h3>
         </div>
         <div class="col-md-12">
-          <p>Recentemente eu fiz uma placa para controlar um motor de passo com um display e alguns botões, e para isso
+          <p class="text-justify">Recentemente eu fiz uma placa para controlar um motor de passo com um display e alguns
+            botões, e para isso
             decidi utilizar um ATMEGA328P devido a grande utilização de memória pelas bibliotecas e pela quantidade de
             portas que precisaria utilizar. Como a placa era para um uso bem específico, não precisaria ter pinos de
             programação expostos (fossem ICSP ou padrão FTDI), mas os testes que realizei em bancada só me permitiram
             testar os acionamentos e os testes de torque e velocidade do acionamento do motor só poderiam ser realizados
             na placa, já com todas as peças montadas.</p>
-          <p>A configuração ideal de velocidade do motor demorou demais para ser encontrada, tendo sido necessário
+          <p class="text-justify">A configuração ideal de velocidade do motor demorou demais para ser encontrada, tendo
+            sido necessário
             retirar o microcontrolador da placa para um Arduino e de volta diversas vezes, ao custo de danificar algum
             pino ou mesmo o soquete estampado de 28 pinos. Então desde esse dia que eu imaginei a criação da placa
             shield deste post, para que eu pudesse programar qualquer microcontrolador que eu geralmente uso (podendo
             ser um ATMEGA328P, ou um ATMEGA8L ou um ATTINY85), sem a necessidade de fazer a ligação dos fios em uma
             protoboard e sem correr o risco de danificar algo no processo.</p>
           <div class="row">
-            <div class="col-md-4 col-md-offset-4">
-              <p>
-                <a href="../projetos/placa_zif/soquete.png" class="image-popup">
+            <div class="col-md-12">
+              <div class="col-md-4 col-md-offset-4">
+                <a href="../projetos/placa_zif/soquete.png" class="image-popup" style="margin-bottom: 1px;">
                   <img src="../projetos/placa_zif/soquete.png" class="img-responsive">
                 </a>
-                Soquete estampado DIP de 28 pinos. Fonte: <a
-                  href="https://www.filipeflop.com/produto/soquete-28-pinos-estampado-dip-28/">FilipeFlop</a>
-              </p>
+                <p class="text-justify">Soquete estampado DIP de 28 pinos. Fonte: <a
+                    href="https://www.makerhero.com/produto/soquete-28-pinos-estampado-dip-28/">MakerHero</a>
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -85,72 +88,69 @@
           <h3>Criando a placa no EAGLE</h3>
         </div>
         <div class="col-md-12">
-          <p>Para fazer a placa no EAGLE eu utilizei o esquemático do Arduino Uno R3 criado pela <a
+          <p class="text-justify">Para fazer a placa no EAGLE eu utilizei o esquemático do Arduino Uno R3 criado pela <a
               href="https://www.adafruit.com/">Adafruit</a> (link para a biblioteca <a
               href="https://github.com/adafruit/Adafruit-Eagle-Library">aqui</a>), planejei as conexões necessárias para
             fazer a programação via ICSP tanto dos ATMEGAs quanto do ATTINY. Expus também as conexões com um cristal,
             para gravar já na frequência que desejaria utilizar. Adicionei um LED ao pino digital 13 para uma
             visualização do processo de gravação.</p>
-          <p>Já o soquete ZIF (zero insertion force) compatível com o que eu tinha veio da <a
+          <p class="text-justify">Já o soquete ZIF (zero insertion force) compatível com o que eu tinha veio da <a
               href="https://github.com/sparkfun/SparkFun-Eagle-Libraries">biblioteca SparkFun-Connectors</a>, feito pela
-            <a href="https://www.sparkfun.com/">SparkFun</a>.</p>
+            <a href="https://www.sparkfun.com/">SparkFun</a>.
+          </p>
         </div>
       </div>
       <div class="row">
-        <div class="col-md-4">
-          <p>
-            <a href="../projetos/placa_zif/esq_zif.png" class="image-popup">
+        <div class="col-md-12">
+          <div class="col-md-4">
+            <a href="../projetos/placa_zif/esq_zif.png" class="image-popup" style="margin-bottom: 1px;">
               <img src="../projetos/placa_zif/esq_zif.png" class="img-responsive">
-              Esquemático do soquete ZIF
             </a>
-          </p>
-        </div>
-        <div class="col-md-4">
-          <p>
-            <a href="../projetos/placa_zif/esq_ard.png" class="image-popup">
+            <p class="text-justify">Esquemático do soquete ZIF</p>
+          </div>
+          <div class="col-md-4">
+            <a href="../projetos/placa_zif/esq_ard.png" class="image-popup" style="margin-bottom: 1px;">
               <img src="../projetos/placa_zif/esq_ard.png" class="img-responsive">
-              Esquemático da placa Arduino, com soquete para o cristal
             </a>
-          </p>
-        </div>
-        <div class="col-md-4">
-          <p>
-            <a href="../projetos/placa_zif/brd_semTerra.png" class="image-popup">
+            <p class="text-justify">Esquemático da placa Arduino, com soquete para o cristal</p>
+          </div>
+          <div class="col-md-4">
+            <a href="../projetos/placa_zif/brd_semTerra.png" class="image-popup" style="margin-bottom: 1px;">
               <img src="../projetos/placa_zif/brd_semTerra.png" class="img-responsive">
-              Layout da placa. GNDs desconectados porque há malha de terra
             </a>
-          </p>
+            <p class="text-justify">Layout da placa. GNDs desconectados porque há malha de terra</p>
+          </div>
         </div>
       </div>
       <div class="row">
         <div class="col-md-12">
           <h3>Placa pronta</h3>
-          <p>Submeti os arquivos EAGLE para fazer no <a href="http://protolab.imd.ufrn.br/">ProtoLab</a>, o laboratório
+          <p class="text-justify">Submeti os arquivos EAGLE para fazer no <a
+              href="http://protolab.imd.ufrn.br/">ProtoLab</a>, o laboratório
             de prototipagem rápida onde fui bolsista. Entreguei a placa de fibra de face dupla e soldei.</p>
         </div>
       </div>
       <div class="row">
-        <div class="col-md-6">
-          <p>
-            <a href="../projetos/placa_zif/placa_328.png" class="image-popup">
+        <div class="col-md-12">
+          <div class="col-md-6">
+            <a href="../projetos/placa_zif/placa_328.png" class="image-popup" style="margin-bottom: 1px;">
               <img src="../projetos/placa_zif/placa_328.png" class="img-responsive">
-              A placa finalizada, com um ATMEGA328P e um cristal de 16MHz
             </a>
-          </p>
-        </div>
-        <div class="col-md-6">
-          <p>
-            <a href="../projetos/placa_zif/placa_tiny85.png" class="image-popup">
+            <p class="text-justify">A placa finalizada, com um ATMEGA328P e um cristal de 16MHz</p>
+          </div>
+          <div class="col-md-6">
+            <a href="../projetos/placa_zif/placa_tiny85.png" class="image-popup" style="margin-bottom: 1px;">
               <img src="../projetos/placa_zif/placa_tiny85.png" class="img-responsive">
-              A placa com um ATTINY85
             </a>
-          </p>
+            <p class="text-justify">A placa com um ATTINY85</p>
+          </div>
         </div>
       </div>
       <div class="row">
         <div class="col-md-12">
           <h3>Download</h3>
-          <p>Para baixar os arquivos EAGLE, <a href="https://github.com/lucaspwo/gravador_isp">aqui está um link para o
+          <p class="text-justify">Para baixar os arquivos EAGLE, <a href="https://github.com/lucaspwo/gravador_isp">aqui
+              está um link para o
               meu repositório do GitHub do projeto</a>.</p>
         </div>
       </div>
