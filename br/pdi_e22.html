@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="pt">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Processamento Digital de Imagens - Exercício 2.2</title>
+  <link href="https://fonts.googleapis.com/css?family=Abel" rel="stylesheet">
+  <link rel="stylesheet" href="../css/styles-merged.css">
+  <link rel="stylesheet" href="../css/style.min.css">
+  <link rel="stylesheet" href="../css/custom.css">
+
+<link rel="apple-touch-icon" sizes="180x180" href="https://lucaspwo.com/assets/favicon180x180.png">
+<link rel="icon" type="image/png" sizes="16x16" href="https://lucaspwo.com/assets/favicon16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://lucaspwo.com/assets/favicon32x32.png">
+<link rel="icon" type="image/x-icon" href="https://lucaspwo.com/assets/favicon.png">
+
+<meta property="og:title" content="Processamento Digital de Imagens - Exercício 2.2" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://lucaspwo.com/pdi_e22.html" />
+<meta property="og:image" content="https://lucaspwo.com/projetos/pdi_e2.2/resultRegions.png" />
+<meta property="og:site_name" content="Meu Laboratório de Experimentos" />
+<meta property="og:description" content="Resultados do exercício 2.2 da disciplina de Processamento Digital de Imagens." />
+
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:description" content="Resultados do exercício 2.2 da disciplina de Processamento Digital de Imagens." />
+<meta name="twitter:title" content="Processamento Digital de Imagens - Exercício 2.2" />
+<meta name="twitter:site" content="@lucaspwo" />
+<meta name="twitter:creator" content="@lucaspwo" />
+<meta name="twitter:image" content="https://lucaspwo.com/projetos/pdi_e2.2/resultRegions.png" />
+</head>
+
+<body>
+
+<div class="probootstrap-loader"></div>
+
+<header role="banner" class="probootstrap-header">
+  <div class="container">
+    <a href="../index.html" class="probootstrap-logo">Meu Laboratório de Experimentos</a>
+
+    <a href="#" class="probootstrap-burger-menu visible-xs"><i>Menu</i></a>
+    <div class="mobile-menu-overlay"></div>
+
+    <nav role="navigation" class="probootstrap-nav hidden-xs">
+      <ul class="probootstrap-main-nav">
+        <li ><a href="../index.html">Principal</a></li>
+        <li ><a href="../about.html">Sobre</a></li>
+        <li ><a href="../contact.html">Contato</a></li>
+        <li><a href="../pdi_e22.html">&#x1F1E7;&#x1F1F7;</a></li>
+      </ul>
+      <div class="extra-text visible-xs">
+        <a href="#" class="probootstrap-burger-menu"><i>Menu</i></a>
+        <h5>Conecte-se</h5>
+        <ul class="social-buttons">
+          <li><a href="https://www.youtube.com/@lucaspwo"><i class="icon-youtube"></i></a></li>
+          <li><a href="https://www.linkedin.com/in/lucaspwo"><i class="icon-linkedin"></i></a></li>
+          <li><a href="https://github.com/lucaspwo"><i class="icon-github2"></i></a></li>
+        </ul>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<section class="probootstrap-section">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-8 col-md-offset-2 mb40 text-center">
+        <h2>Processamento Digital de Imagens - Exercício 2.2</h2>
+        <p>Postado em </p>
+      </div>
+      <div class="col-md-12">
+        <div class="col-md-12">
+  <p class="text-justify">Os dois primeiros exercícios, para a disciplina de Processamento Digital de Imagens, consistiam em manipular a matriz de uma imagem de duas formas diferentes: o primeiro inverte os tons de cinza em uma região provida pelo usuário e o segundo troca os quadrantes que compõem a imagem.</p>
+</div>
+<h2>Regions.cpp</h2>
+<div class="col-md-12">
+  <p class="text-justify">Para o primeiro programa (regions.cpp, [disponível aqui](https://github.com/lucaspwo/pdi/blob/master/exemplo2/regions.cpp)), era necessário coletar do usuário dois pontos da imagem, ou seja: quatro coordenadas. Duas para o ponto 1 e duas para o ponto 2, como se pode ver no trecho abaixo.</p>
+</div>
+<div class="col-md-12"><script src="https://gist.github.com/lucaspwo/3538300db2ec9c3933f888095d2ad781.js"></script></div>
+<div class="col-md-12">
+  <p class="text-justify">A partir da leitura, a coordenada X do ponto 1 está armazenada na variável xp1 e a coordenada Y do ponto 1 está armazenada na variável yp1, com o mesmo se repetindo para o ponto 2. A fim de evitar que o programa apresentasse algum problema durante o laço de repetição para pintar a área submetida, com o recebimento de coordenadas do ponto 2 menores que as do ponto 1, escrevi um trecho condicional para trocar os valores das variáveis.</p>
+</div>
+<div class="col-md-12"><script src="https://gist.github.com/lucaspwo/ea7087fe1460996e02d46cd08bd40233.js"></script></div>
+<div class="col-md-12">
+  <p class="text-justify">Com isso, os laços for aninhados podem partir do menor para o maior valor, tanto em X quanto em Y e subtrair de 255 o valor do tom de cinza existente em cada pixel da matriz. Segue o código completo:</p>
+</div>
+<div class="col-md-12"><script src="https://gist.github.com/lucaspwo/7e26a3fd7d50b08293d0f6e73e53b1bd.js"></script></div>
+<div class="col-md-12"><div class="col-md-6 text-center"><a href="../projetos/pdi_e2.2/bono.png" class="image-popup" style="margin-bottom: 1px;"><img src="../projetos/pdi_e2.2/bono.png" class="img-responsive" alt="Imagem original"></a><p>Imagem original</p></div><div class="col-md-6 text-center"><a href="../projetos/pdi_e2.2/resultRegions.png" class="image-popup" style="margin-bottom: 1px;"><img src="../projetos/pdi_e2.2/resultRegions.png" class="img-responsive" alt="Imagem após o processamento do código"></a><p>Imagem após o processamento do código</p></div></div>
+<h2>Trocaregioes.cpp</h2>
+<div class="col-md-12">
+  <p class="text-justify">E para o [segundo programa](https://github.com/lucaspwo/pdi/blob/master/exemplo2/trocaregioes.cpp), era necessário que os quadrantes da imagem fossem substituídos diagonalmente. A maior dificuldade aqui foi perceber que existem duas formas diferentes de copiar a matriz de uma imagem, no OpenCV. Uma delas é uma cópia "rasa", quando você atribui outro nome (nesse caso, variável) para a mesma matriz, e outra é a cópia "profunda", que cria matrizes distintas, para variáveis diferentes, através do comando clone(). Após conhecer essa diferença, o restante do código saiu depressa. Fiz uma cópia separada da imagem original (deep copy) e fiz um par de laços para cada quadrante, modificando a variável de saída de acordo com a posição original dos quadrantes, na imagem original. Aqui está código final:</p>
+</div>
+<div class="col-md-12"><script src="https://gist.github.com/lucaspwo/15ad51d9d12c2ed40b7d88ee0ef36bca.js"></script></div>
+<div class="col-md-12"><div class="col-md-6 text-center"><a href="../projetos/pdi_e2.2/bono.png" class="image-popup" style="margin-bottom: 1px;"><img src="../projetos/pdi_e2.2/bono.png" class="img-responsive" alt="A imagem original, a mesma de antes"></a><p>A imagem original, a mesma de antes</p></div><div class="col-md-6 text-center"><a href="../projetos/pdi_e2.2/resultTrocaregioes.png" class="image-popup" style="margin-bottom: 1px;"><img src="../projetos/pdi_e2.2/resultTrocaregioes.png" class="img-responsive" alt="A imagem após o processamento do segundo código"></a><p>A imagem após o processamento do segundo código</p></div></div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="probootstrap-footer" role="contentinfo">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <p>Template de site desenvolvido por <a href="https://uicookies.com">uiCookies</a>.</p>
+        <ul class="probootstrap-social">
+          <li><a href="https://www.youtube.com/@lucaspwo"><i class="icon-youtube"></i></a></li>
+          <li><a href="https://www.linkedin.com/in/lucaspwo"><i class="icon-linkedin"></i></a></li>
+          <li><a href="https://github.com/lucaspwo"><i class="icon-github2"></i></a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<div class="gototop js-top">
+  <a href="#" class="js-gotop"><i class="icon-chevron-thin-up"></i></a>
+</div>
+
+  <script src="../js/scripts.min.js"></script>
+  <script src="../js/main.min.js"></script>
+  <script src="../js/custom.js"></script>
+</body>
+
+</html>
