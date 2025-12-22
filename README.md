@@ -58,8 +58,16 @@ description: "Descrição breve para SEO"
 og_image: "projetos/pasta/imagem.jpg"
 featured_image: "projetos/pasta/imagem.jpg"
 alternate_url: "../nome_do_post.html"
+index_size: 12  # Opcional: 4, 6, 8 ou 12 (tamanho da imagem no index)
 ---
 ```
+
+**Campo `index_size` (opcional):**
+- Controla o tamanho da imagem de capa na página inicial
+- Valores: `4` (pequeno), `6` (médio/padrão), `8` (grande), `12` (destaque)
+- Se omitido, usa padrão `6` (dois posts por linha)
+- **Importante:** Planeje para somar exatamente 12 por linha (ex: 6+6, 8+4, 12)
+- O build avisa se houver quebras inesperadas no layout
 
 ### 3. Escrever Conteúdo com Macros
 
@@ -186,15 +194,48 @@ lucaspwo.github.io/
 ## ⚙️ Comandos Úteis
 
 ```bash
-# Build
 cd builder
+
+# Build manual (gera HTML de todos os arquivos .md)
 npm run build
 
-# Build contínuo (auto-rebuild)
+# Criar novo post (cria os arquivos EN e PT com front-matter)
+npm run new-post
+
+# Otimizar imagens (reduz tamanho mantendo qualidade)
+npm run optimize-images
+
+# Servidor de desenvolvimento (auto-rebuild + live reload)
 npm run dev
 
 # Limpar HTMLs gerados
 npm run clean
+```
+
+### 🎬 Workflow Recomendado
+
+**Para criar um novo post:**
+
+```bash
+cd builder
+
+# 1. Criar templates dos arquivos com front-matter
+npm run new-post
+# Informe: título (EN e PT), slug, descrições
+
+# 2. Editar os arquivos .md criados em:
+#    _source/content/posts/en/seu-slug.md
+#    _source/content/posts/pt/seu-slug.md
+
+# 3. (Opcional) Otimizar imagens antes de usar
+npm run optimize-images
+
+# 4. Testar localmente com live reload
+npm run dev
+# Acesse http://localhost:3001
+
+# 5. Quando estiver pronto, commit e push
+# O GitHub Actions fará o build e deploy automaticamente
 ```
 
 ## 🛠️ Tecnologias

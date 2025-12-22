@@ -5,7 +5,9 @@
   "main": "build.js",
   "scripts": {
     "build": "node build.js",
-    "dev": "nodemon --watch ../_source build.js",
+    "dev": "node server.js",
+    "new-post": "node new-post.js",
+    "optimize-images": "node optimize-images.js",
     "clean": "rm -rf ../*.html ../br/*.html"
   },
   "keywords": ["static-site", "generator", "markdown", "nunjucks"],
@@ -16,7 +18,11 @@
     "markdown-it": "^14.0.0",
     "nunjucks": "^3.2.4",
     "fs-extra": "^11.2.0",
-    "glob": "^10.3.10"
+    "glob": "^10.3.10",
+    "sharp": "^0.33.0",
+    "express": "^4.18.0",
+    "chokidar": "^3.5.0",
+    "browser-sync": "^2.29.0"
   },
   "devDependencies": {
     "nodemon": "^3.0.2"

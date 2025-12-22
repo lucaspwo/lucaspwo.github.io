@@ -53,5 +53,26 @@
     "prefix": "youtube",
     "body": "{% youtube \"${1:VIDEO_ID}\" %}",
     "description": "Embed de vídeo do YouTube"
+  },
+  "New Post": {
+    "prefix": "newpost",
+    "body": [
+      "---",
+      "title: \"${1:Title}\"",
+      "slug: \"${2:slug}\"",
+      "date: \"${CURRENT_YEAR}-${CURRENT_MONTH}-${CURRENT_DATE}\"",
+      "date_display: \"${3:Month DD, YYYY}\"",
+      "lang: \"${4|en,pt|}\"",
+      "type: \"post\"",
+      "description: \"${5:Description}\"",
+      "og_image: \"projetos/${6:folder}/${7:image.jpg}\"",
+      "featured_image: \"projetos/${6:folder}/${7:image.jpg}\"",
+      "alternate_url: \"${8|br/,../|}${2:slug}.html\"",
+      "index_size: ${9|4,6,8,12|}",
+      "---",
+      "",
+      "$0"
+    ],
+    "description": "Front-matter completo para novo post"
   }
 }

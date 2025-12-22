@@ -11,7 +11,7 @@
 
     <div class="row probootstrap-gutter16">
       {% for post in posts %}
-      <div class="col-md-{% if loop.index == 1 %}12{% elif loop.index <= 3 %}6{% elif loop.index == 4 %}8{% else %}4{% endif %} probootstrap-animate" data-animate-effect="fadeIn">
+      <div class="col-md-{% if post.index_size %}{{ post.index_size }}{% else %}6{% endif %} probootstrap-animate" data-animate-effect="fadeIn">
         <a href="{{ basePath }}{{ post.slug }}.html" class="img-bg" style="background-image: url({{ basePath }}{{ post.featured_image or post.og_image }});">
           <div class="probootstrap-photo-details">
             <h2 class="title-main">{{ post.title }}</h2>
