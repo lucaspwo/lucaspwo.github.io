@@ -1,0 +1,55 @@
+{# Macro para imagem única centralizada #}
+{% macro single(src, alt, width, caption) %}
+<div class="col-md-12">
+  <div class="col-md-12 text-center">
+    <a href="{{ src }}" class="image-popup" style="margin-bottom: 1px;">
+      <img src="{{ src }}" class="img-responsive" style="margin: 0 auto; width: {{ width or 50 }}%; height: auto;" alt="{{ alt }}">
+    </a>
+    {% if caption %}
+    <p>{{ caption | safe }}</p>
+    {% endif %}
+  </div>
+</div>
+{% endmacro %}
+
+{# Macro para 2 colunas #}
+{% macro twoCols(src1, alt1, caption1, src2, alt2, caption2, width1, width2) %}
+<div class="col-md-12">
+  <div class="col-md-6 text-center">
+    <a href="{{ src1 }}" class="image-popup" style="margin-bottom: 1px;">
+      <img src="{{ src1 }}" class="img-responsive" {% if width1 %}style="margin: 0 auto; width: {{ width1 }}%; height: auto;"{% endif %} alt="{{ alt1 }}">
+    </a>
+    {% if caption1 %}<p>{{ caption1 | safe }}</p>{% endif %}
+  </div>
+  <div class="col-md-6 text-center">
+    <a href="{{ src2 }}" class="image-popup" style="margin-bottom: 1px;">
+      <img src="{{ src2 }}" class="img-responsive" {% if width2 %}style="margin: 0 auto; width: {{ width2 }}%; height: auto;"{% endif %} alt="{{ alt2 }}">
+    </a>
+    {% if caption2 %}<p>{{ caption2 | safe }}</p>{% endif %}
+  </div>
+</div>
+{% endmacro %}
+
+{# Macro para 3 colunas #}
+{% macro threeCols(src1, alt1, caption1, src2, alt2, caption2, src3, alt3, caption3) %}
+<div class="col-md-12">
+  <div class="col-md-4 text-center">
+    <a href="{{ src1 }}" class="image-popup" style="margin-bottom: 1px;">
+      <img src="{{ src1 }}" class="img-responsive" alt="{{ alt1 }}">
+    </a>
+    {% if caption1 %}<p>{{ caption1 | safe }}</p>{% endif %}
+  </div>
+  <div class="col-md-4 text-center">
+    <a href="{{ src2 }}" class="image-popup" style="margin-bottom: 1px;">
+      <img src="{{ src2 }}" class="img-responsive" alt="{{ alt2 }}">
+    </a>
+    {% if caption2 %}<p>{{ caption2 | safe }}</p>{% endif %}
+  </div>
+  <div class="col-md-4 text-center">
+    <a href="{{ src3 }}" class="image-popup" style="margin-bottom: 1px;">
+      <img src="{{ src3 }}" class="img-responsive" alt="{{ alt3 }}">
+    </a>
+    {% if caption3 %}<p>{{ caption3 | safe }}</p>{% endif %}
+  </div>
+</div>
+{% endmacro %}

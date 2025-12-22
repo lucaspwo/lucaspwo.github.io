@@ -1,0 +1,57 @@
+{
+  "Paragraph with justify": {
+    "prefix": "p",
+    "body": [
+      "{% p %}",
+      "$1",
+      "{% endp %}"
+    ],
+    "description": "Parágrafo justificado"
+  },
+  "Horizontal rule": {
+    "prefix": "hr",
+    "body": "{% hr %}",
+    "description": "Separador horizontal"
+  },
+  "Link": {
+    "prefix": "link",
+    "body": "{% link \"${1:url}\", \"${2:text}\" %}",
+    "description": "Link (para usar em legendas)"
+  },
+  "Single image": {
+    "prefix": "image",
+    "body": "{% image \"${1:projetos/path/image.jpg}\", \"${2:Alt text}\", ${3:50}, \"${4:Caption}\" %}",
+    "description": "Imagem única centralizada"
+  },
+  "Two columns images": {
+    "prefix": "image2cols",
+    "body": [
+      "{% image2cols",
+      "  \"${1:projetos/path/img1.jpg}\", \"${2:Alt 1}\", \"${3:Caption 1}\",",
+      "  \"${4:projetos/path/img2.jpg}\", \"${5:Alt 2}\", \"${6:Caption 2}\"",
+      "%}"
+    ],
+    "description": "Duas imagens lado a lado"
+  },
+  "Three columns images": {
+    "prefix": "image3cols",
+    "body": [
+      "{% image3cols",
+      "  \"${1:projetos/path/img1.jpg}\", \"${2:Alt 1}\", \"${3:Caption 1}\",",
+      "  \"${4:projetos/path/img2.jpg}\", \"${5:Alt 2}\", \"${6:Caption 2}\",",
+      "  \"${7:projetos/path/img3.jpg}\", \"${8:Alt 3}\", \"${9:Caption 3}\"",
+      "%}"
+    ],
+    "description": "Três imagens lado a lado"
+  },
+  "GitHub Gist": {
+    "prefix": "gist",
+    "body": "{% gist \"${1:GIST_ID}\" %}",
+    "description": "Embed de Gist do GitHub"
+  },
+  "YouTube video": {
+    "prefix": "youtube",
+    "body": "{% youtube \"${1:VIDEO_ID}\" %}",
+    "description": "Embed de vídeo do YouTube"
+  }
+}
