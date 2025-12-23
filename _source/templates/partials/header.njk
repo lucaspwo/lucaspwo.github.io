@@ -1,0 +1,28 @@
+<div class="probootstrap-loader"></div>
+
+<header role="banner" class="probootstrap-header">
+  <div class="container">
+    <a href="{{ basePath }}index.html" class="probootstrap-logo">{{ siteTitle }}</a>
+
+    <a href="#" class="probootstrap-burger-menu visible-xs"><i>Menu</i></a>
+    <div class="mobile-menu-overlay"></div>
+
+    <nav role="navigation" class="probootstrap-nav hidden-xs">
+      <ul class="probootstrap-main-nav">
+        <li {% if slug == 'index' %}class="active"{% endif %}><a href="{{ basePath }}index.html">{{ menuMain }}</a></li>
+        <li {% if slug == 'about' %}class="active"{% endif %}><a href="{{ basePath }}about.html">{{ menuAbout }}</a></li>
+        <li {% if slug == 'contact' %}class="active"{% endif %}><a href="{{ basePath }}contact.html">{{ menuContact }}</a></li>
+        <li><a href="{{ alternateLangUrl }}">&#x1F1E7;&#x1F1F7;</a></li>
+      </ul>
+      <div class="extra-text visible-xs">
+        <a href="#" class="probootstrap-burger-menu"><i>Menu</i></a>
+        <h5>{{ connectTitle }}</h5>
+        <ul class="social-buttons">
+          <li><a href="{{ socialLinks.youtube }}"><i class="icon-youtube"></i></a></li>
+          <li><a href="{{ socialLinks.linkedin }}"><i class="icon-linkedin"></i></a></li>
+          <li><a href="{{ socialLinks.github }}"><i class="icon-github2"></i></a></li>
+        </ul>
+      </div>
+    </nav>
+  </div>
+</header>

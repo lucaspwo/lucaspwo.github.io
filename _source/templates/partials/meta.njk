@@ -1,0 +1,30 @@
+<link rel="apple-touch-icon" sizes="180x180" href="https://lucaspwo.com/assets/favicon180x180.png">
+<link rel="icon" type="image/png" sizes="16x16" href="https://lucaspwo.com/assets/favicon16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://lucaspwo.com/assets/favicon32x32.png">
+<link rel="icon" type="image/x-icon" href="https://lucaspwo.com/assets/favicon.png">
+
+<meta property="og:title" content="{{ pageTitle or siteTitle }}" />
+<meta property="og:type" content="{{ ogType or 'article' }}" />
+<meta property="og:url" content="{{ siteUrl }}/{{ slug }}.html" />
+{% if og_image %}
+<meta property="og:image" content="{{ siteUrl }}/{{ og_image }}" />
+{% else %}
+<meta property="og:image" content="https://lucaspwo.com/assets/favicon.png" />
+{% endif %}
+<meta property="og:site_name" content="{{ siteName }}" />
+{% if description %}
+<meta property="og:description" content="{{ description }}" />
+{% endif %}
+
+<meta name="twitter:card" content="summary" />
+{% if description %}
+<meta name="twitter:description" content="{{ description }}" />
+{% endif %}
+<meta name="twitter:title" content="{{ pageTitle or siteTitle }}" />
+<meta name="twitter:site" content="{{ twitterHandle }}" />
+<meta name="twitter:creator" content="{{ twitterHandle }}" />
+{% if og_image %}
+<meta name="twitter:image" content="{{ siteUrl }}/{{ og_image }}" />
+{% else %}
+<meta name="twitter:image" content="https://lucaspwo.com/assets/favicon.png" />
+{% endif %}

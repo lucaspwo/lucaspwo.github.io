@@ -1,0 +1,36 @@
+{
+  "editor.tokenColorCustomizations": {
+    "textMateRules": [
+      {
+        "scope": "text.html.markdown meta.embedded.block.nunjucks",
+        "settings": {
+          "foreground": "#C792EA"
+        }
+      },
+      {
+        "scope": "punctuation.definition.template.nunjucks",
+        "settings": {
+          "foreground": "#89DDFF"
+        }
+      },
+      {
+        "scope": "entity.name.tag.nunjucks",
+        "settings": {
+          "foreground": "#F78C6C",
+          "fontStyle": "bold"
+        }
+      }
+    ]
+  },
+  "files.associations": {
+    "*.md": "markdown"
+  },
+  "[markdown]": {
+    "editor.quickSuggestions": {
+      "other": true,
+      "comments": false,
+      "strings": false
+    },
+    "editor.wordWrap": "on"
+  }
+}
