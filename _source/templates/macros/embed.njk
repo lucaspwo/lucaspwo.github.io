@@ -1,0 +1,24 @@
+{# Macro para Gists do GitHub #}
+{% macro gist(gistId) %}
+<div class="col-md-12">
+  <script src="https://gist.github.com/lucaspwo/{{ gistId }}.js"></script>
+</div>
+{% endmacro %}
+
+{# Macro para vídeos do YouTube #}
+{% macro youtube(videoId, width, height) %}
+<div class="col-md-12">
+  <div class="col-md-8">
+    <div style="max-width:{{ width or 730 }}px;margin:0 auto;">
+      <div style="position: relative;padding-bottom: 56.25%; height: 0; overflow: hidden;">
+        <iframe width="{{ width or 730 }}" height="{{ height or 410 }}"
+          src="https://www.youtube-nocookie.com/embed/{{ videoId }}"
+          style="position: absolute; top: 0px; left: 0px; width: 100%; height: 100%; max-width: {{ width or 730 }}px; max-height: {{ height or 410 }}px;"
+          title="YouTube video player" frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowfullscreen></iframe>
+      </div>
+    </div>
+  </div>
+</div>
+{% endmacro %}

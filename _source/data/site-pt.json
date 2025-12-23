@@ -1,0 +1,18 @@
+{
+  "siteTitle": "Meu Laboratório de Experimentos",
+  "siteUrl": "https://lucaspwo.com",
+  "siteName": "Meu Laboratório de Experimentos",
+  "author": "Lucas Oliveira",
+  "twitterHandle": "@lucaspwo",
+  "postDatePrefix": "Postado em",
+  "menuMain": "Principal",
+  "menuAbout": "Sobre",
+  "menuContact": "Contato",
+  "connectTitle": "Conecte-se",
+  "footerTemplate": "Template de site desenvolvido por",
+  "socialLinks": {
+    "youtube": "https://www.youtube.com/@lucaspwo",
+    "linkedin": "https://www.linkedin.com/in/lucaspwo",
+    "github": "https://github.com/lucaspwo"
+  }
+}

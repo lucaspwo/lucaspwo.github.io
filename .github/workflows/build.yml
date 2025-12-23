@@ -1,0 +1,54 @@
+name: Build and Deploy Site
+
+on:
+  push:
+    branches: [master, main]
+    paths:
+      - '_source/**'
+      - 'builder/**'
+      - '.github/workflows/build.yml'
+  workflow_dispatch:  # Permite trigger manual
+
+permissions:
+  contents: write  # Necessário para push
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Histórico completo para git
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: builder/package-lock.json
+
+      - name: Install dependencies
+        working-directory: ./builder
+        run: npm ci
+
+      - name: Build site
+        working-directory: ./builder
+        run: npm run build
+
+      - name: Configure git
+        run: |
+          git config user.name "GitHub Actions Bot"
+          git config user.email "actions@github.com"
+
+      - name: Commit and push generated files
+        run: |
+          # Adiciona todos os HTMLs gerados (mesmo que não estejam rastreados localmente)
+          git add -f *.html br/*.html _source/data/posts-index.json
+          # Comita apenas se houver mudanças
+          git diff --staged --quiet || git commit -m "🤖 Auto-build: Update generated HTML files"
+          git push
+
+      - name: Deploy to GitHub Pages
+        run: echo "✅ Deployed to GitHub Pages"

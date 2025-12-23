@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ pageTitle or siteTitle }}</title>
+  <link href="https://fonts.googleapis.com/css?family=Abel" rel="stylesheet">
+  <link rel="stylesheet" href="{{ basePath }}css/styles-merged.css">
+  <link rel="stylesheet" href="{{ basePath }}css/style.min.css">
+  <link rel="stylesheet" href="{{ basePath }}css/custom.css">
+
+  {% include "partials/meta.njk" %}
+</head>
+
+<body>
+
+  {% include "partials/header.njk" %}
+
+  {% block content %}{% endblock %}
+
+  {% include "partials/footer.njk" %}
+
+  <script src="{{ basePath }}js/scripts.min.js"></script>
+  <script src="{{ basePath }}js/main.min.js"></script>
+  <script src="{{ basePath }}js/custom.js"></script>
+</body>
+
+</html>
