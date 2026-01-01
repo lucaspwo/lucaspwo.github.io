@@ -20,7 +20,9 @@ async function createNewPost() {
   const slug = await question('Slug (filename): ');
   const descEN = await question('Description (EN): ');
   const descPT = await question('Description (PT): ');
-  const indexSize = await question('Index image size - col-md-X (4, 6, 8, 12) [default: auto]: ');
+  const indexTitleEN = await question('Index card title (EN) [empty = use full title]: ');
+  const indexTitlePT = await question('Index card title (PT) [empty = use full title]: ');
+  const indexSize = await question('Index card size - col-md-X (4, 6, 8, 12) [default: 6]: ');
 
   // Gerar data atual
   const now = new Date();
@@ -43,8 +45,22 @@ async function createNewPost() {
 
   // Validar e processar index_size
   const validSizes = ['4', '6', '8', '12'];
-  const indexSizeField = indexSize && validSizes.includes(indexSize.trim())
-    ? `index_size: ${indexSize.trim()}\n`
+  let indexSizeValue = 6; // default
+  if (indexSize && indexSize.trim()) {
+    if (!validSizes.includes(indexSize.trim())) {
+      console.log(`⚠️  Invalid size "${indexSize}". Using default (6).`);
+    } else {
+      indexSizeValue = parseInt(indexSize.trim());
+    }
+  }
+  const indexSizeField = indexSizeValue !== 6 ? `index_size: ${indexSizeValue}\n` : '';
+
+  // Processar index_title
+  const indexTitleENField = indexTitleEN && indexTitleEN.trim()
+    ? `index_title: "${indexTitleEN.trim()}"\n`
+    : '';
+  const indexTitlePTField = indexTitlePT && indexTitlePT.trim()
+    ? `index_title: "${indexTitlePT.trim()}"\n`
     : '';
 
   // Front-matter para EN
@@ -59,7 +75,7 @@ description: "${descEN}"
 og_image: "projetos/${slug}/image.jpg"
 featured_image: "projetos/${slug}/image.jpg"
 alternate_url: "br/${slug}.html"
-${indexSizeField}---
+${indexTitleENField}${indexSizeField}---
 
 `;
 
@@ -75,7 +91,7 @@ description: "${descPT}"
 og_image: "projetos/${slug}/image.jpg"
 featured_image: "projetos/${slug}/image.jpg"
 alternate_url: "../${slug}.html"
-${indexSizeField}---
+${indexTitlePTField}${indexSizeField}---
 
 `;
 
@@ -95,7 +111,11 @@ ${indexSizeField}---
   console.log('\n✅ Posts created successfully!');
   console.log(`   EN: ${filePathEN}`);
   console.log(`   PT: ${filePathPT}`);
-  console.log('\n💡 Tip: Add your content below the front-matter and run `npm run build` when ready.\n');
+  console.log('\n💡 Tips:');
+  console.log('   - Add content below the front-matter');
+  console.log('   - index_title: Use shorter version for index cards (optional)');
+  console.log('   - index_size: Valid values are 4, 6, 8, 12 (must sum to 12 per row)');
+  console.log('   - Run `npm run build` when ready\n');
 
   rl.close();
 }

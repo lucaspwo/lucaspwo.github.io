@@ -4,6 +4,7 @@ const nunjucks = require('nunjucks');
 const matter = require('gray-matter');
 const MarkdownIt = require('markdown-it');
 const { glob } = require('glob');
+const beautify = require('js-beautify').html;
 
 // ====================
 // CONFIGURAÇÃO
@@ -49,7 +50,7 @@ function parseMarkdownWithMacros(content) {
   // Função auxiliar para processar {% link %} em qualquer string (com escapes)
   function processLinks(text) {
     if (!text) return '';
-    // Primeiro processar os links com escape
+    // Primeiro processar os links com escape (barra+aspas)
     let result = text.replace(
       /{%\s*link\s+\\"([^"]+)\\",\s*\\"((?:[^"\\]|\\.)*?)\\"\s*%}/g,
       (_match, url, linkText) => {
@@ -57,8 +58,21 @@ function parseMarkdownWithMacros(content) {
         return `<a href="${url}">${t}</a>`;
       }
     );
-    // Depois remover escapes restantes
-    result = result.replace(/\\"/g, '"');
+    // Depois processar links sem escape (já processados pelo YAML parser)
+    // Usa (?:[^"\\]|\\.)* para permitir aspas escapadas dentro do texto
+    result = result.replace(
+      /{%\s*link\s+"((?:[^"\\]|\\.)+)",\s*"((?:[^"\\]|\\.)*)"\s*%}/g,
+      (_match, url, linkText) => {
+        // Remover barras de escape das aspas
+        const cleanText = linkText.replace(/\\"/g, '"');
+        return `<a href="${url}">${cleanText}</a>`;
+      }
+    );
+    // Por último, remover qualquer \\" ou \" restante que não foi processado
+    // Primeiro remove \\" (barra dupla + aspas)
+    result = result.split('\\\\"').join('"');
+    // Depois remove \" (barra simples + aspas)
+    result = result.split('\\"').join('"');
     return result;
   }
 
@@ -73,11 +87,13 @@ function parseMarkdownWithMacros(content) {
     }
   );
 
-  // Padrão: {% youtube "id" %}\n\n{% image2cols "..." %} -> col-md-8 + col-md-4 (2 imagens empilhadas)
+  // Padrão: {% youtube "id", "caption" %}\n\n{% image2cols "..." %} -> col-md-8 + col-md-4 (2 imagens empilhadas)
   content = content.replace(
-    /{%\s*youtube\s+"([^"]+)"(?:,\s*(\d+),\s*(\d+))?\s*%}\s*\n\s*\n\s*{%\s*image2cols\s+"([^"]+)",\s*"([^"]*)",\s*"((?:[^"\\]|\\.)*)",\s*"([^"]+)",\s*"([^"]*)",\s*"((?:[^"\\]|\\.)*)"\s*%}/g,
-    (_match, videoId, _vw, _vh, src1, alt1, cap1, src2, alt2, cap2) => {
-      return `{% youtube_with_image2cols "${videoId}", "${src1}", "${alt1}", "${cap1}", "${src2}", "${alt2}", "${cap2}" %}`;
+    /{%\s*youtube\s+"([^"]+)"(?:,\s*"((?:[^"\\]|\\.)*)")?\s*%}\s*\n\s*\n\s*{%\s*image2cols\s+"([^"]+)",\s*"([^"]*)",\s*"((?:[^"\\]|\\.)*)",\s*"([^"]+)",\s*"([^"]*)",\s*"((?:[^"\\]|\\.)*)"\s*%}/g,
+    (_match, videoId, ytCaption, src1, alt1, cap1, src2, alt2, cap2) => {
+      // Se há legenda no YouTube, usa a primeira imagem para mostrar a legenda do vídeo
+      const videoCaption = ytCaption || '';
+      return `{% youtube_with_image2cols "${videoId}", "${videoCaption}", "${src1}", "${alt1}", "${cap1}", "${src2}", "${alt2}", "${cap2}" %}`;
     }
   );
 
@@ -131,24 +147,25 @@ function parseMarkdownWithMacros(content) {
     }
   );
 
-  // {% youtube_with_image2cols "videoId", "src1", "alt1", "cap1", "src2", "alt2", "cap2" %}
+  // {% youtube_with_image2cols "videoId", "ytCaption", "src1", "alt1", "cap1", "src2", "alt2", "cap2" %}
   // Layout: col-md-8 (vídeo) + col-md-4 (2 imagens empilhadas)
   content = content.replace(
-    /{%\s*youtube_with_image2cols\s+"([^"]+)",\s*"([^"]+)",\s*"([^"]*)",\s*"((?:[^"\\]|\\.)*)",\s*"([^"]+)",\s*"([^"]*)",\s*"((?:[^"\\]|\\.)*)"\s*%}/g,
-    (_match, videoId, src1, alt1, cap1, src2, alt2, cap2) => {
+    /{%\s*youtube_with_image2cols\s+"([^"]+)",\s*"((?:[^"\\]|\\.)*)",\s*"([^"]+)",\s*"([^"]*)",\s*"((?:[^"\\]|\\.)*)",\s*"([^"]+)",\s*"([^"]*)",\s*"((?:[^"\\]|\\.)*)"\s*%}/g,
+    (_match, videoId, ytCaption, src1, alt1, cap1, src2, alt2, cap2) => {
+      const ytCap = processLinks(ytCaption || '');
       const c1 = processLinks(cap1);
-      const c2 = processLinks(cap2);
-      return `<div class="col-md-12"><div class="col-md-8"><div style="max-width:730px;margin:0 auto;"><div style="position: relative;padding-bottom: 56.25%; height: 0; overflow: hidden;"><iframe width="730" height="410" src="https://www.youtube-nocookie.com/embed/${videoId}" style="position: absolute; top: 0px; left: 0px; width: 100%; height: 100%; max-width: 730px; max-height: 410px;" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div></div></div><div class="col-md-4"><a href="${src1}" class="image-popup" style="margin-bottom: 0;"><img src="${src1}" class="img-responsive"></a><a href="${src2}" class="image-popup" style="margin-bottom: 1px;"><img src="${src2}" class="img-responsive"></a>${c1 ? `<p class="text-justify">${c1}</p>` : ''}</div></div>`;
+      const ytCaptionHTML = ytCap ? `<p class="text-justify">${ytCap}</p>` : '';
+      return `<div class="col-md-12"><div class="col-md-8"><div style="max-width:730px;margin:0 auto;"><div style="position: relative;padding-bottom: 56.25%; height: 0; overflow: hidden;"><iframe width="730" height="410" src="https://www.youtube-nocookie.com/embed/${videoId}" style="position: absolute; top: 0px; left: 0px; width: 100%; height: 100%; max-width: 730px; max-height: 410px;" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div></div></div>${ytCaptionHTML}</div><div class="col-md-4"><a href="${src1}" class="image-popup" style="margin-bottom: 0;"><img src="${src1}" class="img-responsive"></a><a href="${src2}" class="image-popup" style="margin-bottom: 1px;"><img src="${src2}" class="img-responsive"></a>${c1 ? `<p class="text-justify">${c1}</p>` : ''}</div></div>`;
     }
   );
 
-  // {% youtube "id" %}
+  // {% youtube "id", "caption" %} ou {% youtube "id" %}
   content = content.replace(
-    /{%\s*youtube\s+"([^"]+)"(?:,\s*(\d+),\s*(\d+))?\s*%}/g,
-    (_match, id, width, height) => {
-      const w = width || 730;
-      const h = height || 410;
-      return `<div class="col-md-12"><div class="col-md-8"><div style="max-width:${w}px;margin:0 auto;"><div style="position: relative;padding-bottom: 56.25%; height: 0; overflow: hidden;"><iframe width="${w}" height="${h}" src="https://www.youtube-nocookie.com/embed/${id}" style="position: absolute; top: 0px; left: 0px; width: 100%; height: 100%; max-width: ${w}px; max-height: ${h}px;" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div></div></div></div>`;
+    /{%\s*youtube\s+"([^"]+)"(?:,\s*"((?:[^"\\]|\\.)*)")?\s*%}/g,
+    (_match, id, caption) => {
+      const cap = processLinks(caption || '');
+      const captionHTML = cap ? `<p class="text-justify">${cap}</p>` : '';
+      return `<div class="col-md-12"><div class="col-md-8"><div style="max-width:730px;margin:0 auto;"><div style="position: relative;padding-bottom: 56.25%; height: 0; overflow: hidden;"><iframe width="730" height="410" src="https://www.youtube-nocookie.com/embed/${id}" style="position: absolute; top: 0px; left: 0px; width: 100%; height: 100%; max-width: 730px; max-height: 410px;" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div></div></div>${captionHTML}</div>`;
     }
   );
 
@@ -180,6 +197,22 @@ function parseMarkdownWithMacros(content) {
 }
 
 // ====================
+// FORMAT HTML OUTPUT
+// ====================
+function formatHTML(html) {
+  return beautify(html, {
+    indent_size: 2,
+    indent_char: ' ',
+    max_preserve_newlines: 2,
+    preserve_newlines: true,
+    indent_inner_html: true,
+    wrap_line_length: 0,
+    end_with_newline: true,
+    extra_liners: ['head', 'body', '/html']
+  });
+}
+
+// ====================
 // VALIDAÇÃO DE FRONT-MATTER
 // ====================
 function validateFrontMatter(data, filePath) {
@@ -193,6 +226,17 @@ function validateFrontMatter(data, filePath) {
   // Validações adicionais para posts
   if (data.type === 'post' && !data.date) {
     throw new Error(`Missing required field 'date' for post in ${filePath}`);
+  }
+
+  // Validar index_size se presente
+  if (data.index_size) {
+    const validSizes = [4, 6, 8, 12];
+    if (!validSizes.includes(parseInt(data.index_size))) {
+      throw new Error(
+        `Invalid index_size in ${filePath}: ${data.index_size}. ` +
+        `Must be one of: ${validSizes.join(', ')}`
+      );
+    }
   }
 }
 
@@ -213,7 +257,8 @@ function processMarkdown(filePath, lang) {
   let htmlContent = md.render(processedContent);
 
   // Determinar paths baseado no idioma
-  const basePath = lang === 'pt' ? '../' : '';
+  const basePath = lang === 'pt' ? '../' : ''; // Para assets (CSS/JS)
+  const navPath = ''; // Navegação sempre relativa à pasta atual
   const outputPath = lang === 'pt' ? 'br/' : '';
 
   // Carregar dados do site
@@ -227,15 +272,18 @@ function processMarkdown(filePath, lang) {
     ...siteData,
     content: htmlContent,
     basePath,
+    navPath,
     lang,
     slug: data.slug,
     pageTitle: data.title,
+    dateDisplay: data.date_display || data.date,
     alternateLangUrl: data.alternate_url || (lang === 'en' ? 'br/index.html' : '../index.html')
   };
 
   // Renderizar template
   const layout = data.layout || (data.type === 'post' ? 'layouts/post.njk' : 'layouts/page.njk');
-  const html = env.render(layout, context);
+  let html = env.render(layout, context);
+  html = formatHTML(html);
 
   // Salvar arquivo
   const outputFile = path.join(OUTPUT_DIR, outputPath, `${data.slug}.html`);
@@ -289,7 +337,8 @@ function generateIndex(posts, lang) {
     fs.readFileSync(path.join(DATA_DIR, `site-${lang}.json`), 'utf8')
   );
 
-  const basePath = lang === 'pt' ? '../' : '';
+  const basePath = lang === 'pt' ? '../' : ''; // Para assets (CSS/JS)
+  const navPath = ''; // Navegação sempre relativa à pasta atual
   const outputPath = lang === 'pt' ? 'br/' : '';
 
   // Filtrar e ordenar posts do idioma
@@ -298,7 +347,8 @@ function generateIndex(posts, lang) {
     .sort((a, b) => new Date(b.date) - new Date(a.date))
     .map(p => ({
       ...p,
-      dateShort: p.date_display_short || p.date
+      dateShort: p.date_display_short || p.date,
+      displayTitle: p.index_title || p.title
     }));
 
   // Validar layout antes de gerar
@@ -316,6 +366,7 @@ function generateIndex(posts, lang) {
     posts: langPosts,
     content: indexContent,
     basePath,
+    navPath,
     lang,
     slug: 'index',
     pageTitle: siteData.siteTitle,
@@ -323,7 +374,8 @@ function generateIndex(posts, lang) {
     ogType: 'website'
   };
 
-  const html = env.render('layouts/home.njk', context);
+  let html = env.render('layouts/home.njk', context);
+  html = formatHTML(html);
   const outputFile = path.join(OUTPUT_DIR, outputPath, 'index.html');
   fs.writeFileSync(outputFile, html);
 
@@ -337,8 +389,10 @@ async function build() {
   console.log('🔨 Starting build...\n');
 
   try {
-    // Processar todos os arquivos Markdown
-    const mdFiles = await glob(`${CONTENT_DIR}/**/*.md`);
+    // Processar todos os arquivos Markdown (excluindo backups)
+    const mdFiles = await glob(`${CONTENT_DIR}/**/*.md`, {
+      ignore: `${CONTENT_DIR}/posts.backup/**`
+    });
     const allContent = [];
 
     console.log(`📄 Found ${mdFiles.length} markdown files\n`);

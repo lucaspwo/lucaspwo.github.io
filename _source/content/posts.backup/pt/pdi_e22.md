@@ -1,17 +1,15 @@
 ---
-title: Processamento Digital de Imagens - Exercício 2.2
-slug: pdi_e22
-date: '2019-04-13'
-date_display: 13 de abril de 2019
-date_display_short: 13/04/2019
-lang: pt
-type: post
-description: Resultados do exercício 2.2 da disciplina de Processamento Digital de Imagens.
-og_image: projetos/pdi_e2.2/resultRegions.png
-featured_image: projetos/pdi_e2.2/resultRegions.png
-alternate_url: ../pdi_e22.html
-index_title: Processamento Digital de Imagens
-index_size: 4
+title: "Processamento Digital de Imagens - Exercício 2.2"
+slug: "pdi_e22"
+date: "2019-04-13"
+date_display: "13 de abril de 2019"
+date_display_short: "13/04/2019"
+lang: "pt"
+type: "post"
+description: "Resultados do exercício 2.2 da disciplina de Processamento Digital de Imagens."
+og_image: "projetos/pdi_e2.2/resultRegions.png"
+featured_image: "projetos/pdi_e2.2/resultRegions.png"
+alternate_url: "../pdi_e22.html"
 ---
 
 {% p %}

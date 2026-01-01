@@ -1,17 +1,15 @@
 ---
-title: Burner Shield for ATMEGA328P/8L and ATTINY85
-slug: placa_zif
-date: '2020-02-24'
-date_display: 'February 24, 2020'
-date_display_short: 02/24/2020
-lang: en
-type: post
-description: The motivation and solution I found to burn AVR microcontrollers more easily.
-og_image: projetos/placa_zif/IMG_0138.png
-featured_image: projetos/placa_zif/IMG_0138.png
-alternate_url: br/placa_zif.html
-index_title: Burner Shield
-index_size: 8
+title: "Burner Shield for ATMEGA328P/8L and ATTINY85"
+slug: "placa_zif"
+date: "2020-02-24"
+date_display: "February 24, 2020"
+date_display_short: "02/24/2020"
+lang: "en"
+type: "post"
+description: "The motivation and solution I found to burn AVR microcontrollers more easily."
+og_image: "projetos/placa_zif/IMG_0138.png"
+featured_image: "projetos/placa_zif/IMG_0138.png"
+alternate_url: "br/placa_zif.html"
 ---
 
 ## The problem

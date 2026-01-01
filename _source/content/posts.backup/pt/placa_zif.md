@@ -1,19 +1,15 @@
 ---
-title: Placa Gravadora para ATMEGA328P/8L e ATTINY85
-slug: placa_zif
-date: '2020-02-24'
-date_display: 24 de fevereiro de 2020
-date_display_short: 24/02/2020
-lang: pt
-type: post
-description: >-
-  A motivação e a solução que encontrei para gravar microcontroladores AVR com
-  mais facilidade.
-og_image: projetos/placa_zif/IMG_0138.png
-featured_image: projetos/placa_zif/IMG_0138.png
-alternate_url: ../placa_zif.html
-index_title: Placa Gravadora
-index_size: 8
+title: "Placa Gravadora para ATMEGA328P/8L e ATTINY85"
+slug: "placa_zif"
+date: "2020-02-24"
+date_display: "24 de fevereiro de 2020"
+date_display_short: "24/02/2020"
+lang: "pt"
+type: "post"
+description: "A motivação e a solução que encontrei para gravar microcontroladores AVR com mais facilidade."
+og_image: "projetos/placa_zif/IMG_0138.png"
+featured_image: "projetos/placa_zif/IMG_0138.png"
+alternate_url: "../placa_zif.html"
 ---
 
 ## Problema

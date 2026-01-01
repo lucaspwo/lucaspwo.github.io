@@ -1,0 +1,86 @@
+{
+  "en": [
+    {
+      "slug": "placa_usb",
+      "updated": true,
+      "changes": {
+        "index_title": "USB Board for Raspberry Pi Zero",
+        "index_size": 12
+      }
+    },
+    {
+      "slug": "primeiro_drone",
+      "updated": true,
+      "changes": {
+        "index_title": "Rewind 2: First Drone",
+        "index_size": 6
+      }
+    },
+    {
+      "slug": "micro_vant",
+      "updated": true,
+      "changes": {
+        "index_title": "Rewind 1: Micro-UAV",
+        "index_size": 6
+      }
+    },
+    {
+      "slug": "placa_zif",
+      "updated": true,
+      "changes": {
+        "index_title": "Burner Shield",
+        "index_size": 8
+      }
+    },
+    {
+      "slug": "pdi_e22",
+      "updated": true,
+      "changes": {
+        "index_title": "Digital Image Processing",
+        "index_size": 4
+      }
+    }
+  ],
+  "pt": [
+    {
+      "slug": "placa_usb",
+      "updated": true,
+      "changes": {
+        "index_title": "Placa USB para Raspberry Pi Zero",
+        "index_size": 12
+      }
+    },
+    {
+      "slug": "primeiro_drone",
+      "updated": true,
+      "changes": {
+        "index_title": "Rewind 2: Primeiro Drone",
+        "index_size": 6
+      }
+    },
+    {
+      "slug": "micro_vant",
+      "updated": true,
+      "changes": {
+        "index_title": "Rewind 1: Micro VANT",
+        "index_size": 6
+      }
+    },
+    {
+      "slug": "placa_zif",
+      "updated": true,
+      "changes": {
+        "index_title": "Placa Gravadora",
+        "index_size": 8
+      }
+    },
+    {
+      "slug": "pdi_e22",
+      "updated": true,
+      "changes": {
+        "index_title": "Processamento Digital de Imagens",
+        "index_size": 4
+      }
+    }
+  ]
+}

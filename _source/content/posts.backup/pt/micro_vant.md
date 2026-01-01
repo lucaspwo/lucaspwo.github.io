@@ -1,19 +1,15 @@
 ---
-title: 'Série Rewind parte 1: Micro VANT (2012-2015)'
-slug: micro_vant
-date: '2024-02-12'
-date_display: 12 de fevereiro de 2024
-date_display_short: 12/02/2024
-lang: pt
-type: post
-description: >-
-  Minha primeira bolsa de iniciação científica na UFRN: um resumo do que
-  realizei ao longo do projeto.
-og_image: projetos/micro_vant/micro_vant.jpg
-featured_image: projetos/micro_vant/micro_vant.jpg
-alternate_url: ../micro_vant.html
-index_title: 'Rewind 1: Micro VANT'
-index_size: 6
+title: "Série Rewind parte 1: Micro VANT (2012-2015)"
+slug: "micro_vant"
+date: "2024-02-12"
+date_display: "12 de fevereiro de 2024"
+date_display_short: "12/02/2024"
+lang: "pt"
+type: "post"
+description: "Minha primeira bolsa de iniciação científica na UFRN: um resumo do que realizei ao longo do projeto."
+og_image: "projetos/micro_vant/micro_vant.jpg"
+featured_image: "projetos/micro_vant/micro_vant.jpg"
+alternate_url: "../micro_vant.html"
 ---
 
 {% p %}

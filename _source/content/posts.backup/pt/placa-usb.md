@@ -1,19 +1,15 @@
 ---
-title: Placa USB para Raspberry Pi Zero
-slug: placa_usb
-date: '2025-12-16'
-date_display: 16 de dezembro de 2025
-date_display_short: 16/12/2025
-lang: pt
-type: post
-description: >-
-  Aqui detalho a placa adaptadora USB que desenvolvi para uso com o Raspberry Pi
-  Zero.
-og_image: projetos/placa_usb/placa.jpg
-featured_image: projetos/placa_usb/placa.jpg
-alternate_url: ../placa_usb.html
-index_title: Placa USB para Raspberry Pi Zero
-index_size: 12
+title: "Placa USB para Raspberry Pi Zero"
+slug: "placa_usb"
+date: "2025-12-16"
+date_display: "16 de dezembro de 2025"
+date_display_short: "16/12/2025"
+lang: "pt"
+type: "post"
+description: "Aqui detalho a placa adaptadora USB que desenvolvi para uso com o Raspberry Pi Zero."
+og_image: "projetos/placa_usb/placa.jpg"
+featured_image: "projetos/placa_usb/placa.jpg"
+alternate_url: "../placa_usb.html"
 ---
 
 {% p %}

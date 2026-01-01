@@ -1,17 +1,15 @@
 ---
-title: 'Série Rewind parte 2: Primeiro Drone'
-slug: primeiro_drone
-date: '2024-02-20'
-date_display: 20 de fevereiro de 2024
-date_display_short: 20/02/2024
-lang: pt
-type: post
-description: 'Sobre o primeiro drone que tive: as motivações e as peças utilizadas.'
-og_image: projetos/primeiro_drone/drone_montado.jpg
-featured_image: projetos/primeiro_drone/drone_montado.jpg
-alternate_url: ../primeiro_drone.html
-index_title: 'Rewind 2: Primeiro Drone'
-index_size: 6
+title: "Série Rewind parte 2: Primeiro Drone"
+slug: "primeiro_drone"
+date: "2024-02-20"
+date_display: "20 de fevereiro de 2024"
+date_display_short: "20/02/2024"
+lang: "pt"
+type: "post"
+description: "Sobre o primeiro drone que tive: as motivações e as peças utilizadas."
+og_image: "projetos/primeiro_drone/drone_montado.jpg"
+featured_image: "projetos/primeiro_drone/drone_montado.jpg"
+alternate_url: "../primeiro_drone.html"
 ---
 
 {% p %}

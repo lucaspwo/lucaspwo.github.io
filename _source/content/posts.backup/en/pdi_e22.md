@@ -1,17 +1,15 @@
 ---
-title: Digital Image Processing - Exercise 2.2
-slug: pdi_e22
-date: '2019-04-13'
-date_display: 'April 13, 2019'
-date_display_short: 04/13/2019
-lang: en
-type: post
-description: Results of exercise 2.2 of the Digital Image Processing discipline.
-og_image: projetos/pdi_e2.2/resultRegions.png
-featured_image: projetos/pdi_e2.2/resultRegions.png
-alternate_url: br/pdi_e22.html
-index_title: Digital Image Processing
-index_size: 4
+title: "Digital Image Processing - Exercise 2.2"
+slug: "pdi_e22"
+date: "2019-04-13"
+date_display: "April 13, 2019"
+date_display_short: "04/13/2019"
+lang: "en"
+type: "post"
+description: "Results of exercise 2.2 of the Digital Image Processing discipline."
+og_image: "projetos/pdi_e2.2/resultRegions.png"
+featured_image: "projetos/pdi_e2.2/resultRegions.png"
+alternate_url: "br/pdi_e22.html"
 ---
 
 {% p %}

@@ -1,19 +1,15 @@
 ---
-title: 'Rewind series part 1: Micro-UAV (2012-2015)'
-slug: micro_vant
-date: '2024-02-12'
-date_display: 'February 12, 2024'
-date_display_short: 02/12/2024
-lang: en
-type: post
-description: >-
-  My first scientific initiation scholarship at UFRN: a summary of what I
-  accomplished throughout the project.
-og_image: projetos/micro_vant/micro_vant.jpg
-featured_image: projetos/micro_vant/micro_vant.jpg
-alternate_url: br/micro_vant.html
-index_title: 'Rewind 1: Micro-UAV'
-index_size: 6
+title: "Rewind series part 1: Micro-UAV (2012-2015)"
+slug: "micro_vant"
+date: "2024-02-12"
+date_display: "February 12, 2024"
+date_display_short: "02/12/2024"
+lang: "en"
+type: "post"
+description: "My first scientific initiation scholarship at UFRN: a summary of what I accomplished throughout the project."
+og_image: "projetos/micro_vant/micro_vant.jpg"
+featured_image: "projetos/micro_vant/micro_vant.jpg"
+alternate_url: "br/micro_vant.html"
 ---
 
 {% p %}
@@ -50,7 +46,7 @@ Eventually, we were able to simulate an APM on an Arduino Mega (both had the sam
 In September 2014, we successfully conducted the first autonomous flight with a flying wing, as can be seen in the video below. We were able to correctly program the APM autopilot and, after laboratory simulations, we could finally test it in the field.
 {% endp %}
 
-{% youtube "ERJ4EnVSIlo", "Onboard video on the flying wing. The year in the date of the video is incorrect." %}
+{% youtube "ERJ4EnVSIlo" %}
 
 {% image2cols "./projetos/micro_vant/rota_planejada.jpg", "The programmed route", "The programmed route (above) and the executed route (below).", "./projetos/micro_vant/rota_realizada.jpg", "The executed route", "The programmed route (above) and the executed route (below)." %}
 
@@ -72,4 +68,4 @@ Between late 2014 and 2015, we realized the need to reduce weight to increase fl
 
 {% image "./projetos/micro_vant/apm_micro-vant.jpg", "Layout with the boards in a 1:1 ratio relative to the APM", 50, "Layout with the boards in a 1:1 ratio relative to the APM." %}
 
-{% image "./projetos/micro_vant/apm_micro-vant-placa1.jpg", "Some boards (front and back) when they were manufactured, in September 2015", "Some boards (front and back) when they were manufactured, in September 2015." %}
+{% image "projetos/micro_vant/apm_micro-vant-placa1.jpg", "Some boards (front and back) when they were manufactured, in September 2015", "Some boards (front and back) when they were manufactured, in September 2015." %}
