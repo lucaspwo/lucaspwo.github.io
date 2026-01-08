@@ -1,255 +1,131 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt">
 
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Meu Laboratório de Experimentos</title>
+  <title>Placa USB para Raspberry Pi Zero</title>
   <link href="https://fonts.googleapis.com/css?family=Abel" rel="stylesheet">
   <link rel="stylesheet" href="../css/styles-merged.css">
   <link rel="stylesheet" href="../css/style.min.css">
   <link rel="stylesheet" href="../css/custom.css">
 
-  <link rel="apple-touch-icon" sizes="180x180" href="https://lucaspwo.com/assets/favicon180x180.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="https://lucaspwo.com/assets/favicon16x16.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="https://lucaspwo.com/assets/favicon32x32.png">
-  <link rel="icon" type="image/x-icon" href="https://lucaspwo.com/assets/favicon.png">
+<link rel="apple-touch-icon" sizes="180x180" href="https://lucaspwo.com/assets/favicon180x180.png">
+<link rel="icon" type="image/png" sizes="16x16" href="https://lucaspwo.com/assets/favicon16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://lucaspwo.com/assets/favicon32x32.png">
+<link rel="icon" type="image/x-icon" href="https://lucaspwo.com/assets/favicon.png">
 
-  <meta property="og:title" content="Placa USB para Raspberry Pi Zero" />
-  <meta property="og:type" content="article" />
-  <meta property="og:url" content="https://lucaspwo.com/br/placa_usb.html" />
-  <meta property="og:image" content="https://lucaspwo.com/projetos/placa_usb/placa.jpg" />
-  <meta property="og:site_name" content="Meu Laboratório de Experimentos" />
-  <meta property="og:description" content="Aqui eu detalho sobre a placa adaptadora de USB que desenvolvi para uso com o Raspberry Pi Zero." />
-  <!-- <meta property="" content="" /> -->
+<meta property="og:title" content="Placa USB para Raspberry Pi Zero" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://lucaspwo.com/placa_usb.html" />
+<meta property="og:image" content="https://lucaspwo.com/projetos/placa_usb/placa.jpg" />
+<meta property="og:site_name" content="Meu Laboratório de Experimentos" />
+<meta property="og:description" content="Aqui detalho a placa adaptadora USB que desenvolvi para uso com o Raspberry Pi Zero." />
 
-  <meta name="twitter:card" content="summary" />
-  <meta name="twitter:description" content="Aqui eu detalho sobre a placa adaptadora de USB que desenvolvi para uso com o Raspberry Pi Zero." />
-  <meta name="twitter:title" content="Placa USB para Raspberry Pi Zero" />
-  <meta name="twitter:site" content="@lucaspwo" />
-  <meta name="twitter:creator" content="@lucaspwo" />
-  <meta name="twitter:image" content="https://lucaspwo.com/projetos/placa_usb/placa.jpg" />
-  <!-- <meta name="" content="" /> -->
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:description" content="Aqui detalho a placa adaptadora USB que desenvolvi para uso com o Raspberry Pi Zero." />
+<meta name="twitter:title" content="Placa USB para Raspberry Pi Zero" />
+<meta name="twitter:site" content="@lucaspwo" />
+<meta name="twitter:creator" content="@lucaspwo" />
+<meta name="twitter:image" content="https://lucaspwo.com/projetos/placa_usb/placa.jpg" />
 </head>
 
 <body>
 
-  <!-- START: header -->
-  <div class="probootstrap-loader"></div>
+<div class="probootstrap-loader"></div>
 
-  <header role="banner" class="probootstrap-header">
-    <div class="container">
-      <a href="index.html" class="probootstrap-logo col-xs-8">Meu Laboratório de Experimentos</a>
+<header role="banner" class="probootstrap-header">
+  <div class="container">
+    <a href="../index.html" class="probootstrap-logo">Meu Laboratório de Experimentos</a>
 
-      <a href="#" class="probootstrap-burger-menu visible-xs"><i>Menu</i></a>
-      <div class="mobile-menu-overlay"></div>
+    <a href="#" class="probootstrap-burger-menu visible-xs"><i>Menu</i></a>
+    <div class="mobile-menu-overlay"></div>
 
-      <nav role="navigation" class="probootstrap-nav hidden-xs">
-        <ul class="probootstrap-main-nav">
-          <li class="active"><a href="index.html">Principal</a></li>
-          <li><a href="about.html">Sobre</a></li>
-          <li><a href="contact.html">Contato</a></li>
-          <li><a href="../placa_usb.html">&#x1F1FA;&#x1F1F8;</a></li>
+    <nav role="navigation" class="probootstrap-nav hidden-xs">
+      <ul class="probootstrap-main-nav">
+        <li ><a href="../index.html">Principal</a></li>
+        <li ><a href="../about.html">Sobre</a></li>
+        <li ><a href="../contact.html">Contato</a></li>
+        <li><a href="../placa_usb.html">&#x1F1E7;&#x1F1F7;</a></li>
+      </ul>
+      <div class="extra-text visible-xs">
+        <a href="#" class="probootstrap-burger-menu"><i>Menu</i></a>
+        <h5>Conecte-se</h5>
+        <ul class="social-buttons">
+          <li><a href="https://www.youtube.com/@lucaspwo"><i class="icon-youtube"></i></a></li>
+          <li><a href="https://www.linkedin.com/in/lucaspwo"><i class="icon-linkedin"></i></a></li>
+          <li><a href="https://github.com/lucaspwo"><i class="icon-github2"></i></a></li>
         </ul>
-        <div class="extra-text visible-xs">
-          <a href="#" class="probootstrap-burger-menu"><i>Menu</i></a>
-          <h5>Conecte-se</h5>
-          <ul class="social-buttons">
-            <li><a href="https://www.youtube.com/@lucaspwo"><i class="icon-youtube"></i></a></li>
-            <li><a href="https://www.linkedin.com/in/lucaspwo"><i class="icon-linkedin"></i></a></li>
-            <li><a href="https://github.com/lucaspwo"><i class="icon-github2"></i></a></li>
-          </ul>
-        </div>
-      </nav>
-    </div>
-  </header>
-  <!-- END: header -->
+      </div>
+    </nav>
+  </div>
+</header>
 
-  <div class="probootstrap-section">
-    <div class="container">
+<section class="probootstrap-section">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-8 col-md-offset-2 mb40 text-center">
+        <h2>Placa USB para Raspberry Pi Zero</h2>
+        <p>Postado em </p>
+      </div>
+      <div class="col-md-12">
+        <div class="col-md-12">
+  <p class="text-justify">Este post retrata um projeto de protótipo feito sob encomenda para uma empresa, logo, havia uma relação comercial entre as partes envolvidas. Algumas informações sensíveis foram omitidas por razões de confidencialidade.</p>
+</div>
+<div class="col-md-12">
+  <hr>
+</div>
+<h2>Problemática do projeto</h2>
+<div class="col-md-12">
+  <p class="text-justify">Me apresentaram ao projeto desse cliente com a proposta de resolver um problema que parecia ser simples: retirar as fotos de uma máquina fotográfica e levá-las para a aplicação móvel feita por eles. Na situação original, o usuário enviava uma mensagem via WhatsApp quando ia iniciar uma sessão de captura de fotos, para registrar o horário, e após o seu expediente, uma pessoa conferia o horário da captura das fotos com a mensagem enviada, para bater a localização registrada pela aplicação com as fotos da máquina.</p>
+</div>
+<div class="col-md-12">
+  <p class="text-justify">Após algumas discussões sobre requisitos e as reais necessidades do protótipo (resumindo para não me estender demais neste post), decidimos utilizar um Raspberry Pi Zero 2 W executando um programa para remover as fotos da câmera via USB, e enviá-las para o celular do usuário utilizando Wi-Fi. Além disso, o Raspberry teria de ser energizado utilizando um powerbank e um pino do GPIO ficaria responsável por ligar e desligar a conexão com a câmera.</p>
+</div>
+<div class="col-md-12"><div class="col-md-12 text-center"><a href="projetos/placa_usb/raspzero2w.png" class="image-popup" style="margin-bottom: 1px;"><img src="projetos/placa_usb/raspzero2w.png" class="img-responsive" style="margin: 0 auto; width: 50%; height: auto;" alt="Raspberry Pi Zero 2 W"></a><p>Raspberry Pi Zero 2 W. Fonte: <a href="https://www.raspberrypi.com/products/raspberry-pi-zero-2-w/">RaspberryPi.com</a></p></div></div>
+<h2>Desenvolvimento inicial</h2>
+<div class="col-md-12">
+  <p class="text-justify">Após resolver a parte de código responsável pela detecção, cópia e interação com a aplicação móvel via Wi-Fi junto com a equipe responsável, desenvolvi um cabo com circuitos para chavear o acesso da câmera utilizando peças que tinha em casa: relé, transistor, resistores, cabo USB tipo A macho e um conector USB tipo A fêmea. Logo no início do desenvolvimento, me avisaram que a empresa utilizava câmeras do tipo "super zoom" e, por sorte, consegui com meus pais uma Canon SX40 HS, a mesma que eu havia utilizado anteriormente no meu [drone para fotogrametria aérea](primeiro_drone.html).</p>
+</div>
+<div class="col-md-12"><div class="col-md-6 text-center"><a href="projetos/placa_usb/sx40hs1.jpg" class="image-popup" style="margin-bottom: 1px;"><img src="projetos/placa_usb/sx40hs1.jpg" class="img-responsive" alt="Canon SX40 HS"></a><p>Canon SX40 HS. Fonte: <a href="https://www.photoxels.com/canon-sx40-hs-review-trustedreviews/">Photoxels</a></p></div><div class="col-md-6 text-center"><a href="projetos/placa_usb/sx40hs2.jpg" class="image-popup" style="margin-bottom: 1px;"><img src="projetos/placa_usb/sx40hs2.jpg" class="img-responsive" alt="Canon SX40 HS mostrando alcance máximo da lente"></a><p>Canon SX40 HS, mostrando o alcance máximo da lente. Fonte: <a href="https://www.ephotozine.com/article/canon-powershot-sx40-hs-digital-camera-review-18216">ePHOTOzine</a></p></div></div>
+<h2>Problemas identificados</h2>
+<div class="col-md-12">
+  <p class="text-justify">Logo de cara, identifiquei o primeiro problema: o cabo de dados de qualquer câmera termina em um USB tipo A, e o Raspberry Pi Zero (tanto o modelo original quanto o 2 W) possui apenas uma porta micro USB tipo B para dados. Nos meus testes caseiros, utilizei um adaptador OTG (On The Go) para conectar a câmera, mas precisaria de uma solução mais confiável para o protótipo e produto final.</p>
+</div>
+<div class="col-md-12"><div class="col-md-6 text-center"><a href="projetos/placa_usb/usbotgcable.jpg" class="image-popup" style="margin-bottom: 1px;"><img src="projetos/placa_usb/usbotgcable.jpg" class="img-responsive" alt="Cabo USB OTG genérico"></a><p>Exemplo de um cabo USB OTG genérico. Não muito confiável. Fonte: <a href="https://www.amazon.in/FEDUS-Connector-Adapter-Android-Smartphone/dp/B00O1WIZXC">Amazon</a></p></div><div class="col-md-6 text-center"><a href="projetos/placa_usb/usbotgshim.jpg" class="image-popup" style="margin-bottom: 1px;"><img src="projetos/placa_usb/usbotgshim.jpg" class="img-responsive" alt="Adaptador USB OTG tipo shim"></a><p>Exemplo de um adaptador USB OTG tipo shim, mais confiável. O que utilizei. Fonte: <a href="https://raspberrypi.dk/en/product/micro-usb-otg-to-usb-adapter-shim/">RaspberryPi.dk</a></p></div></div>
+<h2>O Protótipo</h2>
+<div class="col-md-12">
+  <p class="text-justify">Em poucas horas, após perder tempo (infelizmente) com soluções de fabricação de PCB aqui no Brasil, recorri à [JLCPCB](https://jlcpcb.com/) para fabricar a placa. Dessa forma, projetei exatamente o que queria, e o benefício de usar essa plataforma seria ter toda a solução em um só lugar: a plataforma CAD (computer-aided design) online para projetar a placa, a seleção de componentes disponíveis para serem utilizados, a fabricação da placa de circuito impresso e a montagem dos componentes nela.</p>
+</div>
+<div class="col-md-12"><div class="col-md-4 text-center"><a href="projetos/placa_usb/placa1.jpg" class="image-popup" style="margin-bottom: 1px;"><img src="projetos/placa_usb/placa1.jpg" class="img-responsive" alt="Vista superior da placa"></a><p>Vista superior da placa</p></div><div class="col-md-4 text-center"><a href="projetos/placa_usb/placa2.jpg" class="image-popup" style="margin-bottom: 1px;"><img src="projetos/placa_usb/placa2.jpg" class="img-responsive" alt="Vista inferior da placa"></a><p>Vista inferior da placa</p></div><div class="col-md-4 text-center"><a href="projetos/placa_usb/placa3.jpg" class="image-popup" style="margin-bottom: 1px;"><img src="projetos/placa_usb/placa3.jpg" class="img-responsive" alt="Placa USB conectada ao Raspberry Pi"></a><p>Placa USB conectada ao Raspberry Pi</p></div></div>
 
-      <div class="row">
-        <div class="col-md-8 col-md-offset-2 mb40 text-center">
-          <h2>Placa USB para Raspberry Pi Zero</h2>
-          <p>Postado em 16 de Dezembro, 2025</p>
-        </div>
-        <div class="col-md-12">
-          <p class="text-justify">Esse post retrata o projeto de protótipo feito sob encomenda para uma empresa, então
-            houve uma relação comercial entre as partes envolvidas. Algumas informações sensíveis foram omitidas por
-            questões de confidencialidade.
-          </p>
-          <hr>
-        </div>
-        <div class="col-md-12">
-          <h3>Problemática do projeto</h3>
-          <p class="text-justify">Me apresentaram ao projeto desse cliente com a proposta de resolver um problema que
-            parecia ser simples: retirar as fotos de uma máquina fotográfica e levá-las para a aplicação móvel feita
-            por eles. Na situação original, o usuário enviava uma mensagem via WhatsApp quando ia iniciar uma sessão de
-            captura de fotos, para registrar o horário, e após o seu expediente, uma pessoa conferia o horário da captura
-            das fotos com a mensagem enviada, para bater a localização registrada pela aplicação com as fotos da máquina.
-          </p>
-        </div>
-        <div class="col-md-12">
-          <p class="text-justify">Após algumas discussões sobre requisitos e as reais necessidades do protótipo (resumindo para
-            não me estender demais neste post), decidimos utilizar um Raspberry Pi Zero 2 W executando um programa para remover
-            as fotos da câmera via USB, e enviá-las para o celular do usuário utilizando Wi-Fi. Além disso, o Raspberry teria
-            de ser energizado utilizando um powerbank e um pino do GPIO ficaria responsável por ligar e desligar a conexão
-            com a câmera.
-          </p>
-        </div>
-        <div class="col-md-12">
-          <div class="col-md-12 text-center">
-            <a href="../projetos/placa_usb/raspzero2w.png" class="image-popup" style="margin-bottom: 1px;">
-              <img src="../projetos/placa_usb/raspzero2w.png" class="img-responsive" style="margin: 0 auto; width: 50%; height: auto;">
-            </a>
-            <p>Raspberry Pi Zero 2 W. Fonte: <a
-                href="https://www.raspberrypi.com/products/raspberry-pi-zero-2-w/">RaspberryPi.com</a></p>
-          </div>
-        </div>
-        <div class="col-md-12">
-          <h3>Desenvolvimento inicial</h3>
-          <p class="text-justify">Resolvida a parte do código responsável pela detecção, cópia e interação com a aplicação
-            móvel via Wi-Fi com a equipe responsável, desenvolvi um cabo com o circuito para chavear o acesso à câmera com
-            peças que possuía em casa: relé, transistor, resistores, cabo USB tipo A macho e um conector USB tipo A fêmea.
-            Logo no início do desenvolvimento me disseram que a empresa utilizava câmeras do tipo "super zoom" e, por sorte,
-            consegui com meus pais uma Canon SX40 HS, a mesma que eu havia utilizado anteriormente no meu
-            <a href="primeiro_drone.html">drone para aerofotogrametria</a>.
-          </p>
-        </div>
-        <div class="col-md-12">
-          <div class="col-md-6 text-center">
-            <a href="../projetos/placa_usb/sx40hs1.jpg" class="image-popup" style="margin-bottom: 1px;">
-              <img src="../projetos/placa_usb/sx40hs1.jpg" class="img-responsive" style="margin: 0 auto; width: 40%; height: auto;">
-            </a>
-            <p>Canon SX40 HS. Fonte: <a
-                href="https://www.photoxels.com/canon-sx40-hs-review-trustedreviews/">Photoxels</a></p>
-          </div>
-          <div class="col-md-6 text-center">
-            <a href="../projetos/placa_usb/sx40hs2.jpg" class="image-popup" style="margin-bottom: 1px;">
-              <img src="../projetos/placa_usb/sx40hs2.jpg" class="img-responsive" style="margin: 0 auto; width: 50%; height: auto;">
-            </a>
-            <p>Canon SX40 HS, aqui mostrando o alcance máximo da objetiva. Fonte: <a
-                href="https://www.ephotozine.com/article/canon-powershot-sx40-hs-digital-camera-review-18216">ePHOTOzine</a></p>
-          </div>
-        </div>
-        <div class="col-md-12">
-          <h3>Problemas identificados</h3>
-          <p class="text-justify">Logo no início identifiquei o primeiro problema: o cabo de dados de qualquer câmera
-            termina em uma USB tipo A e o Raspberry Pi Zero (tanto o modelo original quanto o 2 W) possui apenas uma
-            porta micro USB tipo B para dados. Nos meus testes em casa, utilizei um adaptador OTG (On The Go) para conectar
-            a câmera, mas precisaria de uma solução mais confiável para o protótipo e o produto final.
-          </p>
-        </div>
-        <div class="col-md-12">
-          <div class="col-md-6 text-center">
-            <a href="../projetos/placa_usb/usbotgcable.jpg" class="image-popup" style="margin-bottom: 1px;">
-              <img src="../projetos/placa_usb/usbotgcable.jpg" class="img-responsive" style="margin: 0 auto; width: 50%; height: auto;">
-            </a>
-            <p>Exemplo de cabo usb OTG genérico. Pouco confiável. Fonte: <a
-                href="https://www.amazon.in/FEDUS-Connector-Adapter-Android-Smartphone/dp/B00O1WIZXC">Amazon</a></p>
-          </div>
-          <div class="col-md-6 text-center">
-            <a href="../projetos/placa_usb/usbotgshim.jpg" class="image-popup" style="margin-bottom: 1px;">
-              <img src="../projetos/placa_usb/usbotgshim.jpg" class="img-responsive" style="margin: 0 auto; width: 50%; height: auto;">
-            </a>
-            <p>Exemplo de adaptador USB OTG tipo shim, mais confiável. O que utilizei. Fonte: <a
-                href="https://raspberrypi.dk/en/product/micro-usb-otg-to-usb-adapter-shim/">RaspberryPi.dk</a></p>
-          </div>
-        </div>
-        <div class="col-md-12">
-          <p class="text-justify">O segundo problema foi a alimentação do próprio Raspberry. Havíamos acordado que seria
-            utilizado um powerbank, mas o cabo teria de ser o também micro USB tipo B. Então seria ideal se pudéssemos trocar
-            para o novo padrão tipo C, que está cada vez mais popular e fácil de encontrar.
-          </p>
-        </div>
-        <div class="col-md-12">
-          <p class="text-justify">O terceiro e não-tão-problema assim seria a conexão do pino GPIO com o dispositivo para
-            chavear a conexão USB da câmera. Caso o protótipo fosse tipo shield/HAT, daria para enviar o sinal através dos
-            próprios pinos previstos no desenho da placa (seguindo o padrão dos HATs, com a "nova" pinagem de 40 pinos).
-            Porém, escolhendo ir por esse caminho, ainda teria de solucionar a conexão das duas USBs micro B. Então uma decisão
-            precisava ser tomada aqui.
-          </p>
-        </div>
-        <div class="col-md-12">
-          <h3>O protótipo</h3>
-          <p class="text-justify">Em algumas horas, após perder tempo (infelizmente) com soluções de manufaturas de PCBs
-            aqui no Brasil, recorri ao <a href="https://jlcpcb.com/">JLCPCB</a> para fabricar a placa. Dessa forma, desenhei
-            exatamente do jeito que queria e o benfício de utilizar esta plataforma seria de ter toda a solução em um só lugar:
-            a plataforma CAD (computer-aided design) online para desenhar a placa, a seleção de componentes disponíveis para
-            serem utilizados, a confecção da placa de circuito impresso e a montagem dos componentes nela.
-          </p>
-        </div>
-        <div class="col-md-12">
-          <p class="text-justify">Como havíamos perdido muito tempo esperando retorno de uma manufatura brasileira, recebi
-            carta branca para submeter todo o projeto para ser fabricado na China. Inicialmente, cobri todos os gastos, mas
-            seria ressarcido posteriormente.
-          </p>
-        </div>
-        <div class="col-md-12">
-          <div class="col-md-4 text-center">
-            <a href="../projetos/placa_usb/placa1.jpg" class="image-popup" style="margin-bottom: 1px;">
-              <img src="../projetos/placa_usb/placa1.jpg" class="img-responsive" style="margin: 0 auto; width: 50%; height: auto;">
-            </a>
-            <p>Vista superior da placa</p>
-          </div>
-          <div class="col-md-4 text-center">
-            <a href="../projetos/placa_usb/placa2.jpg" class="image-popup" style="margin-bottom: 1px;">
-              <img src="../projetos/placa_usb/placa2.jpg" class="img-responsive" style="margin: 0 auto; width: 50%; height: auto;">
-            </a>
-            <p>Vista inferior da placa</p>
-          </div>
-          <div class="col-md-4 text-center">
-            <a href="../projetos/placa_usb/placa3.jpg" class="image-popup" style="margin-bottom: 1px;">
-              <img src="../projetos/placa_usb/placa3.jpg" class="img-responsive" style="margin: 0 auto; width: 50%; height: auto;">
-            </a>
-            <p>Placa USB conectada ao Raspberry Pi</p>
-          </div>
-        </div>
-        <div class="col-md-12">
-          <p class="text-justify">A placa protótipo consistia em um adaptador OTG embutido com um chaveamento externo (via
-            pino, para a GPIO), um conector USB tipo C para alimentação do Raspberry Pi e um LED para indicar o chaveamento
-            do circuito.
-          </p>
-        </div>
-        <div class="col-md-12">
-          <h3>Próximos passos</h3>
-          <p class="text-justify">Até a data da publicação deste post a placa ainda não foi submetida a testes em campo pela
-            empresa cliente, mas está em avançado processo de desenvolvimento do encapsulamento para, então, ser testada em campo.
-          </p>
-        </div>
-        <div class="col-md-12">
-          <p class="text-justify">Foram identificados alguns pontos de melhoria para uma próxima versão. Logo, as próximas unidades
-            serão fabricadas com essas melhorias já implementadas.
-          </p>
-        </div>
       </div>
     </div>
   </div>
+</section>
 
-  <footer class="probootstrap-footer" role="contentinfo">
-    <div class="container">
-      <div class="row">
-        <div class="col-md-12">
-          <p>Template de site desenvolvido por <a href="https://uicookies.com">uiCookies</a>.</p>
-          <ul class="probootstrap-social">
-            <li><a href="https://www.youtube.com/@lucaspwo"><i class="icon-youtube"></i></a></li>
-            <li><a href="https://www.linkedin.com/in/lucaspwo"><i class="icon-linkedin"></i></a></li>
-            <li><a href="https://github.com/lucaspwo"><i class="icon-github2"></i></a></li>
-          </ul>
-        </div>
+<footer class="probootstrap-footer" role="contentinfo">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <p>Template de site desenvolvido por <a href="https://uicookies.com">uiCookies</a>.</p>
+        <ul class="probootstrap-social">
+          <li><a href="https://www.youtube.com/@lucaspwo"><i class="icon-youtube"></i></a></li>
+          <li><a href="https://www.linkedin.com/in/lucaspwo"><i class="icon-linkedin"></i></a></li>
+          <li><a href="https://github.com/lucaspwo"><i class="icon-github2"></i></a></li>
+        </ul>
       </div>
     </div>
-  </footer>
-
-  <div class="gototop js-top">
-    <a href="#" class="js-gotop"><i class="icon-chevron-thin-up"></i></a>
   </div>
+</footer>
 
+<div class="gototop js-top">
+  <a href="#" class="js-gotop"><i class="icon-chevron-thin-up"></i></a>
+</div>
 
   <script src="../js/scripts.min.js"></script>
   <script src="../js/main.min.js"></script>
   <script src="../js/custom.js"></script>
-
 </body>
 
 </html>
