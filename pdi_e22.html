@@ -4,189 +4,122 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Lucas' Experiments Lab</title>
+  <title>Digital Image Processing - Exercise 2.2</title>
   <link href="https://fonts.googleapis.com/css?family=Abel" rel="stylesheet">
   <link rel="stylesheet" href="css/styles-merged.css">
   <link rel="stylesheet" href="css/style.min.css">
   <link rel="stylesheet" href="css/custom.css">
 
-  <link rel="apple-touch-icon" sizes="180x180" href="https://lucaspwo.com/assets/favicon180x180.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="https://lucaspwo.com/assets/favicon16x16.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="https://lucaspwo.com/assets/favicon32x32.png">
-  <link rel="icon" type="image/x-icon" href="https://lucaspwo.com/assets/favicon.png">
+<link rel="apple-touch-icon" sizes="180x180" href="https://lucaspwo.com/assets/favicon180x180.png">
+<link rel="icon" type="image/png" sizes="16x16" href="https://lucaspwo.com/assets/favicon16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://lucaspwo.com/assets/favicon32x32.png">
+<link rel="icon" type="image/x-icon" href="https://lucaspwo.com/assets/favicon.png">
 
-  <meta property="og:title" content="Digital Image Processing - Exercise 2.2" />
-  <meta property="og:type" content="article" />
-  <meta property="og:url" content="https://lucaspwo.com/pdi_e22.html" />
-  <meta property="og:image" content="https://lucaspwo.com/projetos/pdi_e2.2/resultRegions.png" />
-  <meta property="og:site_name" content="Meu Laboratório de Experimentos" />
-  <meta property="og:description" content="Results of exercise 2.2 of the Digital Image Processing discipline." />
-  <!-- <meta property="" content="" /> -->
+<meta property="og:title" content="Digital Image Processing - Exercise 2.2" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://lucaspwo.com/pdi_e22.html" />
+<meta property="og:image" content="https://lucaspwo.com/projetos/pdi_e2.2/resultRegions.png" />
+<meta property="og:site_name" content="Lucas' Experiments Lab" />
+<meta property="og:description" content="Results of exercise 2.2 of the Digital Image Processing discipline." />
 
-  <meta name="twitter:card" content="summary" />
-  <meta name="twitter:description" content="Results of exercise 2.2 of the Digital Image Processing discipline." />
-  <meta name="twitter:title" content="Digital Image Processing - Exercise 2.2" />
-  <meta name="twitter:site" content="@lucaspwo" />
-  <meta name="twitter:creator" content="@lucaspwo" />
-  <meta name="twitter:image" content="https://lucaspwo.com/projetos/pdi_e2.2/resultRegions.png" />
-  <!-- <meta name="" content="" /> -->
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:description" content="Results of exercise 2.2 of the Digital Image Processing discipline." />
+<meta name="twitter:title" content="Digital Image Processing - Exercise 2.2" />
+<meta name="twitter:site" content="@lucaspwo" />
+<meta name="twitter:creator" content="@lucaspwo" />
+<meta name="twitter:image" content="https://lucaspwo.com/projetos/pdi_e2.2/resultRegions.png" />
 </head>
 
 <body>
 
-  <!-- START: header -->
-  <div class="probootstrap-loader"></div>
+<div class="probootstrap-loader"></div>
 
-  <header role="banner" class="probootstrap-header">
-    <div class="container">
-      <a href="index.html" class="probootstrap-logo">Lucas' Experiments Lab</a>
+<header role="banner" class="probootstrap-header">
+  <div class="container">
+    <a href="index.html" class="probootstrap-logo">Lucas' Experiments Lab</a>
 
-      <a href="#" class="probootstrap-burger-menu visible-xs"><i>Menu</i></a>
-      <div class="mobile-menu-overlay"></div>
+    <a href="#" class="probootstrap-burger-menu visible-xs"><i>Menu</i></a>
+    <div class="mobile-menu-overlay"></div>
 
-      <nav role="navigation" class="probootstrap-nav hidden-xs">
-        <ul class="probootstrap-main-nav">
-          <li class="active"><a href="index.html">Main</a></li>
-          <li><a href="about.html">About</a></li>
-          <li><a href="contact.html">Contact</a></li>
-          <li><a href="br/pdi_e22.html">&#x1F1E7;&#x1F1F7;</a></li>
+    <nav role="navigation" class="probootstrap-nav hidden-xs">
+      <ul class="probootstrap-main-nav">
+        <li ><a href="index.html">Main</a></li>
+        <li ><a href="about.html">About</a></li>
+        <li ><a href="contact.html">Contact</a></li>
+        <li><a href="br/pdi_e22.html">&#x1F1E7;&#x1F1F7;</a></li>
+      </ul>
+      <div class="extra-text visible-xs">
+        <a href="#" class="probootstrap-burger-menu"><i>Menu</i></a>
+        <h5>Connect</h5>
+        <ul class="social-buttons">
+          <li><a href="https://www.youtube.com/@lucaspwo"><i class="icon-youtube"></i></a></li>
+          <li><a href="https://www.linkedin.com/in/lucaspwo"><i class="icon-linkedin"></i></a></li>
+          <li><a href="https://github.com/lucaspwo"><i class="icon-github2"></i></a></li>
         </ul>
-        <div class="extra-text visible-xs">
-          <a href="#" class="probootstrap-burger-menu"><i>Menu</i></a>
-          <h5>Connect</h5>
-          <ul class="social-buttons">
-            <li><a href="https://www.youtube.com/@lucaspwo"><i class="icon-youtube"></i></a></li>
-            <li><a href="https://www.linkedin.com/in/lucaspwo"><i class="icon-linkedin"></i></a></li>
-            <li><a href="https://github.com/lucaspwo"><i class="icon-github2"></i></a></li>
-          </ul>
-        </div>
-      </nav>
-    </div>
-  </header>
-  <!-- END: header -->
+      </div>
+    </nav>
+  </div>
+</header>
 
-  <div class="probootstrap-section">
-    <div class="container">
+<section class="probootstrap-section">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-8 col-md-offset-2 mb40 text-center">
+        <h2>Digital Image Processing - Exercise 2.2</h2>
+        <p>Posted on </p>
+      </div>
+      <div class="col-md-12">
+        <div class="col-md-12">
+  <p class="text-justify">The first two exercises, for Digital Image Processing class, consisted of manipulating the matrix of an image in two different ways: the first one should invert the gray scale in a specific region, provided by the user, and the second one should switch the quadrants which compose the image.</p>
+</div>
+<h2>Regions.cpp</h2>
+<div class="col-md-12">
+  <p class="text-justify">In the first program (regions.cpp, [available in Portuguese here](https://github.com/lucaspwo/pdi/blob/master/exemplo2/regions.cpp)) it was necessary to receive from the user two points in the image, that is: four coordinates. Two for the first point and two for the second point, as it can be seen below.</p>
+</div>
+<div class="col-md-12"><script src="https://gist.github.com/lucaspwo/3538300db2ec9c3933f888095d2ad781.js"></script></div>
+<div class="col-md-12">
+  <p class="text-justify">After the input, the X coordinate from the first point will be stored in the xp1 variable and the Y coordinate from the first point will be stored in the yp1 variable, with the same being applied for the second point. In order to avoid some problems during the program's repetition structure to paint the inputted area, when receiving smaller coordinates values for the second point than the first point, I wrote a conditional code to change the variables values.</p>
+</div>
+<div class="col-md-12"><script src="https://gist.github.com/lucaspwo/ea7087fe1460996e02d46cd08bd40233.js"></script></div>
+<div class="col-md-12">
+  <p class="text-justify">With that, the nested loop should begin from the smaller coordinates to the bigger coordinates, both in X and Y and subtract from 255 the gray scale value existing in every pixel of the matrix. The complete code follows:</p>
+</div>
+<div class="col-md-12"><script src="https://gist.github.com/lucaspwo/7e26a3fd7d50b08293d0f6e73e53b1bd.js"></script></div>
+<div class="col-md-12"><div class="col-md-6 text-center"><a href="projetos/pdi_e2.2/bono.png" class="image-popup" style="margin-bottom: 1px;"><img src="projetos/pdi_e2.2/bono.png" class="img-responsive" alt="Original image"></a><p>Original image</p></div><div class="col-md-6 text-center"><a href="projetos/pdi_e2.2/resultRegions.png" class="image-popup" style="margin-bottom: 1px;"><img src="projetos/pdi_e2.2/resultRegions.png" class="img-responsive" alt="Image after code processing"></a><p>Image after code processing</p></div></div>
+<h2>Trocaregioes.cpp</h2>
+<div class="col-md-12">
+  <p class="text-justify">And for the [second program](https://github.com/lucaspwo/pdi/blob/master/exemplo2/trocaregioes.cpp), it was necessary to switch the image quadrants diagonally. The biggest difficulty here was realizing that existed two different ways to copy the matrix of an image, in OpenCV. One would make a "shallow" copy, when you assign another name (in this case, another variable name) to the same matrix, and the other is a "deep" copy, which creates a distinct matrix, to different variables, using the clone() command. After noticing this difference, the remaining of the code flowed quickly. I made a separate copy of the original image (deep copy) and wrote a pair of loops for each quadrant, in the original image. Here's the final code:</p>
+</div>
+<div class="col-md-12"><script src="https://gist.github.com/lucaspwo/15ad51d9d12c2ed40b7d88ee0ef36bca.js"></script></div>
+<div class="col-md-12"><div class="col-md-6 text-center"><a href="projetos/pdi_e2.2/bono.png" class="image-popup" style="margin-bottom: 1px;"><img src="projetos/pdi_e2.2/bono.png" class="img-responsive" alt="The original image, same as before"></a><p>The original image, same as before</p></div><div class="col-md-6 text-center"><a href="projetos/pdi_e2.2/resultTrocaregioes.png" class="image-popup" style="margin-bottom: 1px;"><img src="projetos/pdi_e2.2/resultTrocaregioes.png" class="img-responsive" alt="The image after the processing of the second code"></a><p>The image after the processing of the second code</p></div></div>
 
-      <div class="row">
-        <div class="col-md-8 col-md-offset-2 mb40 text-center">
-          <h2>Digital Image Processing - Exercise 2.2</h2>
-          <p>Posted on April 13, 2019</p>
-        </div>
-        <div class="col-md-12">
-          <p class="text-justify">The first two exercises, for Digital Image Processing class, consisted of manipulating
-            the matrix of an image
-            in two different ways: the first one should invert the gray scale in a specific region, provided by the
-            user, and the second one should switch the quadrants which compose the image.</p>
-        </div>
-        <div class="col-md-12">
-          <h3>Regions.cpp</h3>
-        </div>
-        <div class="col-md-12">
-          <p class="text-justify">In the first program (regions.cpp, <a
-              href="https://github.com/lucaspwo/pdi/blob/master/exemplo2/regions.cpp">available in Portuguese here</a>)
-            it was necessary to receive from the user two points in the image, that is: four coordinates. Two for the
-            first point and two for the second point, as it can be seen below.</p>
-          <div class="col-md-12">
-            <script src="https://gist.github.com/lucaspwo/3538300db2ec9c3933f888095d2ad781.js"></script>
-          </div>
-          <p class="text-justify">After the input, the X coordinate from the first point will be stored in the xp1
-            variable and the Y
-            coordinate from the first point will be stored in the yp1 variable, with the same being applied for the
-            second point. In order to avoid some problems during the program's repetition structure to paint the inputted
-            area, when
-            receiving smaller coordinates values for the second point than the first point, I wrote a conditional code
-            to change the variables values.</p>
-          <div class="col-md-12">
-            <script src="https://gist.github.com/lucaspwo/ea7087fe1460996e02d46cd08bd40233.js"></script>
-          </div>
-          <p class="text-justify">With that, the nested loop should begin from the smaller coordinates to the bigger
-            coordinates, both in X
-            and Y and subtract from 255 the gray scale value existing in every pixel of the matrix. The complete code
-            follows:</p>
-          <div class="col-md-12">
-            <script src="https://gist.github.com/lucaspwo/7e26a3fd7d50b08293d0f6e73e53b1bd.js"></script>
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-12">
-          <div class="col-md-6">
-            <a href="projetos/pdi_e2.2/bono.png" class="image-popup" style="margin-bottom: 1px;">
-              <img src="projetos/pdi_e2.2/bono.png" class="img-responsive">
-            </a>
-            <p class="text-justify">Original image</p>
-          </div>
-          <div class="col-md-6">
-            <a href="projetos/pdi_e2.2/resultRegions.png" class="image-popup" style="margin-bottom: 1px;">
-              <img src="projetos/pdi_e2.2/resultRegions.png" class="img-responsive">
-            </a>
-            <p class="text-justify">Image after code processing</p>
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-12">
-          <h3>Trocaregioes.cpp</h3>
-          <p class="text-justify">And for the <a
-              href="https://github.com/lucaspwo/pdi/blob/master/exemplo2/trocaregioes.cpp">second
-              program</a>, it was necessary to switch the image quadrants diagonally. The biggest difficulty here was
-            realizing that existed two different ways to copy the matrix of an image, in
-            OpenCV. One would make a "shallow" copy, when you assign another name (in this case, another variable name)
-            to the same matrix, and the other is a "deep" copy, which creates a distinct matrix, to different variables,
-            using the clone() command. After noticing this difference, the remaining of the code flowed quickly. I made
-            a separate copy of the
-            original image (deep copy) and wrote a pair of loops for each quadrant, in the original image. Here's the
-            final code:
-          </p>
-          <div class="col-md-12">
-            <script src="https://gist.github.com/lucaspwo/15ad51d9d12c2ed40b7d88ee0ef36bca.js"></script>
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-12">
-          <div class="col-md-6">
-            <a href="projetos/pdi_e2.2/bono.png" class="image-popup" style="margin-bottom: 1px;">
-              <img src="projetos/pdi_e2.2/bono.png" class="img-responsive">
-            </a>
-            <p class="text-justify">The original image, same as before</p>
-          </div>
-          <div class="col-md-6">
-            <a href="projetos/pdi_e2.2/resultTrocaregioes.png" class="image-popup" style="margin-bottom: 1px;">
-              <img src="projetos/pdi_e2.2/resultTrocaregioes.png" class="img-responsive">
-            </a>
-            <p class="text-justify">The image after the processing of the second code</p>
-          </div>
-        </div>
       </div>
     </div>
   </div>
+</section>
 
-  <footer class="probootstrap-footer" role="contentinfo">
-    <div class="container">
-      <div class="row">
-        <div class="col-md-12">
-          <p>Website template by <a href="https://uicookies.com">uiCookies</a>.</p>
-          <ul class="probootstrap-social">
-            <li><a href="https://www.youtube.com/@lucaspwo"><i class="icon-youtube"></i></a></li>
-            <li><a href="https://www.linkedin.com/in/lucaspwo"><i class="icon-linkedin"></i></a></li>
-            <li><a href="https://github.com/lucaspwo"><i class="icon-github2"></i></a></li>
-          </ul>
-        </div>
+<footer class="probootstrap-footer" role="contentinfo">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <p>Website template by <a href="https://uicookies.com">uiCookies</a>.</p>
+        <ul class="probootstrap-social">
+          <li><a href="https://www.youtube.com/@lucaspwo"><i class="icon-youtube"></i></a></li>
+          <li><a href="https://www.linkedin.com/in/lucaspwo"><i class="icon-linkedin"></i></a></li>
+          <li><a href="https://github.com/lucaspwo"><i class="icon-github2"></i></a></li>
+        </ul>
       </div>
     </div>
-  </footer>
-
-  <div class="gototop js-top">
-    <a href="#" class="js-gotop"><i class="icon-chevron-thin-up"></i></a>
   </div>
+</footer>
 
+<div class="gototop js-top">
+  <a href="#" class="js-gotop"><i class="icon-chevron-thin-up"></i></a>
+</div>
 
   <script src="js/scripts.min.js"></script>
   <script src="js/main.min.js"></script>
   <script src="js/custom.js"></script>
-
 </body>
 
 </html>
