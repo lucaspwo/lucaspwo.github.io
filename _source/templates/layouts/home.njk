@@ -1,0 +1,26 @@
+{% extends "base.njk" %}
+
+{% block content %}
+<div class="probootstrap-section">
+  <div class="container text-center">
+    <div class="row">
+      <div class="col-md-6 col-md-offset-3 mb40">
+        {{ content | safe }}
+      </div>
+    </div>
+
+    <div class="row probootstrap-gutter16">
+      {% for post in posts %}
+      <div class="col-md-{% if post.index_size %}{{ post.index_size }}{% else %}6{% endif %} probootstrap-animate" data-animate-effect="fadeIn">
+        <a href="{{ basePath }}{{ post.slug }}.html" class="img-bg" style="background-image: url({{ basePath }}{{ post.featured_image or post.og_image }});">
+          <div class="probootstrap-photo-details">
+            <h2 class="title-main">{{ post.title }}</h2>
+            <p class="title-main">{{ post.dateShort }}</p>
+          </div>
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}
