@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lucas' Experiments Lab</title>
+  <link href="https://fonts.googleapis.com/css?family=Abel" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles-merged.css">
+  <link rel="stylesheet" href="css/style.min.css">
+  <link rel="stylesheet" href="css/custom.css">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="https://lucaspwo.com/assets/favicon180x180.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://lucaspwo.com/assets/favicon16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://lucaspwo.com/assets/favicon32x32.png">
+  <link rel="icon" type="image/x-icon" href="https://lucaspwo.com/assets/favicon.png">
+
+  <meta property="og:title" content="Nitro to Electric: Reviving a 20-Year-Old RC Car" />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://lucaspwo.com/carro_rc.html" />
+  <meta property="og:image" content="https://lucaspwo.com/projetos/carro_rc/xsara_lateral.jpeg" />
+  <meta property="og:site_name" content="Lucas' Experiments Lab" />
+  <meta property="og:description" content="Converting a 20-year-old nitro RC car to electric using 3D-printed parts and repurposed drone components." />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:description" content="Converting a 20-year-old nitro RC car to electric using 3D-printed parts and repurposed drone components." />
+  <meta name="twitter:title" content="Nitro to Electric: Reviving a 20-Year-Old RC Car" />
+  <meta name="twitter:site" content="@lucaspwo" />
+  <meta name="twitter:creator" content="@lucaspwo" />
+  <meta name="twitter:image" content="https://lucaspwo.com/projetos/carro_rc/xsara_lateral.jpeg" />
+</head>
+
+<body>
+
+  <!-- START: header -->
+  <div class="probootstrap-loader"></div>
+
+  <header role="banner" class="probootstrap-header">
+    <div class="container">
+      <a href="index.html" class="probootstrap-logo">Lucas' Experiments Lab</a>
+
+      <a href="#" class="probootstrap-burger-menu visible-xs"><i>Menu</i></a>
+      <div class="mobile-menu-overlay"></div>
+
+      <nav role="navigation" class="probootstrap-nav hidden-xs">
+        <ul class="probootstrap-main-nav">
+          <li class="active"><a href="index.html">Main</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="contact.html">Contact</a></li>
+          <li><a href="br/carro_rc.html">&#x1F1E7;&#x1F1F7;</a></li>
+        </ul>
+        <div class="extra-text visible-xs">
+          <a href="#" class="probootstrap-burger-menu"><i>Menu</i></a>
+          <h5>Connect</h5>
+          <ul class="social-buttons">
+            <li><a href="https://www.youtube.com/@lucaspwo"><i class="icon-youtube"></i></a></li>
+            <li><a href="https://www.linkedin.com/in/lucaspwo"><i class="icon-linkedin"></i></a></li>
+            <li><a href="https://github.com/lucaspwo"><i class="icon-github2"></i></a></li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+  </header>
+  <!-- END: header -->
+
+  <div class="probootstrap-section">
+    <div class="container">
+
+      <div class="row">
+        <div class="col-md-8 col-md-offset-2 mb40 text-center">
+          <h2>Nitro to Electric: Reviving a 20-Year-Old RC Car</h2>
+          <p>Posted on March 17, 2026</p>
+        </div>
+
+        <!-- Section 1: Introduction -->
+        <div class="col-md-12">
+          <h3>The Car</h3>
+          <p class="text-justify">Around 2004-2005, my father, my paternal grandfather, and I built together a Citro&euml;n
+            Xsara Kit Car RC from a Salvat magazine collection. It was sold in fascicles &mdash; each issue came with a
+            magazine and a bag of parts, and you would assemble the car over time. The very first issue even came with a
+            VHS tape showing an overview of the finished car and how to get started.</p>
+          <p class="text-justify">The car was powered by a Thunder Tiger Pro 15, a single-cylinder two-stroke nitro
+            engine. It was a proper nitro RC car: loud, fast, and required a glow starter, fuel, and tuning to run.
+            Building it with my father and grandfather is one of my fondest memories &mdash; three generations working
+            together on the same project.</p>
+        </div>
+        <div class="col-md-12">
+          <div class="col-md-4">
+            <a href="projetos/carro_rc/xsara_lateral.jpeg" class="image-popup" style="margin-bottom: 1px;">
+              <img src="projetos/carro_rc/xsara_lateral.jpeg" class="img-responsive">
+            </a>
+            <p class="text-justify">The Citro&euml;n Xsara Kit Car &mdash; side profile.</p>
+          </div>
+          <div class="col-md-4">
+            <a href="projetos/carro_rc/xsara_cutting_mat.jpeg" class="image-popup" style="margin-bottom: 1px;">
+              <img src="projetos/carro_rc/xsara_cutting_mat.jpeg" class="img-responsive">
+            </a>
+            <p class="text-justify">The other side, on a cutting mat for scale.</p>
+          </div>
+          <div class="col-md-4">
+            <a href="projetos/carro_rc/xsara_angular.jpeg" class="image-popup" style="margin-bottom: 1px;">
+              <img src="projetos/carro_rc/xsara_angular.jpeg" class="img-responsive">
+            </a>
+            <p class="text-justify">Top-down view of the car with its body shell.</p>
+          </div>
+        </div>
+
+        <div class="col-md-12"><hr></div>
+
+        <!-- Section 2: The Problem -->
+        <div class="col-md-12">
+          <h3>The Problem</h3>
+          <p class="text-justify">After years of sitting unused, the car had accumulated a list of issues. The nitro fuel
+            had gone bad, and since the engine was stored without lubrication, the piston had seized. The air filter foams
+            were lost, the carburetor needed idle calibration, and to top it off, a nitro engine is far too loud to run
+            inside an apartment building.</p>
+          <p class="text-justify">On top of that, the original rubber tires had degraded over 20 years &mdash; the thin
+            rubber had become brittle and was cracking open, almost feeling like plastic rather than rubber.</p>
+        </div>
+        <div class="col-md-12">
+          <div class="col-md-6 col-md-offset-3">
+            <a href="projetos/carro_rc/chassis_combustao.jpeg" class="image-popup" style="margin-bottom: 1px;">
+              <img src="projetos/carro_rc/chassis_combustao.jpeg" class="img-responsive">
+            </a>
+            <p class="text-justify">The chassis with the original Thunder Tiger Pro 15 engine still mounted. You can see the
+              orange air filter foam, fuel lines, and exhaust pipe.</p>
+          </div>
+        </div>
+
+        <div class="col-md-12"><hr></div>
+
+        <!-- Section 3: The Electric Conversion -->
+        <div class="col-md-12">
+          <h3>The Electric Conversion</h3>
+          <p class="text-justify">Rather than trying to restore the nitro engine, I decided to convert the car to electric.
+            The best part: I already had most of the components from my
+            <a href="primeiro_drone.html">drone projects</a>. The motor is a 2212 brushless outrunner rated at 800 KV
+            &mdash; a spare from my first drone build. The radio is a Turnigy 9X, also from the drone. The battery is a
+            Turnigy 3S 5200 mAh Multistar (10C discharge), repurposed from my second drone. The only new purchase was a
+            30A ESC.</p>
+        </div>
+        <div class="col-md-12">
+          <div class="col-md-6">
+            <a href="projetos/carro_rc/chassis_eletrico_completo.jpeg" class="image-popup" style="margin-bottom: 1px;">
+              <img src="projetos/carro_rc/chassis_eletrico_completo.jpeg" class="img-responsive">
+            </a>
+            <p class="text-justify">The converted chassis from above &mdash; battery, ESC, receiver, and brushless motor
+              all in place. Note the original tires still mounted.</p>
+          </div>
+          <div class="col-md-6">
+            <a href="projetos/carro_rc/chassis_eletrico_detalhe.jpeg" class="image-popup" style="margin-bottom: 1px;">
+              <img src="projetos/carro_rc/chassis_eletrico_detalhe.jpeg" class="img-responsive">
+            </a>
+            <p class="text-justify">Closer look without the battery &mdash; motor, ESC, and servos visible. The 3D-printed
+              TPU tires are already installed here.</p>
+          </div>
+        </div>
+
+        <div class="col-md-12"><hr></div>
+
+        <!-- Section 4: 3D Printed Parts -->
+        <div class="col-md-12">
+          <h3>3D Printed Parts</h3>
+          <p class="text-justify">The original car was designed around a nitro engine, so fitting a brushless motor
+            required custom adapters. I measured all the original parts with a caliper, modeled replacements in Fusion,
+            and printed them at home with leftover filament.</p>
+        </div>
+
+        <!-- Motor adapter -->
+        <div class="col-md-12">
+          <h4>Motor Adapter and Shim</h4>
+          <p class="text-justify">The brushless motor needed to be mounted at 90 degrees to the chassis &mdash; quite
+            different from the original engine orientation. I designed an L-shaped adapter that bolts to the chassis plate
+            and holds the motor in position, plus a shim for fine alignment. Both were printed in PLA.</p>
+        </div>
+        <div class="col-md-12">
+          <div class="col-md-6 col-md-offset-3">
+            <a href="projetos/carro_rc/fusion_adaptador_motor.png" class="image-popup" style="margin-bottom: 1px;">
+              <img src="projetos/carro_rc/fusion_adaptador_motor.png" class="img-responsive">
+            </a>
+            <p class="text-justify">Fusion render of the motor adapter &mdash; the base mounts flat on the chassis, and
+              the cylindrical part holds the motor at 90 degrees.</p>
+          </div>
+        </div>
+
+        <!-- Gearbox coupling -->
+        <div class="col-md-12">
+          <h4>Gearbox Coupling</h4>
+          <p class="text-justify">The original car used a centrifugal clutch to engage the gearbox from the nitro engine.
+            With the electric motor, this clutch was no longer needed. I designed a gear that mounts directly on the motor
+            shaft and meshes with the existing gearbox. Also printed in PLA.</p>
+        </div>
+        <div class="col-md-12">
+          <div class="col-md-6">
+            <a href="projetos/carro_rc/fusion_engate_marchas.png" class="image-popup" style="margin-bottom: 1px;">
+              <img src="projetos/carro_rc/fusion_engate_marchas.png" class="img-responsive">
+            </a>
+            <p class="text-justify">Fusion render of the gearbox coupling &mdash; a dual-gear design that replaces the
+              centrifugal clutch.</p>
+          </div>
+          <div class="col-md-6">
+            <a href="projetos/carro_rc/engate_motor_detalhe_1.jpeg" class="image-popup" style="margin-bottom: 1px;">
+              <img src="projetos/carro_rc/engate_motor_detalhe_1.jpeg" class="img-responsive">
+            </a>
+            <p class="text-justify">The coupling installed &mdash; the black printed gear on the motor shaft meshes with the
+              gearbox. The blue part behind the motor is the printed adapter. The yellow structure is the original chassis.</p>
+          </div>
+        </div>
+        <div class="col-md-12">
+          <div class="col-md-6">
+            <a href="projetos/carro_rc/engate_motor_detalhe_2.jpeg" class="image-popup" style="margin-bottom: 1px;">
+              <img src="projetos/carro_rc/engate_motor_detalhe_2.jpeg" class="img-responsive">
+            </a>
+            <p class="text-justify">Another angle showing the gear engagement.</p>
+          </div>
+          <div class="col-md-6">
+            <a href="projetos/carro_rc/engate_motor_detalhe_3.jpeg" class="image-popup" style="margin-bottom: 1px;">
+              <img src="projetos/carro_rc/engate_motor_detalhe_3.jpeg" class="img-responsive">
+            </a>
+            <p class="text-justify">Vertical view &mdash; you can also spot the 30A ESC label.</p>
+          </div>
+        </div>
+
+        <!-- Tires -->
+        <div class="col-md-12">
+          <h4>Tires</h4>
+          <p class="text-justify">The original tires had deteriorated beyond use after 20 years. The thin rubber had become
+            brittle and was splitting open. I modeled new tires in Fusion, replicating the tread pattern, and printed
+            them in black TPU (flexible filament) &mdash; a front pair and a rear pair with slightly different dimensions.</p>
+        </div>
+        <div class="col-md-12">
+          <div class="col-md-6">
+            <a href="projetos/carro_rc/fusion_pneu_dianteiro.png" class="image-popup" style="margin-bottom: 1px;">
+              <img src="projetos/carro_rc/fusion_pneu_dianteiro.png" class="img-responsive">
+            </a>
+            <p class="text-justify">Fusion render of the front tire.</p>
+          </div>
+          <div class="col-md-6">
+            <a href="projetos/carro_rc/fusion_pneu_traseiro.png" class="image-popup" style="margin-bottom: 1px;">
+              <img src="projetos/carro_rc/fusion_pneu_traseiro.png" class="img-responsive">
+            </a>
+            <p class="text-justify">Fusion render of the rear tire (wider).</p>
+          </div>
+        </div>
+        <div class="col-md-12">
+          <div class="col-md-6">
+            <a href="projetos/carro_rc/pneus_3d_vs_originais_1.jpeg" class="image-popup" style="margin-bottom: 1px;">
+              <img src="projetos/carro_rc/pneus_3d_vs_originais_1.jpeg" class="img-responsive">
+            </a>
+            <p class="text-justify">Comparing the 3D model in the slicer with the original tires.</p>
+            <a href="projetos/carro_rc/impressao_pneu.jpeg" class="image-popup" style="margin-bottom: 1px;">
+              <img src="projetos/carro_rc/impressao_pneu.jpeg" class="img-responsive">
+            </a>
+            <p class="text-justify">A tire being printed in TPU on the 3D printer.</p>
+          </div>
+          <div class="col-md-6">
+            <a href="projetos/carro_rc/pneu_tpu_detalhe.jpeg" class="image-popup" style="margin-bottom: 1px;">
+              <img src="projetos/carro_rc/pneu_tpu_detalhe.jpeg" class="img-responsive">
+            </a>
+            <p class="text-justify">A finished TPU tire mounted on the rim.</p>
+          </div>
+        </div>
+        <div class="col-md-12">
+          <div class="col-md-6 col-md-offset-3">
+            <div style="max-width:560px;margin:0 auto;">
+              <div style="position: relative;padding-bottom: 56.25%; height: 0; overflow: hidden;">
+                <iframe width="560" height="315"
+                  src="https://www.youtube-nocookie.com/embed/esmgoRW0yB4?si=TKnjH0wN_F3mAPdg"
+                  style="position: absolute; top: 0px; left: 0px; width: 100%; height: 100%; max-width: 560px; max-height: 315px;"
+                  title="YouTube video player" frameborder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowfullscreen></iframe>
+              </div>
+            </div>
+            <p class="text-justify">Timelapse of a tire being printed.</p>
+          </div>
+        </div>
+
+        <div class="col-md-12"><hr></div>
+
+        <!-- Section 5: Result -->
+        <div class="col-md-12">
+          <h3>The Result</h3>
+          <p class="text-justify">After all the adaptations, the car is alive again. Over 20 years after it was first built
+            &mdash; now running silently on electric power, with 3D-printed parts filling in for what time had worn out.
+            The Need for Speed: Most Wanted sticker on the body shell, dating back to 2005, serves as a fun reminder of
+            just how long this car has been around.</p>
+        </div>
+        <div class="col-md-12">
+          <div class="col-md-6">
+            <a href="projetos/carro_rc/xsara_finalizada_angular.jpeg" class="image-popup" style="margin-bottom: 1px;">
+              <img src="projetos/carro_rc/xsara_finalizada_angular.jpeg" class="img-responsive">
+            </a>
+            <p class="text-justify">The finished car from above.</p>
+          </div>
+          <div class="col-md-6">
+            <a href="projetos/carro_rc/xsara_andando.jpeg" class="image-popup" style="margin-bottom: 1px;">
+              <img src="projetos/carro_rc/xsara_andando.jpeg" class="img-responsive">
+            </a>
+            <p class="text-justify">Taking it for a spin in the building's common area.</p>
+          </div>
+        </div>
+        <div class="col-md-12">
+          <div class="col-md-6 col-md-offset-3">
+            <div style="max-width:560px;margin:0 auto;">
+              <div style="position: relative;padding-bottom: 56.25%; height: 0; overflow: hidden;">
+                <iframe width="560" height="315"
+                  src="https://www.youtube-nocookie.com/embed/ApUfA_XE-gY?si=avJW6Wz-GP8kmAeQ"
+                  style="position: absolute; top: 0px; left: 0px; width: 100%; height: 100%; max-width: 560px; max-height: 315px;"
+                  title="YouTube video player" frameborder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowfullscreen></iframe>
+              </div>
+            </div>
+            <p class="text-justify">The car running after the conversion.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <footer class="probootstrap-footer" role="contentinfo">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <p>Website template by <a href="https://uicookies.com">uiCookies</a>.</p>
+          <ul class="probootstrap-social">
+            <li><a href="https://www.youtube.com/@lucaspwo"><i class="icon-youtube"></i></a></li>
+            <li><a href="https://www.linkedin.com/in/lucaspwo"><i class="icon-linkedin"></i></a></li>
+            <li><a href="https://github.com/lucaspwo"><i class="icon-github2"></i></a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <div class="gototop js-top">
+    <a href="#" class="js-gotop"><i class="icon-chevron-thin-up"></i></a>
+  </div>
+
+
+  <script src="js/scripts.min.js"></script>
+  <script src="js/main.min.js"></script>
+  <script src="js/custom.js"></script>
+
+</body>
+
+</html>
