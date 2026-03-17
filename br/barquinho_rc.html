@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Meu Laboratório de Experimentos</title>
+  <link href="https://fonts.googleapis.com/css?family=Abel" rel="stylesheet">
+  <link rel="stylesheet" href="../css/styles-merged.css">
+  <link rel="stylesheet" href="../css/style.min.css">
+  <link rel="stylesheet" href="../css/custom.css">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="https://lucaspwo.com/assets/favicon180x180.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://lucaspwo.com/assets/favicon16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://lucaspwo.com/assets/favicon32x32.png">
+  <link rel="icon" type="image/x-icon" href="https://lucaspwo.com/assets/favicon.png">
+
+  <meta property="og:title" content="Barquinho RC Bluetooth: Um Presente de Aniversário DIY" />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://lucaspwo.com/br/barquinho_rc.html" />
+  <meta property="og:image" content="https://lucaspwo.com/projetos/barquinho_rc/barquinho_montado.jpeg" />
+  <meta property="og:site_name" content="Meu Laboratório de Experimentos" />
+  <meta property="og:description" content="Construindo um barquinho RC Bluetooth controlado por celular como presente de aniversário DIY, com Arduino, pás impressas em 3D e caixa impermeável." />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:description" content="Construindo um barquinho RC Bluetooth controlado por celular como presente de aniversário DIY, com Arduino, pás impressas em 3D e caixa impermeável." />
+  <meta name="twitter:title" content="Barquinho RC Bluetooth: Um Presente de Aniversário DIY" />
+  <meta name="twitter:site" content="@lucaspwo" />
+  <meta name="twitter:creator" content="@lucaspwo" />
+  <meta name="twitter:image" content="https://lucaspwo.com/projetos/barquinho_rc/barquinho_montado.jpeg" />
+</head>
+
+<body>
+
+  <!-- START: header -->
+  <div class="probootstrap-loader"></div>
+
+  <header role="banner" class="probootstrap-header">
+    <div class="container">
+      <a href="index.html" class="probootstrap-logo col-xs-8">Meu Laboratório de Experimentos</a>
+
+      <a href="#" class="probootstrap-burger-menu visible-xs"><i>Menu</i></a>
+      <div class="mobile-menu-overlay"></div>
+
+      <nav role="navigation" class="probootstrap-nav hidden-xs">
+        <ul class="probootstrap-main-nav">
+          <li class="active"><a href="index.html">Principal</a></li>
+          <li><a href="about.html">Sobre</a></li>
+          <li><a href="contact.html">Contato</a></li>
+          <li><a href="../barquinho_rc.html">&#x1F1FA;&#x1F1F8;</a></li>
+        </ul>
+        <div class="extra-text visible-xs">
+          <a href="#" class="probootstrap-burger-menu"><i>Menu</i></a>
+          <h5>Conecte-se</h5>
+          <ul class="social-buttons">
+            <li><a href="https://www.youtube.com/@lucaspwo"><i class="icon-youtube"></i></a></li>
+            <li><a href="https://www.linkedin.com/in/lucaspwo"><i class="icon-linkedin"></i></a></li>
+            <li><a href="https://github.com/lucaspwo"><i class="icon-github2"></i></a></li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+  </header>
+  <!-- END: header -->
+
+  <div class="probootstrap-section">
+    <div class="container">
+
+      <div class="row">
+        <div class="col-md-8 col-md-offset-2 mb40 text-center">
+          <h2>Barquinho RC Bluetooth: Um Presente de Aniversário DIY</h2>
+          <p>Postado em 17 de Março, 2026</p>
+        </div>
+
+        <!-- Seção 1: O Presente -->
+        <div class="col-md-12">
+          <h3>O Presente</h3>
+          <p class="text-justify">Por volta do Natal de 2024, tive a ideia de construir algo especial para o aniversário
+            do primo da minha esposa. Ele faria 11 anos em maio de 2025, e pensei que um barco de controle remoto seria
+            um presente divertido e educativo &mdash; algo com que ele pudesse realmente brincar e que eu pudesse construir
+            do zero.</p>
+          <p class="text-justify">Comecei a adquirir as peças no início de 2025 e montei o barco de forma incremental,
+            testando cada módulo conforme ia completando. No dia 16 de maio, entreguei o barquinho finalizado junto com
+            um Raspberry Pi como presente de aniversário.</p>
+        </div>
+        <div class="col-md-12">
+          <div class="col-md-6 col-md-offset-3">
+            <a href="../projetos/barquinho_rc/barquinho_montado.jpeg" class="image-popup" style="margin-bottom: 1px;">
+              <img src="../projetos/barquinho_rc/barquinho_montado.jpeg" class="img-responsive">
+            </a>
+            <p class="text-justify">O barquinho finalizado &mdash; caixa impermeável com duas rodas de pás acionadas por motores
+              com redução.</p>
+          </div>
+        </div>
+
+        <div class="col-md-12"><hr></div>
+
+        <!-- Seção 2: O Conceito -->
+        <div class="col-md-12">
+          <h3>O Conceito</h3>
+          <p class="text-justify">O barco é controlado via Bluetooth por um aplicativo de celular no modo gamepad. Usa
+            steering diferencial &mdash; dois motores independentes com caixa de redução, cada um acionando uma roda de
+            pás de um lado. Para ir para frente, os dois motores giram. Para virar, apenas um motor funciona. O corpo é
+            feito de plástico e isopor, com toda a eletrônica dentro de uma caixa plástica impermeável.</p>
+        </div>
+        <div class="col-md-12">
+          <div class="col-md-6 col-md-offset-3">
+            <a href="../projetos/barquinho_rc/fusion_barquinho_geral.png" class="image-popup" style="margin-bottom: 1px;">
+              <img src="../projetos/barquinho_rc/fusion_barquinho_geral.png" class="img-responsive">
+            </a>
+            <p class="text-justify">Render no Fusion do design do barco &mdash; casco, caixa impermeável, rodas de pás e motores
+              com redução.</p>
+          </div>
+        </div>
+
+        <div class="col-md-12"><hr></div>
+
+        <!-- Seção 3: Eletrônica e Evolução -->
+        <div class="col-md-12">
+          <h3>Eletrônica e Evolução</h3>
+          <p class="text-justify">A eletrônica passou por duas revisões importantes conforme fui descobrindo as limitações
+            do design inicial.</p>
+        </div>
+
+        <!-- V1 -->
+        <div class="col-md-12">
+          <h4>Versão 1: Bateria 9V</h4>
+          <p class="text-justify">A primeira versão usava um Arduino Pro Micro, um módulo Bluetooth HC-05, uma ponte H
+            L298N e uma bateria 9V. Também adicionei dois LEDs &mdash; um para indicar que a placa estava ligada e outro
+            para mostrar o estado da conexão Bluetooth.</p>
+        </div>
+        <div class="col-md-12">
+          <div class="col-md-6">
+            <a href="../projetos/barquinho_rc/diagrama_fritzing.png" class="image-popup" style="margin-bottom: 1px;">
+              <img src="../projetos/barquinho_rc/diagrama_fritzing.png" class="img-responsive">
+            </a>
+            <p class="text-justify">Diagrama de fiação no Fritzing. Nota: reflete apenas a configuração V1 (L298N + bateria 9V).</p>
+          </div>
+          <div class="col-md-6">
+            <a href="../projetos/barquinho_rc/teste_bancada.jpeg" class="image-popup" style="margin-bottom: 1px;">
+              <img src="../projetos/barquinho_rc/teste_bancada.jpeg" class="img-responsive">
+            </a>
+            <p class="text-justify">Teste inicial na bancada &mdash; Arduino Pro Micro no breadboard, driver L298N e o
+              aplicativo do celular controlando os motores via Bluetooth.</p>
+          </div>
+        </div>
+        <div class="col-md-12">
+          <p class="text-justify">Porém, a bateria 9V simplesmente não conseguia fornecer corrente suficiente para acionar
+            os motores com redução com torque significativo. Os motores mal giravam sob carga.</p>
+        </div>
+        <div class="col-md-12">
+          <div class="col-md-6">
+            <div style="max-width:560px;margin:0 auto;">
+              <div style="position: relative;padding-bottom: 56.25%; height: 0; overflow: hidden;">
+                <iframe width="560" height="315"
+                  src="https://www.youtube-nocookie.com/embed/Mzl5x_ClPlM"
+                  style="position: absolute; top: 0px; left: 0px; width: 100%; height: 100%; max-width: 560px; max-height: 315px;"
+                  title="YouTube video player" frameborder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowfullscreen></iframe>
+              </div>
+            </div>
+            <p class="text-justify">Testando o controle dos motores via Bluetooth com o L298N, antes de instalar as pás.</p>
+          </div>
+          <div class="col-md-6">
+            <div style="max-width:560px;margin:0 auto;">
+              <div style="position: relative;padding-bottom: 56.25%; height: 0; overflow: hidden;">
+                <iframe width="560" height="315"
+                  src="https://www.youtube-nocookie.com/embed/4tC66_Oou64"
+                  style="position: absolute; top: 0px; left: 0px; width: 100%; height: 100%; max-width: 560px; max-height: 315px;"
+                  title="YouTube video player" frameborder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowfullscreen></iframe>
+              </div>
+            </div>
+            <p class="text-justify">Primeiro teste na água com a bateria 9V &mdash; mostrando as limitações de torque.</p>
+          </div>
+        </div>
+
+        <!-- V2 -->
+        <div class="col-md-12">
+          <h4>Versão 2: Bateria 18650</h4>
+          <p class="text-justify">Para resolver o problema de potência, substituí a bateria 9V por uma célula de lítio
+            18650 de 2200 mAh. Isso exigiu a adição de um módulo de carga TP4056 (para recarga via USB), um regulador
+            de tensão LM2587 Step Up (boost converter) e a troca do volumoso L298N por um driver DRV8833, bem mais
+            compacto.</p>
+        </div>
+        <div class="col-md-12">
+          <div class="col-md-6">
+            <a href="../projetos/barquinho_rc/caixa_eletronica_v2.jpeg" class="image-popup" style="margin-bottom: 1px;">
+              <img src="../projetos/barquinho_rc/caixa_eletronica_v2.jpeg" class="img-responsive">
+            </a>
+            <p class="text-justify">A caixa impermeável com a bateria 18650, conversor step-up LM2587 e carregador TP4056
+              instalados &mdash; antes do DRV8833 chegar.</p>
+          </div>
+          <div class="col-md-6">
+            <a href="../projetos/barquinho_rc/detalhe_modulo_carga.jpeg" class="image-popup" style="margin-bottom: 1px;">
+              <img src="../projetos/barquinho_rc/detalhe_modulo_carga.jpeg" class="img-responsive">
+            </a>
+            <p class="text-justify">Detalhe do módulo de carga USB TP4056 e fiação, do mesmo dia.</p>
+          </div>
+        </div>
+        <div class="col-md-12">
+          <div class="col-md-6 col-md-offset-3">
+            <a href="../projetos/barquinho_rc/caixa_eletronica_app.jpeg" class="image-popup" style="margin-bottom: 1px;">
+              <img src="../projetos/barquinho_rc/caixa_eletronica_app.jpeg" class="img-responsive">
+            </a>
+            <p class="text-justify">A configuração mais recente &mdash; todos os componentes instalados, com as instruções
+              (QR code) na tampa e o aplicativo do celular conectado.</p>
+          </div>
+        </div>
+        <div class="col-md-12">
+          <div class="col-md-6 col-md-offset-3">
+            <div style="max-width:560px;margin:0 auto;">
+              <div style="position: relative;padding-bottom: 56.25%; height: 0; overflow: hidden;">
+                <iframe width="560" height="315"
+                  src="https://www.youtube-nocookie.com/embed/q3laQB20mjY"
+                  style="position: absolute; top: 0px; left: 0px; width: 100%; height: 100%; max-width: 560px; max-height: 315px;"
+                  title="YouTube video player" frameborder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowfullscreen></iframe>
+              </div>
+            </div>
+            <p class="text-justify">Explicando a conversão para bateria recarregável e demonstrando o acionamento simultâneo
+              real dos motores.</p>
+          </div>
+        </div>
+
+        <div class="col-md-12"><hr></div>
+
+        <!-- Seção 4: O Software -->
+        <div class="col-md-12">
+          <h3>O Software</h3>
+          <p class="text-justify">O código Arduino recebe comandos de caractere único via conexão serial Bluetooth:
+            <strong>F</strong> (frente), <strong>B</strong> (ré), <strong>L</strong> (esquerda), <strong>R</strong>
+            (direita) e <strong>0</strong> (parar). O celular executa um app Bluetooth no modo gamepad que envia esses
+            comandos ao pressionar os botões direcionais.</p>
+          <p class="text-justify">Dois desafios surgiram durante o desenvolvimento. Primeiro, os dois motores partindo
+            simultaneamente em PWM máximo causavam um pico de corrente grande o suficiente para provocar um brownout
+            &mdash; o conversor step-up não aguentava a corrente de partida dos dois motores com redução de uma vez. A
+            solução foi implementar uma rampa de soft-start por PWM, aumentando gradualmente o duty cycle ao invés de
+            saltar direto para o valor alvo.</p>
+          <p class="text-justify">Segundo, a implementação inicial da rampa usava um loop <code>for</code> bloqueante
+            separado para cada motor, o que fazia o motor 1 completar toda a sua rampa antes do motor 2 sequer começar.
+            Isso fazia o barco desviar da rota quando ia reto. A correção foi criar uma função de rampa dupla que
+            incrementa os dois motores juntos no mesmo loop:</p>
+          <pre><code>void analogWriteRampaDupla(int pino1, int pino2, int valorFinal, int tempoStep = 5) {
+  for (int v = 0; v &lt;= valorFinal; v++) {
+    analogWrite(pino1, v);
+    analogWrite(pino2, v);
+    delay(tempoStep);
+  }
+}</code></pre>
+          <p class="text-justify">O código-fonte está disponível no
+            <a href="https://github.com/lucaspwo/Arduino_Projetos/tree/Arduino/Barquinho_Lucas">GitHub</a>, incluindo
+            o sketch principal (versão DRV8833) e sketches individuais de teste para o módulo Bluetooth e os motores.</p>
+        </div>
+
+        <div class="col-md-12"><hr></div>
+
+        <!-- Seção 5: Peças Impressas em 3D -->
+        <div class="col-md-12">
+          <h3>Peças Impressas em 3D</h3>
+        </div>
+
+        <!-- Pás -->
+        <div class="col-md-12">
+          <h4>Rodas de Pás</h4>
+          <p class="text-justify">As pás precisavam ser grandes o suficiente para alcançar a água a partir da posição de
+            montagem, mas leves o suficiente para não sobrecarregar o torque limitado dos motores com redução. Cheguei a
+            um design radial de 8 pás, modelado no Fusion.</p>
+        </div>
+        <div class="col-md-12">
+          <div class="col-md-6">
+            <a href="../projetos/barquinho_rc/fusion_pa_perspectiva.png" class="image-popup" style="margin-bottom: 1px;">
+              <img src="../projetos/barquinho_rc/fusion_pa_perspectiva.png" class="img-responsive">
+            </a>
+            <p class="text-justify">Render no Fusion da roda de pás &mdash; vista em perspectiva.</p>
+          </div>
+          <div class="col-md-6">
+            <a href="../projetos/barquinho_rc/fusion_pa_topo.png" class="image-popup" style="margin-bottom: 1px;">
+              <img src="../projetos/barquinho_rc/fusion_pa_topo.png" class="img-responsive">
+            </a>
+            <p class="text-justify">Vista de cima mostrando o hub e a estrutura radial das pás.</p>
+          </div>
+        </div>
+        <div class="col-md-12">
+          <div class="col-md-6 col-md-offset-3">
+            <a href="../projetos/barquinho_rc/pa_impressa_1.jpeg" class="image-popup" style="margin-bottom: 1px;">
+              <img src="../projetos/barquinho_rc/pa_impressa_1.jpeg" class="img-responsive">
+            </a>
+            <p class="text-justify">Uma roda de pás sendo impressa na impressora 3D.</p>
+          </div>
+        </div>
+        <div class="col-md-12">
+          <div class="col-md-6">
+            <div style="max-width:560px;margin:0 auto;">
+              <div style="position: relative;padding-bottom: 56.25%; height: 0; overflow: hidden;">
+                <iframe width="560" height="315"
+                  src="https://www.youtube-nocookie.com/embed/BMSGnS5xLno"
+                  style="position: absolute; top: 0px; left: 0px; width: 100%; height: 100%; max-width: 560px; max-height: 315px;"
+                  title="YouTube video player" frameborder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowfullscreen></iframe>
+              </div>
+            </div>
+            <p class="text-justify">Testando com apenas uma roda de pás (ainda na bateria 9V).</p>
+          </div>
+          <div class="col-md-6">
+            <div style="max-width:560px;margin:0 auto;">
+              <div style="position: relative;padding-bottom: 56.25%; height: 0; overflow: hidden;">
+                <iframe width="560" height="315"
+                  src="https://www.youtube-nocookie.com/embed/apnhkiVODCs"
+                  style="position: absolute; top: 0px; left: 0px; width: 100%; height: 100%; max-width: 560px; max-height: 315px;"
+                  title="YouTube video player" frameborder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowfullscreen></iframe>
+              </div>
+            </div>
+            <p class="text-justify">As duas rodas de pás funcionando simultaneamente &mdash; no dia do teste na água.</p>
+          </div>
+        </div>
+
+        <!-- Acoplamento -->
+        <div class="col-md-12">
+          <h4>Acoplamento de Eixo</h4>
+          <p class="text-justify">Os motores com redução têm um eixo de saída quadrado, mas as rodas de pás precisam de
+            um furo redondo. Projetei um adaptador de acoplamento que faz a transição de seção quadrada para redonda,
+            permitindo que as pás sejam montadas com segurança nos eixos dos motores.</p>
+        </div>
+        <div class="col-md-12">
+          <div class="col-md-6">
+            <a href="../projetos/barquinho_rc/fusion_acoplamento.png" class="image-popup" style="margin-bottom: 1px;">
+              <img src="../projetos/barquinho_rc/fusion_acoplamento.png" class="img-responsive">
+            </a>
+            <p class="text-justify">Render no Fusion do acoplamento de eixo &mdash; transição quadrado para redondo.</p>
+          </div>
+          <div class="col-md-6">
+            <a href="../projetos/barquinho_rc/fusion_acoplamento_topo.png" class="image-popup" style="margin-bottom: 1px;">
+              <img src="../projetos/barquinho_rc/fusion_acoplamento_topo.png" class="img-responsive">
+            </a>
+            <p class="text-justify">Vista de cima mostrando o furo quadrado que encaixa no eixo do motor.</p>
+          </div>
+        </div>
+
+        <div class="col-md-12">
+          <div class="col-md-6 col-md-offset-3">
+            <a href="../projetos/barquinho_rc/teste_pas_celular.jpeg" class="image-popup" style="margin-bottom: 1px;">
+              <img src="../projetos/barquinho_rc/teste_pas_celular.jpeg" class="img-responsive">
+            </a>
+            <p class="text-justify">Testando as pás montadas com o aplicativo do celular &mdash; motores, acoplamentos e rodas
+              de pás funcionando juntos.</p>
+          </div>
+        </div>
+
+        <div class="col-md-12"><hr></div>
+
+        <!-- Seção 6: O Resultado -->
+        <div class="col-md-12">
+          <h3>O Resultado</h3>
+          <p class="text-justify">O barquinho foi entregue no dia 16 de maio de 2025, acompanhado de instruções impressas
+            com um QR code para baixar o aplicativo de controle Bluetooth e as credenciais de conexão. Um projeto
+            divertido do início ao fim &mdash; e esperamos que um presente de aniversário memorável.</p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <footer class="probootstrap-footer" role="contentinfo">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <p>Template de site desenvolvido por <a href="https://uicookies.com">uiCookies</a>.</p>
+          <ul class="probootstrap-social">
+            <li><a href="https://www.youtube.com/@lucaspwo"><i class="icon-youtube"></i></a></li>
+            <li><a href="https://www.linkedin.com/in/lucaspwo"><i class="icon-linkedin"></i></a></li>
+            <li><a href="https://github.com/lucaspwo"><i class="icon-github2"></i></a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <div class="gototop js-top">
+    <a href="#" class="js-gotop"><i class="icon-chevron-thin-up"></i></a>
+  </div>
+
+
+  <script src="../js/scripts.min.js"></script>
+  <script src="../js/main.min.js"></script>
+  <script src="../js/custom.js"></script>
+
+</body>
+
+</html>

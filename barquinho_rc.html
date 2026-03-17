@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lucas' Experiments Lab</title>
+  <link href="https://fonts.googleapis.com/css?family=Abel" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles-merged.css">
+  <link rel="stylesheet" href="css/style.min.css">
+  <link rel="stylesheet" href="css/custom.css">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="https://lucaspwo.com/assets/favicon180x180.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://lucaspwo.com/assets/favicon16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://lucaspwo.com/assets/favicon32x32.png">
+  <link rel="icon" type="image/x-icon" href="https://lucaspwo.com/assets/favicon.png">
+
+  <meta property="og:title" content="Bluetooth RC Boat: A DIY Birthday Gift" />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://lucaspwo.com/barquinho_rc.html" />
+  <meta property="og:image" content="https://lucaspwo.com/projetos/barquinho_rc/barquinho_montado.jpeg" />
+  <meta property="og:site_name" content="Lucas' Experiments Lab" />
+  <meta property="og:description" content="Building a Bluetooth RC boat controlled via smartphone as a DIY birthday gift, featuring Arduino, 3D-printed paddles, and a custom waterproof enclosure." />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:description" content="Building a Bluetooth RC boat controlled via smartphone as a DIY birthday gift, featuring Arduino, 3D-printed paddles, and a custom waterproof enclosure." />
+  <meta name="twitter:title" content="Bluetooth RC Boat: A DIY Birthday Gift" />
+  <meta name="twitter:site" content="@lucaspwo" />
+  <meta name="twitter:creator" content="@lucaspwo" />
+  <meta name="twitter:image" content="https://lucaspwo.com/projetos/barquinho_rc/barquinho_montado.jpeg" />
+</head>
+
+<body>
+
+  <!-- START: header -->
+  <div class="probootstrap-loader"></div>
+
+  <header role="banner" class="probootstrap-header">
+    <div class="container">
+      <a href="index.html" class="probootstrap-logo">Lucas' Experiments Lab</a>
+
+      <a href="#" class="probootstrap-burger-menu visible-xs"><i>Menu</i></a>
+      <div class="mobile-menu-overlay"></div>
+
+      <nav role="navigation" class="probootstrap-nav hidden-xs">
+        <ul class="probootstrap-main-nav">
+          <li class="active"><a href="index.html">Main</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="contact.html">Contact</a></li>
+          <li><a href="br/barquinho_rc.html">&#x1F1E7;&#x1F1F7;</a></li>
+        </ul>
+        <div class="extra-text visible-xs">
+          <a href="#" class="probootstrap-burger-menu"><i>Menu</i></a>
+          <h5>Connect</h5>
+          <ul class="social-buttons">
+            <li><a href="https://www.youtube.com/@lucaspwo"><i class="icon-youtube"></i></a></li>
+            <li><a href="https://www.linkedin.com/in/lucaspwo"><i class="icon-linkedin"></i></a></li>
+            <li><a href="https://github.com/lucaspwo"><i class="icon-github2"></i></a></li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+  </header>
+  <!-- END: header -->
+
+  <div class="probootstrap-section">
+    <div class="container">
+
+      <div class="row">
+        <div class="col-md-8 col-md-offset-2 mb40 text-center">
+          <h2>Bluetooth RC Boat: A DIY Birthday Gift</h2>
+          <p>Posted on March 17, 2026</p>
+        </div>
+
+        <!-- Section 1: The Gift -->
+        <div class="col-md-12">
+          <h3>The Gift</h3>
+          <p class="text-justify">Around Christmas 2024, I had the idea of building something special for my wife's
+            cousin's upcoming birthday. He was turning 11 in May 2025, and I thought a remote-controlled boat would be a
+            fun and educational gift &mdash; something he could actually play with and that I could build from scratch.</p>
+          <p class="text-justify">I started acquiring parts in early 2025 and assembled the boat incrementally, testing
+            each module as it came together. On May 16th, I delivered the finished boat alongside a Raspberry Pi as his
+            birthday present.</p>
+        </div>
+        <div class="col-md-12">
+          <div class="col-md-6 col-md-offset-3">
+            <a href="projetos/barquinho_rc/barquinho_montado.jpeg" class="image-popup" style="margin-bottom: 1px;">
+              <img src="projetos/barquinho_rc/barquinho_montado.jpeg" class="img-responsive">
+            </a>
+            <p class="text-justify">The finished boat &mdash; waterproof enclosure with two paddle wheels driven by geared motors.</p>
+          </div>
+        </div>
+
+        <div class="col-md-12"><hr></div>
+
+        <!-- Section 2: The Concept -->
+        <div class="col-md-12">
+          <h3>The Concept</h3>
+          <p class="text-justify">The boat is controlled via Bluetooth from a smartphone app running in gamepad mode. It
+            uses differential steering &mdash; two independent geared motors, each driving a paddle wheel on one side. To
+            go forward, both motors spin. To turn, only one motor runs. The body is made of plastic and styrofoam, with
+            all the electronics housed inside a waterproof plastic enclosure.</p>
+        </div>
+        <div class="col-md-12">
+          <div class="col-md-6 col-md-offset-3">
+            <a href="projetos/barquinho_rc/fusion_barquinho_geral.png" class="image-popup" style="margin-bottom: 1px;">
+              <img src="projetos/barquinho_rc/fusion_barquinho_geral.png" class="img-responsive">
+            </a>
+            <p class="text-justify">Fusion render of the boat design &mdash; the hull, waterproof box, paddle wheels, and geared motors.</p>
+          </div>
+        </div>
+
+        <div class="col-md-12"><hr></div>
+
+        <!-- Section 3: Electronics and Evolution -->
+        <div class="col-md-12">
+          <h3>Electronics and Evolution</h3>
+          <p class="text-justify">The electronics went through two major revisions as I discovered the limitations of the
+            initial design.</p>
+        </div>
+
+        <!-- V1 -->
+        <div class="col-md-12">
+          <h4>Version 1: 9V Battery</h4>
+          <p class="text-justify">The first version used an Arduino Pro Micro, an HC-05 Bluetooth module, an L298N H-bridge
+            motor driver, and a 9V battery. I also added two LEDs &mdash; one to indicate the board was powered on, and
+            another to show the Bluetooth connection status.</p>
+        </div>
+        <div class="col-md-12">
+          <div class="col-md-6">
+            <a href="projetos/barquinho_rc/diagrama_fritzing.png" class="image-popup" style="margin-bottom: 1px;">
+              <img src="projetos/barquinho_rc/diagrama_fritzing.png" class="img-responsive">
+            </a>
+            <p class="text-justify">Fritzing wiring diagram. Note: this reflects the V1 configuration only (L298N + 9V battery).</p>
+          </div>
+          <div class="col-md-6">
+            <a href="projetos/barquinho_rc/teste_bancada.jpeg" class="image-popup" style="margin-bottom: 1px;">
+              <img src="projetos/barquinho_rc/teste_bancada.jpeg" class="img-responsive">
+            </a>
+            <p class="text-justify">Early bench test &mdash; Arduino Pro Micro on a breadboard, L298N driver, and the smartphone
+              app controlling the motors via Bluetooth.</p>
+          </div>
+        </div>
+        <div class="col-md-12">
+          <p class="text-justify">However, the 9V battery simply could not deliver enough current to drive the geared
+            motors with any meaningful torque. The motors would barely spin under load.</p>
+        </div>
+        <div class="col-md-12">
+          <div class="col-md-6">
+            <div style="max-width:560px;margin:0 auto;">
+              <div style="position: relative;padding-bottom: 56.25%; height: 0; overflow: hidden;">
+                <iframe width="560" height="315"
+                  src="https://www.youtube-nocookie.com/embed/Mzl5x_ClPlM"
+                  style="position: absolute; top: 0px; left: 0px; width: 100%; height: 100%; max-width: 560px; max-height: 315px;"
+                  title="YouTube video player" frameborder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowfullscreen></iframe>
+              </div>
+            </div>
+            <p class="text-justify">Testing Bluetooth motor control with the L298N, before installing the paddles.</p>
+          </div>
+          <div class="col-md-6">
+            <div style="max-width:560px;margin:0 auto;">
+              <div style="position: relative;padding-bottom: 56.25%; height: 0; overflow: hidden;">
+                <iframe width="560" height="315"
+                  src="https://www.youtube-nocookie.com/embed/4tC66_Oou64"
+                  style="position: absolute; top: 0px; left: 0px; width: 100%; height: 100%; max-width: 560px; max-height: 315px;"
+                  title="YouTube video player" frameborder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowfullscreen></iframe>
+              </div>
+            </div>
+            <p class="text-justify">First water test with the 9V battery &mdash; showing the torque limitations.</p>
+          </div>
+        </div>
+
+        <!-- V2 -->
+        <div class="col-md-12">
+          <h4>Version 2: 18650 Battery</h4>
+          <p class="text-justify">To solve the power problem, I replaced the 9V battery with a 2200 mAh 18650 lithium cell.
+            This required adding a TP4056 charging module (for USB recharging), an LM2587 step-up boost converter (to
+            raise the voltage), and swapping the bulky L298N for a compact DRV8833 motor driver.</p>
+        </div>
+        <div class="col-md-12">
+          <div class="col-md-6">
+            <a href="projetos/barquinho_rc/caixa_eletronica_v2.jpeg" class="image-popup" style="margin-bottom: 1px;">
+              <img src="projetos/barquinho_rc/caixa_eletronica_v2.jpeg" class="img-responsive">
+            </a>
+            <p class="text-justify">The waterproof enclosure with the 18650 battery, LM2587 step-up converter, and TP4056
+              charger installed &mdash; before the DRV8833 arrived.</p>
+          </div>
+          <div class="col-md-6">
+            <a href="projetos/barquinho_rc/detalhe_modulo_carga.jpeg" class="image-popup" style="margin-bottom: 1px;">
+              <img src="projetos/barquinho_rc/detalhe_modulo_carga.jpeg" class="img-responsive">
+            </a>
+            <p class="text-justify">Detail of the TP4056 USB charging module and wiring, from the same day.</p>
+          </div>
+        </div>
+        <div class="col-md-12">
+          <div class="col-md-6 col-md-offset-3">
+            <a href="projetos/barquinho_rc/caixa_eletronica_app.jpeg" class="image-popup" style="margin-bottom: 1px;">
+              <img src="projetos/barquinho_rc/caixa_eletronica_app.jpeg" class="img-responsive">
+            </a>
+            <p class="text-justify">The most recent configuration &mdash; all components in place, with the QR code
+              instructions inside the lid and the smartphone app connected.</p>
+          </div>
+        </div>
+        <div class="col-md-12">
+          <div class="col-md-6 col-md-offset-3">
+            <div style="max-width:560px;margin:0 auto;">
+              <div style="position: relative;padding-bottom: 56.25%; height: 0; overflow: hidden;">
+                <iframe width="560" height="315"
+                  src="https://www.youtube-nocookie.com/embed/q3laQB20mjY"
+                  style="position: absolute; top: 0px; left: 0px; width: 100%; height: 100%; max-width: 560px; max-height: 315px;"
+                  title="YouTube video player" frameborder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowfullscreen></iframe>
+              </div>
+            </div>
+            <p class="text-justify">Explaining the conversion to the rechargeable battery and demonstrating true simultaneous
+              motor activation.</p>
+          </div>
+        </div>
+
+        <div class="col-md-12"><hr></div>
+
+        <!-- Section 4: The Software -->
+        <div class="col-md-12">
+          <h3>The Software</h3>
+          <p class="text-justify">The Arduino code receives single-character commands over a Bluetooth serial connection:
+            <strong>F</strong> (forward), <strong>B</strong> (backward), <strong>L</strong> (left), <strong>R</strong>
+            (right), and <strong>0</strong> (stop). The smartphone runs a Bluetooth gamepad app that sends these commands
+            when the directional buttons are pressed.</p>
+          <p class="text-justify">Two challenges came up during development. First, both motors starting simultaneously
+            at full PWM would cause a current spike large enough to trigger a brownout &mdash; the step-up converter
+            could not handle the inrush current of both geared motors at once. The solution was implementing a soft-start
+            PWM ramp, gradually increasing the duty cycle instead of jumping straight to the target value.</p>
+          <p class="text-justify">Second, the initial ramp implementation used a separate blocking <code>for</code> loop
+            for each motor, which meant motor 1 would complete its entire ramp before motor 2 even started. This caused
+            the boat to veer off course when going straight. The fix was writing a dual-ramp function that increments
+            both motors' PWM values together in the same loop:</p>
+          <pre><code>void analogWriteRampaDupla(int pino1, int pino2, int valorFinal, int tempoStep = 5) {
+  for (int v = 0; v &lt;= valorFinal; v++) {
+    analogWrite(pino1, v);
+    analogWrite(pino2, v);
+    delay(tempoStep);
+  }
+}</code></pre>
+          <p class="text-justify">The source code is available on
+            <a href="https://github.com/lucaspwo/Arduino_Projetos/tree/Arduino/Barquinho_Lucas">GitHub</a>, including
+            the main control sketch (DRV8833 version) and individual test sketches for the Bluetooth module and motors.</p>
+        </div>
+
+        <div class="col-md-12"><hr></div>
+
+        <!-- Section 5: 3D Printed Parts -->
+        <div class="col-md-12">
+          <h3>3D Printed Parts</h3>
+        </div>
+
+        <!-- Paddles -->
+        <div class="col-md-12">
+          <h4>Paddle Wheels</h4>
+          <p class="text-justify">The paddles had to be large enough to reach the water from their mounting position, but
+            light enough not to overwhelm the geared motors' limited torque. I settled on an 8-blade radial design modeled
+            in Fusion.</p>
+        </div>
+        <div class="col-md-12">
+          <div class="col-md-6">
+            <a href="projetos/barquinho_rc/fusion_pa_perspectiva.png" class="image-popup" style="margin-bottom: 1px;">
+              <img src="projetos/barquinho_rc/fusion_pa_perspectiva.png" class="img-responsive">
+            </a>
+            <p class="text-justify">Fusion render of the paddle wheel &mdash; perspective view.</p>
+          </div>
+          <div class="col-md-6">
+            <a href="projetos/barquinho_rc/fusion_pa_topo.png" class="image-popup" style="margin-bottom: 1px;">
+              <img src="projetos/barquinho_rc/fusion_pa_topo.png" class="img-responsive">
+            </a>
+            <p class="text-justify">Top view showing the hub and radial blade structure.</p>
+          </div>
+        </div>
+        <div class="col-md-12">
+          <div class="col-md-6 col-md-offset-3">
+            <a href="projetos/barquinho_rc/pa_impressa_1.jpeg" class="image-popup" style="margin-bottom: 1px;">
+              <img src="projetos/barquinho_rc/pa_impressa_1.jpeg" class="img-responsive">
+            </a>
+            <p class="text-justify">A paddle wheel being printed on the 3D printer.</p>
+          </div>
+        </div>
+        <div class="col-md-12">
+          <div class="col-md-6">
+            <div style="max-width:560px;margin:0 auto;">
+              <div style="position: relative;padding-bottom: 56.25%; height: 0; overflow: hidden;">
+                <iframe width="560" height="315"
+                  src="https://www.youtube-nocookie.com/embed/BMSGnS5xLno"
+                  style="position: absolute; top: 0px; left: 0px; width: 100%; height: 100%; max-width: 560px; max-height: 315px;"
+                  title="YouTube video player" frameborder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowfullscreen></iframe>
+              </div>
+            </div>
+            <p class="text-justify">Testing with a single paddle wheel (still on the 9V battery).</p>
+          </div>
+          <div class="col-md-6">
+            <div style="max-width:560px;margin:0 auto;">
+              <div style="position: relative;padding-bottom: 56.25%; height: 0; overflow: hidden;">
+                <iframe width="560" height="315"
+                  src="https://www.youtube-nocookie.com/embed/apnhkiVODCs"
+                  style="position: absolute; top: 0px; left: 0px; width: 100%; height: 100%; max-width: 560px; max-height: 315px;"
+                  title="YouTube video player" frameborder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowfullscreen></iframe>
+              </div>
+            </div>
+            <p class="text-justify">Both paddle wheels running simultaneously &mdash; the day of the water test.</p>
+          </div>
+        </div>
+
+        <!-- Shaft Coupling -->
+        <div class="col-md-12">
+          <h4>Shaft Coupling</h4>
+          <p class="text-justify">The geared motors have a square output shaft, but the paddle wheels need a round bore.
+            I designed a coupling adapter that transitions from a square cross-section to round, allowing the paddles to
+            mount securely on the motor shafts.</p>
+        </div>
+        <div class="col-md-12">
+          <div class="col-md-6">
+            <a href="projetos/barquinho_rc/fusion_acoplamento.png" class="image-popup" style="margin-bottom: 1px;">
+              <img src="projetos/barquinho_rc/fusion_acoplamento.png" class="img-responsive">
+            </a>
+            <p class="text-justify">Fusion render of the shaft coupling &mdash; square-to-round transition.</p>
+          </div>
+          <div class="col-md-6">
+            <a href="projetos/barquinho_rc/fusion_acoplamento_topo.png" class="image-popup" style="margin-bottom: 1px;">
+              <img src="projetos/barquinho_rc/fusion_acoplamento_topo.png" class="img-responsive">
+            </a>
+            <p class="text-justify">Top view showing the square bore that fits the motor shaft.</p>
+          </div>
+        </div>
+
+        <div class="col-md-12">
+          <div class="col-md-6 col-md-offset-3">
+            <a href="projetos/barquinho_rc/teste_pas_celular.jpeg" class="image-popup" style="margin-bottom: 1px;">
+              <img src="projetos/barquinho_rc/teste_pas_celular.jpeg" class="img-responsive">
+            </a>
+            <p class="text-justify">Testing the assembled paddles with the smartphone app &mdash; motors, couplings, and
+              paddle wheels all working together.</p>
+          </div>
+        </div>
+
+        <div class="col-md-12"><hr></div>
+
+        <!-- Section 6: The Result -->
+        <div class="col-md-12">
+          <h3>The Result</h3>
+          <p class="text-justify">The boat was delivered on May 16th, 2025, along with a set of printed instructions
+            featuring a QR code to download the Bluetooth control app and the connection credentials. A fun project from
+            start to finish &mdash; and hopefully a memorable birthday gift.</p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <footer class="probootstrap-footer" role="contentinfo">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <p>Website template by <a href="https://uicookies.com">uiCookies</a>.</p>
+          <ul class="probootstrap-social">
+            <li><a href="https://www.youtube.com/@lucaspwo"><i class="icon-youtube"></i></a></li>
+            <li><a href="https://www.linkedin.com/in/lucaspwo"><i class="icon-linkedin"></i></a></li>
+            <li><a href="https://github.com/lucaspwo"><i class="icon-github2"></i></a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <div class="gototop js-top">
+    <a href="#" class="js-gotop"><i class="icon-chevron-thin-up"></i></a>
+  </div>
+
+
+  <script src="js/scripts.min.js"></script>
+  <script src="js/main.min.js"></script>
+  <script src="js/custom.js"></script>
+
+</body>
+
+</html>
