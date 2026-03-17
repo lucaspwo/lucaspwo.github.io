@@ -140,8 +140,9 @@
             reacting to system notifications rather than periodically checking state.</p>
 
           <h4>Network Guard (March 11, 2026 &mdash; one day)</h4>
-          <p class="text-justify">A problem emerged when both WiFi and USB-C Ethernet were connected
-            to the same network: duplicate hostnames caused connectivity issues. The solution was a
+          <p class="text-justify">A problem emerged on the Mac when both WiFi and USB-C Ethernet
+            were connected to the same network: macOS detected a duplicate hostname and automatically
+            renamed the machine, causing connectivity issues. The solution was a
             <strong>Swift daemon using SCDynamicStore</strong> (~170 lines) that monitors network
             interface changes and automatically disassociates WiFi when Ethernet is active &mdash;
             while preserving AirDrop and Handoff functionality, which require the WiFi radio to
@@ -156,8 +157,9 @@
               &harr; 24.04), enabling migration between OS versions without manual reconfiguration</li>
             <li><strong>Docker services</strong> &mdash; Immich (photo management), Home Assistant
               (home automation), and Plex (media server), all orchestrated via Docker Compose</li>
-            <li><strong>NVMe ASPM fix</strong> &mdash; the Tachyon connects its NVMe drive via a
-              PCIe flat cable, and the default L1 power state caused MSI-X interrupt loss, leading
+            <li><strong>NVMe ASPM fix</strong> &mdash; an optional Pimoroni NVMe Base connects to
+              the Tachyon via a PCIe flat cable, and the default L1 power state caused MSI-X
+              interrupt loss, leading
               to I/O timeouts under load. The fix involved a 4-component solution addressing ASPM
               policy, interrupt coalescing, queue depth, and power state transitions</li>
             <li><strong>Fan control</strong> &mdash; software PWM via GPIO with a thermal curve and
@@ -210,10 +212,10 @@
 
           <h4>PT-BR Sound Packs</h4>
           <ul>
-            <li><strong>open-peon-war2PT_BR</strong> (v1.1.1) &mdash; 23 Warcraft II Peasant sounds
-              in Brazilian Portuguese</li>
-            <li><strong>open-peon-war3PT_BR</strong> (v1.0.0) &mdash; Warcraft III Human Peasant
-              sounds in Brazilian Portuguese</li>
+            <li><strong><a href="https://openpeon.com/packs/wc2_peasant_pt-br">open-peon-war2PT_BR</a></strong>
+              (v1.1.1) &mdash; 23 Warcraft II Peasant sounds in Brazilian Portuguese</li>
+            <li><strong><a href="https://openpeon.com/packs/wc3_peasant_pt-br">open-peon-war3PT_BR</a></strong>
+              (v1.0.0) &mdash; Warcraft III Human Peasant sounds in Brazilian Portuguese</li>
           </ul>
 
           <h4>Peon Ping Contribution (February 14, 2026)</h4>

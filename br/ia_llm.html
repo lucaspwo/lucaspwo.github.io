@@ -138,8 +138,9 @@
             reagindo a notificações do sistema ao invés de verificar estado periodicamente.</p>
 
           <h4>Network Guard (11 de março de 2026 &mdash; um dia)</h4>
-          <p class="text-justify">Um problema surgiu quando WiFi e Ethernet USB-C estavam conectados à mesma
-            rede: hostnames duplicados causavam problemas de conectividade. A solução foi um
+          <p class="text-justify">Um problema surgiu no Mac quando WiFi e Ethernet USB-C estavam conectados
+            à mesma rede: o macOS detectava hostname duplicado e renomeava automaticamente a máquina,
+            causando problemas de conectividade. A solução foi um
             <strong>daemon Swift usando SCDynamicStore</strong> (~170 linhas) que monitora mudanças nas
             interfaces de rede e automaticamente desassocia o WiFi quando a Ethernet está ativa &mdash;
             preservando AirDrop e Handoff, que exigem que o rádio WiFi permaneça ligado.</p>
@@ -153,8 +154,9 @@
               permitindo migração entre versões do SO sem reconfiguração manual</li>
             <li><strong>Serviços Docker</strong> &mdash; Immich (gerenciamento de fotos), Home Assistant
               (automação residencial) e Plex (servidor de mídia), todos orquestrados via Docker Compose</li>
-            <li><strong>Fix NVMe ASPM</strong> &mdash; o Tachyon conecta seu NVMe via cabo flat PCIe, e o
-              estado de energia L1 padrão causava perda de interrupção MSI-X, levando a timeouts de I/O sob
+            <li><strong>Fix NVMe ASPM</strong> &mdash; uma Pimoroni NVMe Base opcional conecta ao
+              Tachyon via cabo flat PCIe, e o estado de energia L1 padrão causava perda de interrupção
+              MSI-X, levando a timeouts de I/O sob
               carga. A correção envolveu 4 componentes (script + systemd + udev + sudoers)</li>
             <li><strong>Controle de fan</strong> &mdash; PWM por software via GPIO com curva térmica e
               sequência de soft-start, substituindo o comportamento padrão de fan sempre ligado</li>
@@ -206,10 +208,10 @@
 
           <h4>Sound Packs PT-BR</h4>
           <ul>
-            <li><strong>open-peon-war2PT_BR</strong> (v1.1.1) &mdash; 23 sons do Peasant de WarCraft II
-              em português brasileiro</li>
-            <li><strong>open-peon-war3PT_BR</strong> (v1.0.0) &mdash; sons do Human Peasant de WarCraft III
-              em português brasileiro</li>
+            <li><strong><a href="https://openpeon.com/packs/wc2_peasant_pt-br">open-peon-war2PT_BR</a></strong>
+              (v1.1.1) &mdash; 23 sons do Peasant de WarCraft II em português brasileiro</li>
+            <li><strong><a href="https://openpeon.com/packs/wc3_peasant_pt-br">open-peon-war3PT_BR</a></strong>
+              (v1.0.0) &mdash; sons do Human Peasant de WarCraft III em português brasileiro</li>
           </ul>
 
           <h4>Contribuição ao Peon Ping (14 de fevereiro de 2026)</h4>
