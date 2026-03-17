@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lucas' Experiments Lab</title>
+  <link href="https://fonts.googleapis.com/css?family=Abel" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles-merged.css">
+  <link rel="stylesheet" href="css/style.min.css">
+  <link rel="stylesheet" href="css/custom.css">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="https://lucaspwo.com/assets/favicon180x180.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://lucaspwo.com/assets/favicon16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://lucaspwo.com/assets/favicon32x32.png">
+  <link rel="icon" type="image/x-icon" href="https://lucaspwo.com/assets/favicon.png">
+
+  <meta property="og:title" content="Using AI as a Development Tool" />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://lucaspwo.com/ia_llm.html" />
+  <meta property="og:image" content="https://lucaspwo.com/assets/favicon.png" />
+  <meta property="og:site_name" content="Lucas' Experiments Lab" />
+  <meta property="og:description" content="A report on using Claude Code as a development tool across 8 projects, 6 languages, and 3 machines over 5 months." />
+  <!-- <meta property="" content="" /> -->
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:description" content="A report on using Claude Code as a development tool across 8 projects, 6 languages, and 3 machines over 5 months." />
+  <meta name="twitter:title" content="Using AI as a Development Tool" />
+  <meta name="twitter:site" content="@lucaspwo" />
+  <meta name="twitter:creator" content="@lucaspwo" />
+  <meta name="twitter:image" content="https://lucaspwo.com/assets/favicon.png" />
+  <!-- <meta name="" content="" /> -->
+</head>
+
+<body>
+
+  <!-- START: header -->
+  <div class="probootstrap-loader"></div>
+
+  <header role="banner" class="probootstrap-header">
+    <div class="container">
+      <a href="index.html" class="probootstrap-logo">Lucas' Experiments Lab</a>
+
+      <a href="#" class="probootstrap-burger-menu visible-xs"><i>Menu</i></a>
+      <div class="mobile-menu-overlay"></div>
+
+      <nav role="navigation" class="probootstrap-nav hidden-xs">
+        <ul class="probootstrap-main-nav">
+          <li class="active"><a href="index.html">Main</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="contact.html">Contact</a></li>
+          <li><a href="br/ia_llm.html">&#x1F1E7;&#x1F1F7;</a></li>
+        </ul>
+        <div class="extra-text visible-xs">
+          <a href="#" class="probootstrap-burger-menu"><i>Menu</i></a>
+          <h5>Connect</h5>
+          <ul class="social-buttons">
+            <li><a href="https://www.youtube.com/@lucaspwo"><i class="icon-youtube"></i></a></li>
+            <li><a href="https://www.linkedin.com/in/lucaspwo"><i class="icon-linkedin"></i></a></li>
+            <li><a href="https://github.com/lucaspwo"><i class="icon-github2"></i></a></li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+  </header>
+  <!-- END: header -->
+
+  <div class="probootstrap-section">
+    <div class="container">
+
+      <div class="row">
+        <div class="col-md-8 col-md-offset-2 mb40 text-center">
+          <h2>Using AI as a Development Tool</h2>
+          <p>Published on March 16, 2026</p>
+        </div>
+        <div class="col-md-12">
+          <p class="text-justify">I am a computer engineer with a background in hardware and embedded
+            software. In late 2025, I started using <strong>Claude Code</strong> as a development tool
+            in my personal projects. The goal was not to test the tool on trivial tasks or isolated
+            experiments &mdash; I wanted to understand how far it could serve as a real productivity
+            accelerator across concrete projects in different domains.</p>
+          <p class="text-justify">The work was carried out on three machines:
+            <strong>Glaurung</strong> (Mac, Apple Silicon),
+            <strong>Ancalagon</strong> (Windows + WSL2), and
+            <strong>Smaug</strong> (Particle Tachyon SBC, Ubuntu ARM).
+            The period spans from November 2025 to March 2026, with an intensification in the last
+            5 weeks.</p>
+          <p class="text-justify">Below is a summary of what I produced during this period.</p>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>Key Numbers</h3>
+          <div class="row">
+            <div class="col-md-3 col-xs-6 text-center mb40">
+              <h2>~23k</h2>
+              <p>Lines of code</p>
+            </div>
+            <div class="col-md-3 col-xs-6 text-center mb40">
+              <h2>~110</h2>
+              <p>Commits</p>
+            </div>
+            <div class="col-md-3 col-xs-6 text-center mb40">
+              <h2>6</h2>
+              <p>Languages</p>
+            </div>
+            <div class="col-md-3 col-xs-6 text-center mb40">
+              <h2>3</h2>
+              <p>Machines</p>
+            </div>
+          </div>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>Multi-Machine Infrastructure</h3>
+          <p class="text-justify">This was the most extensive work domain, covering everything from
+            KVM switching between machines to infrastructure-as-code for a single-board computer.</p>
+
+          <h4>KVM Setup (March 9&ndash;16, 2026 &mdash; 6 commits)</h4>
+          <p class="text-justify">My daily workflow involves switching between a Mac and a Windows
+            machine sharing two Dell monitors. The KVM switch is USB-only, so video inputs are
+            switched manually on each monitor. Keyboard and mouse sharing is handled by
+            <strong>Synergy</strong>. Getting everything to work seamlessly required several
+            event-driven components:</p>
+          <ul>
+            <li><strong>usb_switch</strong> &mdash; a Swift daemon using IOKit to detect USB device
+              arrival/removal events from the KVM switch and trigger display input changes</li>
+            <li><strong>synergy_switch</strong> &mdash; a Swift utility using CoreGraphics to warp
+              the cursor to screen edges, triggering Synergy crossing to the other machine</li>
+            <li><strong>synergy_lock_watcher</strong> &mdash; redirects input to Windows automatically
+              when the Mac screen locks</li>
+            <li><strong>synergy_caffeinate</strong> &mdash; prevents display sleep while a Synergy
+              client is connected</li>
+            <li><strong>Lid angle detection</strong> via pybooklid &mdash; reads the MacBook lid angle
+              sensor to dynamically choose the Synergy layout (side-by-side vs. stacked) based on the
+              laptop's physical position relative to the monitor</li>
+          </ul>
+          <p class="text-justify">All components are <strong>event-driven with zero polling</strong>,
+            reacting to system notifications rather than periodically checking state.</p>
+
+          <h4>Network Guard (March 11, 2026 &mdash; one day)</h4>
+          <p class="text-justify">A problem emerged when both WiFi and USB-C Ethernet were connected
+            to the same network: duplicate hostnames caused connectivity issues. The solution was a
+            <strong>Swift daemon using SCDynamicStore</strong> (~170 lines) that monitors network
+            interface changes and automatically disassociates WiFi when Ethernet is active &mdash;
+            while preserving AirDrop and Handoff functionality, which require the WiFi radio to
+            remain on.</p>
+
+          <h4>Setup Tachyon / Smaug (November 2025 &mdash; March 2026 &mdash; 64 commits) &mdash; WIP</h4>
+          <p class="text-justify">Infrastructure-as-code for a <strong><a href="https://www.particle.io/tachyon/">Particle Tachyon</a></strong>
+            single-board computer (Qualcomm QCM6490, Ubuntu ARM). This was the longest-running
+            project in the set and covered:</p>
+          <ul>
+            <li><strong>Backup and restore</strong> with cross-version support (Ubuntu 20.04
+              &harr; 24.04), enabling migration between OS versions without manual reconfiguration</li>
+            <li><strong>Docker services</strong> &mdash; Immich (photo management), Home Assistant
+              (home automation), and Plex (media server), all orchestrated via Docker Compose</li>
+            <li><strong>NVMe ASPM fix</strong> &mdash; the Tachyon connects its NVMe drive via a
+              PCIe flat cable, and the default L1 power state caused MSI-X interrupt loss, leading
+              to I/O timeouts under load. The fix involved a 4-component solution addressing ASPM
+              policy, interrupt coalescing, queue depth, and power state transitions</li>
+            <li><strong>Fan control</strong> &mdash; software PWM via GPIO with a thermal curve and
+              soft-start sequence, replacing the default always-on fan behavior</li>
+            <li><strong>Consolidated monitoring</strong> &mdash; a unified dashboard tracking CPU
+              and SSD temperatures, USB-PD power delivery status, and Docker container health</li>
+          </ul>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>System Tools</h3>
+
+          <h4>Launchd Manager TUI (March 13, 2026 &mdash; 8 commits in one day) &mdash; WIP</h4>
+          <p class="text-justify">A <strong>Rust</strong> terminal user interface built with
+            <strong>Ratatui</strong> for managing macOS launchd services. The application follows a
+            clean architecture with real-time filtering, log and plist file viewers, and
+            <strong>$EDITOR</strong> integration for editing configuration files directly from the
+            TUI.</p>
+          <p class="text-justify">An interesting debugging session involved character ghosting
+            &mdash; residual characters appearing on screen after scrolling &mdash; which turned
+            out to be a terminal rendering issue requiring explicit screen region clearing.</p>
+
+          <h4>Activation Code System (February 7, 2026 &mdash; 2 commits)</h4>
+          <p class="text-justify">A <strong>challenge-response authentication system</strong> for
+            embedded devices using <strong>HMAC-SHA256</strong>. The code generation uses a triple
+            layer: a word-based encoding, XOR with the device ID, and a checksum for integrity
+            verification. Implemented as two Python scripts with zero external dependencies.</p>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>Peon Ping and Audio Reverse Engineering</h3>
+          <p class="text-justify"><strong><a href="https://github.com/PeonPing/peon-ping">Peon Ping</a></strong> is an open-source project for AI agent
+            notifications, with 348 commits and over 50 contributors. My involvement centered on
+            audio extraction and Portuguese language support.</p>
+
+          <h4>Audio Extraction (February 13&ndash;14, 2026)</h4>
+          <ul>
+            <li><strong>war2sfx-extractor</strong> &mdash; a parser for Warcraft II DOS WAR/SUD
+              binary formats with LZSS decompression, written in pure Python. Extracted 676 WAV
+              files from the original game data</li>
+            <li><strong>extract_wc3.py</strong> &mdash; extraction of Warcraft III Reforged audio
+              via PyCASC, with a monkey-patched root parser to handle the game's specific CASC
+              archive structure. Extracted approximately 7,400 files</li>
+            <li><strong>extract_sc2.py</strong> &mdash; extraction of StarCraft II audio via
+              libcasc.so/ctypes, since PyCASC does not support the MNDX root format used by SC2.
+              Extracted approximately 373,000 files. Not yet published</li>
+          </ul>
+
+          <h4>PT-BR Sound Packs</h4>
+          <ul>
+            <li><strong>open-peon-war2PT_BR</strong> (v1.1.1) &mdash; 23 Warcraft II Peasant sounds
+              in Brazilian Portuguese</li>
+            <li><strong>open-peon-war3PT_BR</strong> (v1.0.0) &mdash; Warcraft III Human Peasant
+              sounds in Brazilian Portuguese</li>
+          </ul>
+
+          <h4>Peon Ping Contribution (February 14, 2026)</h4>
+          <p class="text-justify">Added a <strong><a href="https://github.com/PeonPing/peon-ping/commit/0536436">Portuguese (BR) language filter</a></strong> in the
+            sound pack picker, enabling users to filter available packs by language.</p>
+
+          <p class="text-justify">The highlight of this domain was <strong>reverse engineering
+            Blizzard binary formats</strong> (LZSS and CASC) to extract game audio for an
+            open-source ecosystem &mdash; work that required understanding undocumented file
+            structures and adapting existing libraries to handle edge cases.</p>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>Applications and Web</h3>
+
+          <h4>Matchmaker (December 2025 &amp; February 2026 &mdash; ~15 commits)</h4>
+          <p class="text-justify">An existing sales analytics application built with
+            <strong>React + Express + MariaDB</strong> that I fully containerized with
+            <strong>Docker</strong>. The setup includes a development environment with hot-reload,
+            a production environment with <strong>Nginx + SSL</strong>, and a unified
+            <strong>mm.sh</strong> entry point script for managing both environments.</p>
+
+          <h4>This Website &mdash; lucaspwo.github.io (March 2026)</h4>
+          <p class="text-justify">The Sigaweb post was created bilingually (English and Portuguese)
+            with <strong>Chrome headless visual validation on WSL2</strong> to verify rendering
+            consistency across both versions. A build system is currently in development (WIP)
+            for converting Markdown to HTML using <strong>Nunjucks</strong> templates.</p>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>Reflection</h3>
+          <p class="text-justify">After five months of using Claude Code across these projects,
+            a few observations stand out:</p>
+          <ul>
+            <li><strong>The tool is an accelerator, not a replacement.</strong> The developer
+              retains responsibility for direction, architecture decisions, and validation. The
+              AI does not replace the need to understand what is being built &mdash; it reduces
+              the friction of building it</li>
+            <li><strong>Less friction when transitioning between domains.</strong> Moving between
+              Swift, Rust, Python, Bash, JavaScript, and HTML in the same week would normally
+              carry a significant context-switching cost. The tool absorbs much of that overhead,
+              allowing faster ramp-up in each language</li>
+            <li><strong>Collaborative debugging on hard problems.</strong> The NVMe ASPM fix and
+              the Blizzard reverse engineering work required iterative debugging sessions where
+              fast iteration was essential. Having an AI assistant that can quickly generate and
+              refine hypotheses significantly shortened the feedback loop</li>
+            <li><strong>The volume produced in approximately 5 intensive weeks would be
+              impractical to achieve alone.</strong> Eight projects across six languages, three
+              machines, and multiple domains &mdash; from kernel-level PCIe debugging to game
+              audio extraction to web development &mdash; represent a breadth that would be
+              difficult to sustain without the tool</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="probootstrap-footer" role="contentinfo">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <p>Website template by <a href="https://uicookies.com">uiCookies</a>.</p>
+          <ul class="probootstrap-social">
+            <li><a href="https://www.youtube.com/@lucaspwo"><i class="icon-youtube"></i></a></li>
+            <li><a href="https://www.linkedin.com/in/lucaspwo"><i class="icon-linkedin"></i></a></li>
+            <li><a href="https://github.com/lucaspwo"><i class="icon-github2"></i></a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <div class="gototop js-top">
+    <a href="#" class="js-gotop"><i class="icon-chevron-thin-up"></i></a>
+  </div>
+
+
+  <script src="js/scripts.min.js"></script>
+  <script src="js/main.min.js"></script>
+  <script src="js/custom.js"></script>
+
+</body>
+
+</html>

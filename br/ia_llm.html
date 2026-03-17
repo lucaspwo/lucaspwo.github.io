@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Usando IA como Ferramenta de Desenvolvimento</title>
+  <link href="https://fonts.googleapis.com/css?family=Abel" rel="stylesheet">
+  <link rel="stylesheet" href="../css/styles-merged.css">
+  <link rel="stylesheet" href="../css/style.min.css">
+  <link rel="stylesheet" href="../css/custom.css">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="https://lucaspwo.com/assets/favicon180x180.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://lucaspwo.com/assets/favicon16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://lucaspwo.com/assets/favicon32x32.png">
+  <link rel="icon" type="image/x-icon" href="https://lucaspwo.com/assets/favicon.png">
+
+  <meta property="og:title" content="Usando IA como Ferramenta de Desenvolvimento" />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://lucaspwo.com/br/ia_llm.html" />
+  <meta property="og:image" content="https://lucaspwo.com/assets/favicon.png" />
+  <meta property="og:site_name" content="Meu Laboratório de Experimentos" />
+  <meta property="og:description" content="Relato do uso do Claude Code como ferramenta de desenvolvimento em 8 projetos distintos, 6 linguagens e 3 máquinas ao longo de 5 meses." />
+  <!-- <meta property="" content="" /> -->
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:description" content="Relato do uso do Claude Code como ferramenta de desenvolvimento em 8 projetos distintos, 6 linguagens e 3 máquinas ao longo de 5 meses." />
+  <meta name="twitter:title" content="Usando IA como Ferramenta de Desenvolvimento" />
+  <meta name="twitter:site" content="@lucaspwo" />
+  <meta name="twitter:creator" content="@lucaspwo" />
+  <meta name="twitter:image" content="https://lucaspwo.com/assets/favicon.png" />
+  <!-- <meta name="" content="" /> -->
+</head>
+
+<body>
+
+  <!-- START: header -->
+  <div class="probootstrap-loader"></div>
+
+  <header role="banner" class="probootstrap-header">
+    <div class="container">
+      <a href="index.html" class="probootstrap-logo col-xs-8">Meu Laboratório de Experimentos</a>
+
+      <a href="#" class="probootstrap-burger-menu visible-xs"><i>Menu</i></a>
+      <div class="mobile-menu-overlay"></div>
+
+      <nav role="navigation" class="probootstrap-nav hidden-xs">
+        <ul class="probootstrap-main-nav">
+          <li class="active"><a href="index.html">Principal</a></li>
+          <li><a href="about.html">Sobre</a></li>
+          <li><a href="contact.html">Contato</a></li>
+          <li><a href="../ia_llm.html">&#x1F1FA;&#x1F1F8;</a></li>
+        </ul>
+        <div class="extra-text visible-xs">
+          <a href="#" class="probootstrap-burger-menu"><i>Menu</i></a>
+          <h5>Conecte-se</h5>
+          <ul class="social-buttons">
+            <li><a href="https://www.youtube.com/@lucaspwo"><i class="icon-youtube"></i></a></li>
+            <li><a href="https://www.linkedin.com/in/lucaspwo"><i class="icon-linkedin"></i></a></li>
+            <li><a href="https://github.com/lucaspwo"><i class="icon-github2"></i></a></li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+  </header>
+  <!-- END: header -->
+
+  <div class="probootstrap-section">
+    <div class="container">
+
+      <div class="row">
+        <div class="col-md-8 col-md-offset-2 mb40 text-center">
+          <h2>Usando IA como Ferramenta de Desenvolvimento</h2>
+          <p>Publicado em 16 de março de 2026</p>
+        </div>
+        <div class="col-md-12">
+          <p class="text-justify">Sou engenheiro de computação com perfil em hardware e software embarcado.
+            No final de 2025, comecei a usar o <strong>Claude Code</strong> como ferramenta de desenvolvimento
+            no meu dia a dia. O objetivo não era testar a ferramenta em tarefas triviais &mdash; era colocá-la
+            à prova em projetos concretos, em diferentes domínios, para entender até onde ela serve como
+            acelerador de produtividade real.</p>
+          <p class="text-justify">O trabalho foi distribuído entre três máquinas: <strong>Glaurung</strong>
+            (Mac, Apple Silicon), <strong>Ancalagon</strong> (Windows + WSL2) e <strong>Smaug</strong> (SBC
+            Particle Tachyon, Ubuntu ARM). O período total vai de novembro de 2025 a março de 2026, com
+            intensificação nas últimas 5 semanas.</p>
+          <p class="text-justify">A seguir, um resumo do que produzi nesse período.</p>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>Números em Destaque</h3>
+          <div class="row">
+            <div class="col-md-3 col-xs-6 text-center mb40">
+              <h2>~23 mil</h2>
+              <p>Linhas de código</p>
+            </div>
+            <div class="col-md-3 col-xs-6 text-center mb40">
+              <h2>~110</h2>
+              <p>Commits</p>
+            </div>
+            <div class="col-md-3 col-xs-6 text-center mb40">
+              <h2>6</h2>
+              <p>Linguagens</p>
+            </div>
+            <div class="col-md-3 col-xs-6 text-center mb40">
+              <h2>3</h2>
+              <p>Máquinas</p>
+            </div>
+          </div>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>Infraestrutura Multi-Máquina</h3>
+          <p class="text-justify">O domínio mais extenso de trabalho foi a automação do fluxo entre três
+            máquinas &mdash; desde o chaveamento físico de periféricos até a gestão de infraestrutura como
+            código em um SBC ARM.</p>
+
+          <h4>KVM Setup (09&ndash;16 de março de 2026 &mdash; 6 commits)</h4>
+          <p class="text-justify">Meu fluxo diário envolve alternar entre um Mac e um Windows compartilhando
+            dois monitores Dell. O switch KVM é somente USB, então os inputs de vídeo são trocados manualmente
+            em cada monitor. Teclado e mouse são compartilhados via <strong>Synergy</strong>. Para que tudo
+            funcione de forma transparente, foram necessários vários componentes event-driven:</p>
+          <ul>
+            <li><strong>usb_switch</strong> &mdash; daemon Swift usando IOKit para detectar eventos de
+              conexão/desconexão USB do KVM e acionar a troca de inputs dos monitores</li>
+            <li><strong>synergy_switch</strong> &mdash; utilitário Swift usando CoreGraphics para mover o
+              cursor até a borda da tela, acionando a transição do Synergy para a outra máquina</li>
+            <li><strong>synergy_lock_watcher</strong> &mdash; redireciona o input para o Windows
+              automaticamente quando a tela do Mac é bloqueada</li>
+            <li><strong>synergy_caffeinate</strong> &mdash; previne display sleep enquanto um cliente
+              Synergy está conectado</li>
+            <li><strong>Detecção do ângulo da tampa</strong> via pybooklid &mdash; lê o sensor de ângulo
+              da tampa do MacBook para escolher dinamicamente o layout do Synergy (lado a lado vs. empilhado)
+              com base na posição física do laptop em relação ao monitor</li>
+          </ul>
+          <p class="text-justify">Todos os componentes são <strong>event-driven com zero polling</strong>,
+            reagindo a notificações do sistema ao invés de verificar estado periodicamente.</p>
+
+          <h4>Network Guard (11 de março de 2026 &mdash; um dia)</h4>
+          <p class="text-justify">Um problema surgiu quando WiFi e Ethernet USB-C estavam conectados à mesma
+            rede: hostnames duplicados causavam problemas de conectividade. A solução foi um
+            <strong>daemon Swift usando SCDynamicStore</strong> (~170 linhas) que monitora mudanças nas
+            interfaces de rede e automaticamente desassocia o WiFi quando a Ethernet está ativa &mdash;
+            preservando AirDrop e Handoff, que exigem que o rádio WiFi permaneça ligado.</p>
+
+          <h4>Setup Tachyon / Smaug (novembro de 2025 &mdash; março de 2026 &mdash; 64 commits) &mdash; WIP</h4>
+          <p class="text-justify">Infraestrutura como código para o SBC
+            <a href="https://www.particle.io/tachyon/">Particle Tachyon</a> (Qualcomm QCM6490,
+            Ubuntu ARM). Este foi o projeto de maior duração no conjunto e cobre:</p>
+          <ul>
+            <li><strong>Backup e restore</strong> com suporte cross-version (Ubuntu 20.04 &harr; 24.04),
+              permitindo migração entre versões do SO sem reconfiguração manual</li>
+            <li><strong>Serviços Docker</strong> &mdash; Immich (gerenciamento de fotos), Home Assistant
+              (automação residencial) e Plex (servidor de mídia), todos orquestrados via Docker Compose</li>
+            <li><strong>Fix NVMe ASPM</strong> &mdash; o Tachyon conecta seu NVMe via cabo flat PCIe, e o
+              estado de energia L1 padrão causava perda de interrupção MSI-X, levando a timeouts de I/O sob
+              carga. A correção envolveu 4 componentes (script + systemd + udev + sudoers)</li>
+            <li><strong>Controle de fan</strong> &mdash; PWM por software via GPIO com curva térmica e
+              sequência de soft-start, substituindo o comportamento padrão de fan sempre ligado</li>
+            <li><strong>Monitoramento consolidado</strong> &mdash; dashboard unificado rastreando temperaturas
+              de CPU/SSD, status de alimentação USB-PD e saúde dos containers Docker</li>
+          </ul>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>Ferramentas de Sistema</h3>
+
+          <h4>Launchd Manager TUI (13 de março de 2026 &mdash; 8 commits em um dia) &mdash; WIP</h4>
+          <p class="text-justify">Interface de terminal em <strong>Rust</strong> construída com
+            <strong>Ratatui</strong> para gerenciar serviços launchd do macOS. A aplicação segue uma
+            arquitetura limpa com filtros em tempo real, visualizadores de logs e plists, e integração com
+            <strong>$EDITOR</strong> para edição de arquivos de configuração diretamente pela TUI.</p>
+          <p class="text-justify">Uma sessão de debugging interessante envolveu ghosting de caracteres
+            &mdash; caracteres residuais aparecendo na tela após rolagem &mdash; que acabou sendo um
+            problema de renderização do terminal exigindo limpeza explícita de regiões da tela.</p>
+
+          <h4>Sistema de Código de Ativação (07 de fevereiro de 2026 &mdash; 2 commits)</h4>
+          <p class="text-justify">Sistema de <strong>autenticação challenge-response</strong> para
+            dispositivos embarcados usando <strong>HMAC-SHA256</strong>. A geração de código usa tripla
+            camada: codificação por palavras, XOR com o ID do dispositivo e checksum para verificação de
+            integridade. Implementado como dois scripts Python com zero dependências externas.</p>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>Peon Ping e Engenharia Reversa de Áudio</h3>
+          <p class="text-justify"><strong><a href="https://github.com/PeonPing/peon-ping">Peon Ping</a></strong>
+            é um projeto open source para notificações sonoras de agentes de IA, com 348 commits e mais de
+            50 contribuidores. Meu envolvimento se concentrou na extração de áudio e suporte ao idioma
+            português.</p>
+
+          <h4>Extração de Áudio (13&ndash;14 de fevereiro de 2026)</h4>
+          <ul>
+            <li><strong>war2sfx-extractor</strong> &mdash; parser de arquivos binários WAR/SUD do WarCraft II
+              DOS com descompressão LZSS, escrito em Python puro. Extrai 676 arquivos WAV dos dados
+              originais do jogo</li>
+            <li><strong>extract_wc3.py</strong> &mdash; extração de áudio do WarCraft III Reforged via
+              PyCASC, com monkey-patch no root parser para lidar com a estrutura CASC específica do jogo.
+              Aproximadamente 7.400 arquivos extraídos</li>
+            <li><strong>extract_sc2.py</strong> &mdash; extração de áudio do StarCraft II via
+              libcasc.so/ctypes, já que o PyCASC não suporta o formato MNDX root usado pelo SC2.
+              Aproximadamente 373.000 arquivos extraídos. Ainda não publicado</li>
+          </ul>
+
+          <h4>Sound Packs PT-BR</h4>
+          <ul>
+            <li><strong>open-peon-war2PT_BR</strong> (v1.1.1) &mdash; 23 sons do Peasant de WarCraft II
+              em português brasileiro</li>
+            <li><strong>open-peon-war3PT_BR</strong> (v1.0.0) &mdash; sons do Human Peasant de WarCraft III
+              em português brasileiro</li>
+          </ul>
+
+          <h4>Contribuição ao Peon Ping (14 de fevereiro de 2026)</h4>
+          <p class="text-justify">Adição de um
+            <strong><a href="https://github.com/PeonPing/peon-ping/commit/0536436">filtro de idioma
+            Português (BR)</a></strong> no seletor de sound packs, permitindo que usuários filtrem os
+            packs disponíveis por idioma.</p>
+
+          <p class="text-justify">O destaque deste domínio foi a <strong>engenharia reversa de formatos
+            binários da Blizzard</strong> (LZSS e CASC) para extrair áudio de jogos para um ecossistema
+            open source &mdash; trabalho que exigiu compreensão de estruturas de arquivo não documentadas
+            e adaptação de bibliotecas existentes para lidar com casos especiais.</p>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>Aplicações e Web</h3>
+
+          <h4>Matchmaker (dezembro de 2025 e fevereiro de 2026 &mdash; ~15 commits)</h4>
+          <p class="text-justify">Uma aplicação existente de analytics de vendas construída com
+            <strong>React + Express + MariaDB</strong> que recebi containerização completa com
+            <strong>Docker</strong>. O setup inclui ambiente de desenvolvimento com hot-reload, ambiente de
+            produção com <strong>Nginx + SSL</strong> e um script <strong>mm.sh</strong> unificado como
+            ponto de entrada para gerenciar ambos os ambientes.</p>
+
+          <h4>Este site &mdash; lucaspwo.github.io (março de 2026)</h4>
+          <p class="text-justify">O post do Sigaweb foi criado bilingualmente (inglês e português) com
+            <strong>validação visual via Chrome headless no WSL2</strong> para verificar consistência de
+            renderização entre ambas as versões. Um sistema de build está atualmente em desenvolvimento (WIP)
+            para converter Markdown em HTML usando templates <strong>Nunjucks</strong>.</p>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>Reflexão</h3>
+          <p class="text-justify">Após cinco meses usando o Claude Code nestes projetos, algumas observações
+            se destacam:</p>
+          <ul>
+            <li><strong>A ferramenta é um acelerador, não um substituto.</strong> O desenvolvedor mantém a
+              responsabilidade pela direção, decisões de arquitetura e validação. A IA não substitui a
+              necessidade de entender o que está sendo construído &mdash; ela reduz a fricção de
+              construí-lo</li>
+            <li><strong>Menos fricção ao transitar entre domínios.</strong> Alternar entre Swift, Rust,
+              Python, Bash, JavaScript e HTML na mesma semana normalmente carregaria um custo significativo
+              de troca de contexto. A ferramenta absorve boa parte desse overhead, permitindo ramp-up mais
+              rápido em cada linguagem</li>
+            <li><strong>Debugging colaborativo em problemas difíceis.</strong> O fix de NVMe ASPM e a
+              engenharia reversa dos formatos da Blizzard exigiram sessões de debugging iterativo onde
+              iteração rápida era essencial. Ter um assistente de IA que gera e refina hipóteses
+              rapidamente encurtou significativamente o ciclo de feedback</li>
+            <li><strong>O volume produzido em aproximadamente 5 semanas intensivas seria impraticável de
+              alcançar sozinho.</strong> Oito projetos em seis linguagens, três máquinas e múltiplos
+              domínios &mdash; de debugging de PCIe no nível do kernel a extração de áudio de jogos a
+              desenvolvimento web &mdash; representam uma amplitude que seria difícil de sustentar sem a
+              ferramenta</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="probootstrap-footer" role="contentinfo">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <p>Template de site desenvolvido por <a href="https://uicookies.com">uiCookies</a>.</p>
+          <ul class="probootstrap-social">
+            <li><a href="https://www.youtube.com/@lucaspwo"><i class="icon-youtube"></i></a></li>
+            <li><a href="https://www.linkedin.com/in/lucaspwo"><i class="icon-linkedin"></i></a></li>
+            <li><a href="https://github.com/lucaspwo"><i class="icon-github2"></i></a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <div class="gototop js-top">
+    <a href="#" class="js-gotop"><i class="icon-chevron-thin-up"></i></a>
+  </div>
+
+
+  <script src="../js/scripts.min.js"></script>
+  <script src="../js/main.min.js"></script>
+  <script src="../js/custom.js"></script>
+
+</body>
+
+</html>
