@@ -329,6 +329,110 @@ curl http://100.91.10.22:1234 ────────────┘
           <hr>
         </div>
 
+        <div class="col-md-12">
+          <h3>A Aplicação &mdash; Pipeline OCR Local</h3>
+          <p class="text-justify">As duas primeiras peças são ferramentas de
+            desenvolvimento. A terceira é uma aplicação concreta: um pipeline de visão
+            que substitui a API do Google Gemini em um sistema de
+            <strong>auditoria de transformadores elétricos</strong>. Fotos de campo de
+            placas de equipamento entram, JSON estruturado com 11 campos sai
+            (potência, fabricante, série, data de fabricação, elo fusível, tensões
+            primária e secundária, fases, autoproteção, tombamento, matrícula).</p>
+
+          <h4>Arquitetura</h4>
+          <p class="text-justify">Servidor dedicado: outro PC com
+            <strong>RTX 5070 12 GB</strong>, Ubuntu 24.04, CUDA 12.8. O pipeline tem
+            <strong>dois estágios principais</strong> e dois auxiliares:</p>
+
+<pre>
+foto de placa ─▶ YOLO Stage 0 ─▶ Stage 1 (visão) ─▶ Stage 2 (raciocínio) ─▶ JSON
+   (SMB ou           crop          Qwen3.5-VLM         qwen2.5:14b           ▲
+    upload         da placa        9B (llama.cpp)     (Ollama)               │
+    base64)            │              :8090            :11434                │
+                       │                                  │                  │
+                       ▼                                  ▼                  │
+                 YOLO Stage 3 ◀─────── auditoria ─────────┘                  │
+                  (revalida classes detectadas)                              │
+                                                                             │
+                                       cruzamento OCR × cadastro ────────────┘
+</pre>
+
+          <ul>
+            <li><strong>Stage 0 (YOLO)</strong> &mdash; detecta a bounding box da
+              <code>placa_transformador</code>, faz crop com 10% de padding e passa só
+              a região da placa para o VLM em alta resolução. Fallback:
+              redimensionar para 1600&nbsp;px se YOLO falhar.</li>
+            <li><strong>Stage 1 (visão)</strong> &mdash; Qwen3.5-VLM 9B via llama.cpp
+              extrai <em>todo</em> texto visível da imagem cropada.</li>
+            <li><strong>Stage 2 (raciocínio)</strong> &mdash; qwen2.5:14b via Ollama
+              recebe o texto bruto e devolve JSON com 11 campos validados.</li>
+            <li><strong>Stage 3 (YOLO)</strong> &mdash; auditoria pós-Stage 2: se o
+              fabricante foi extraído mas a YOLO não viu nenhuma
+              <code>placa_identificacao</code>, marca <code>_needs_review=True</code>
+              para revisão humana.</li>
+          </ul>
+
+          <h4>Por que dois estágios e não modelo único</h4>
+          <p class="text-justify">Testei sete modelos de visão (glm-ocr, qwen2.5vl,
+            Qianfan-OCR, Gemma 4 E4B, entre outros). O <strong>Qwen3.5-VLM lê
+            bem</strong>, mas não é confiável para emitir JSON estruturado direto
+            &mdash; alucinou campos, inverteu valores, perdeu números. Separar OCR puro
+            do raciocínio estruturado deu <strong>11/11 campos corretos</strong> no
+            conjunto de validação inicial (placas Romagnole 112.5 kVA).</p>
+
+          <h4>Evolução em três semanas</h4>
+          <p class="text-justify">O pipeline saiu do zero (<strong>v1.0</strong>) ao
+            <strong>v3.1 com 11/11 campos</strong> em uma única sessão (06 de abril).
+            Em 18 dias, evoluiu por <strong>v3.2 &rarr; v3.7 &rarr; v4.0 &rarr;
+            v4.1-dev</strong>, terminando com <strong>176 testes automatizados</strong>
+            e <strong>&ge;85.3% de acurácia em campo</strong> em um alimentador real
+            (LDA NINA, 34 postes comparados com cadastro).</p>
+
+          <h4>Descobertas práticas</h4>
+          <ul>
+            <li><strong>Filtros em Python &gt; regras no prompt.</strong> O qwen2.5:14b
+              não segue regras complexas em linguagem natural. Toda vez que tive a
+              tentação de adicionar regra ao prompt, regex em Python deu mais
+              confiabilidade. Filtros como <code>_classify_text</code> e
+              <code>_filter_ocr_for_stage2</code> separam texto de placa, de medição,
+              de gravação no poste e de telecom <em>antes</em> do Stage 2 ver.</li>
+            <li><strong>YOLO como contexto, não só crop.</strong> A classe detectada
+              (<code>cls4=placa_identificacao</code> vs
+              <code>cls6=placa_transformador</code>) propaga um
+              <code>pole_id_context</code> que controla filtros downstream. Detectar é
+              fácil; usar a detecção para mudar comportamento do pipeline é o que gera
+              ganho.</li>
+            <li><strong>GPU semaphore.</strong> Stage 1 (~7 GB) + Stage 2 (~9 GB)
+              ultrapassam os 12 GB da RTX 5070. Solução:
+              <code>threading.Semaphore(1)</code> no FastAPI, serializando estágios
+              dentro de uma mesma requisição.</li>
+            <li><strong>banco_trafo via tags do banco de dados.</strong> Detectar
+              banco de transformadores contando placas no mesmo frame YOLO não funciona
+              &mdash; cada trafo do banco tem foto separada. Solução: contar
+              <em>imagens distintas</em> com tag <code>placa_transformador</code> no
+              banco. Se &ge; 2 &rarr; banco confirmado, e a comparação vira
+              <code>OCR_pot &times; N</code> vs cadastro (&plusmn;5%).</li>
+          </ul>
+
+          <h4>Integração com a aplicação consumidora</h4>
+          <p class="text-justify">A API REST sobe em <strong>FastAPI na porta
+            8091</strong> com envelope estilo Gemini
+            (<code>contents[].parts[].inline_data</code>) para ser drop-in para o C# que
+            antes chamava o Google. A aplicação dispara via dois tipos novos de agenda
+            no scheduler existente:</p>
+          <ul>
+            <li><strong>TRA</strong> &mdash; processa um alimentador inteiro lendo as
+              imagens via SMB.</li>
+            <li><strong>ALT</strong> &mdash; envia imagens diretamente em base64
+              (lotes de até 50 postes / 30 imagens por poste / 200 MB).</li>
+          </ul>
+          <p class="text-justify">Há ainda um endpoint OCR-only
+            <code>POST /api/v41/ocr/poste/{id}/texto</code> para casos onde só o texto
+            bruto interessa &mdash; usado para extração de dados de <em>poste</em>
+            (separados dos dados do trafo, com filtros próprios).</p>
+          <hr>
+        </div>
+
         <!-- SECTIONS -->
 
       </div>
