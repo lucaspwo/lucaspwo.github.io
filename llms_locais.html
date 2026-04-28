@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Adventures with Local LLMs</title>
+  <link href="https://fonts.googleapis.com/css?family=Abel" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles-merged.css">
+  <link rel="stylesheet" href="css/style.min.css">
+  <link rel="stylesheet" href="css/custom.css">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="https://lucaspwo.com/assets/favicon180x180.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://lucaspwo.com/assets/favicon16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://lucaspwo.com/assets/favicon32x32.png">
+  <link rel="icon" type="image/x-icon" href="https://lucaspwo.com/assets/favicon.png">
+
+  <meta property="og:title" content="Adventures with Local LLMs" />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://lucaspwo.com/llms_locais.html" />
+  <meta property="og:image" content="https://lucaspwo.com/projetos/llms_locais/llms_locais.jpg" />
+  <meta property="og:site_name" content="Lucas' Experiments Lab" />
+  <meta property="og:description" content="Dedicated server, local client, real application — an AI stack without cloud APIs." />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:description" content="Dedicated server, local client, real application — an AI stack without cloud APIs." />
+  <meta name="twitter:title" content="Adventures with Local LLMs" />
+  <meta name="twitter:site" content="@lucaspwo" />
+  <meta name="twitter:creator" content="@lucaspwo" />
+  <meta name="twitter:image" content="https://lucaspwo.com/projetos/llms_locais/llms_locais.jpg" />
+</head>
+
+<body>
+
+  <!-- START: header -->
+  <div class="probootstrap-loader"></div>
+
+  <header role="banner" class="probootstrap-header">
+    <div class="container">
+      <a href="index.html" class="probootstrap-logo">Lucas' Experiments Lab</a>
+
+      <a href="#" class="probootstrap-burger-menu visible-xs"><i>Menu</i></a>
+      <div class="mobile-menu-overlay"></div>
+
+      <nav role="navigation" class="probootstrap-nav hidden-xs">
+        <ul class="probootstrap-main-nav">
+          <li class="active"><a href="index.html">Main</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="contact.html">Contact</a></li>
+          <li><a href="br/llms_locais.html">&#x1F1E7;&#x1F1F7;</a></li>
+        </ul>
+        <div class="extra-text visible-xs">
+          <a href="#" class="probootstrap-burger-menu"><i>Menu</i></a>
+          <h5>Connect</h5>
+          <ul class="social-buttons">
+            <li><a href="https://www.youtube.com/@lucaspwo"><i class="icon-youtube"></i></a></li>
+            <li><a href="https://www.linkedin.com/in/lucaspwo"><i class="icon-linkedin"></i></a></li>
+            <li><a href="https://github.com/lucaspwo"><i class="icon-github2"></i></a></li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+  </header>
+  <!-- END: header -->
+
+  <div class="probootstrap-section">
+    <div class="container">
+
+      <div class="row">
+        <div class="col-md-8 col-md-offset-2 mb40 text-center">
+          <h2>Adventures with Local LLMs</h2>
+          <p>Published on April 28, 2026</p>
+        </div>
+
+        <div class="col-md-12">
+          <p class="text-justify">I use AI assistants every day for coding &mdash; Claude
+            Code, GPT, the Gemini API. Throughout the first half of 2026, I kept
+            accumulating three frustrations with cloud APIs.</p>
+
+          <p class="text-justify"><strong>Token pressure.</strong> Paid plans have been
+            tightening their available limits with each renewal cycle. Every serious
+            project eventually hit the ceiling and required either waiting for the reset
+            or buying additional packages. Rising cost, decreasing control.</p>
+
+          <p class="text-justify"><strong>Models disappear.</strong> In an electrical
+            transformer auditing application, <code>gemini-1.5-pro</code> was
+            discontinued overnight. <code>gemini-2.0-flash</code> became blocked for
+            new users. The only option left was migrating to
+            <code>gemini-2.5-flash</code> while it lasts. When the pipeline depends on
+            a cloud-hosted model, it has an expiration date.</p>
+
+          <p class="text-justify"><strong>Sensitive data leaving the house.</strong>
+            Every photo of a transformer nameplate sent to Google's API is client data
+            leaving the network.</p>
+
+          <p class="text-justify">The answer, in three projects built throughout the
+            first half of 2026, was to bring the stack home: a dedicated LLM server,
+            a client pointing at it instead of the Anthropic API, and a real application
+            proving it works in production.</p>
+
+          <p class="text-justify">There is an honest trade-off: context costs memory.
+            The model+context combo must fit within the available VRAM, and that
+            equation constrains choices. But the gain &mdash; control over what runs,
+            what leaves the machine, and how much it costs per token (zero) &mdash;
+            makes up for it.</p>
+
+          <p class="text-justify">The three projects:
+            <strong><a href="https://github.com/lucaspwo/ancalagon-llm">ancalagon-llm</a></strong>
+            (the server setup with an RTX 4070 Ti SUPER and llama.cpp tuned for MoE),
+            <strong><a href="https://github.com/lucaspwo/local-claude">local-claude</a></strong>
+            (a wrapper that makes Claude Code use local models), and
+            <strong>ocr-pipeline-local</strong>
+            (a vision pipeline replacing the Gemini API).</p>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>Numbers at a Glance</h3>
+          <div class="row">
+            <div class="col-md-3 col-xs-6 text-center mb40">
+              <h2>36.8 tok/s</h2>
+              <p>Qwen3.6-27B local, 100% on GPU</p>
+            </div>
+            <div class="col-md-3 col-xs-6 text-center mb40">
+              <h2>~6&times;</h2>
+              <p>Speedup with speculative decoding (RTX 4070 Ti SUPER)</p>
+            </div>
+            <div class="col-md-3 col-xs-6 text-center mb40">
+              <h2>81.5 tok/s</h2>
+              <p>Qwen3-Coder 30B (tuned MoE)</p>
+            </div>
+            <div class="col-md-3 col-xs-6 text-center mb40">
+              <h2>13 GB</h2>
+              <p>Model fitting in 16 GB of VRAM (TQ3_4S)</p>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-3 col-xs-6 text-center mb40">
+              <h2>176</h2>
+              <p>Automated tests in the OCR pipeline</p>
+            </div>
+            <div class="col-md-3 col-xs-6 text-center mb40">
+              <h2>&ge;85%</h2>
+              <p>Field accuracy (real feeder)</p>
+            </div>
+            <div class="col-md-3 col-xs-6 text-center mb40">
+              <h2>5</h2>
+              <p>Inference backends supported</p>
+            </div>
+            <div class="col-md-3 col-xs-6 text-center mb40">
+              <h2>0</h2>
+              <p>External API calls in production</p>
+            </div>
+          </div>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>The Server &mdash; ancalagon-llm</h3>
+          <p class="text-justify">The first piece of the stack is the server. The
+            hardware is a <strong>dual-boot</strong> PC (Windows + Ubuntu Server 24.04)
+            with a Ryzen 7600X, 32 GB of RAM, and an
+            <strong>RTX 4070 Ti SUPER 16 GB</strong>. The Mac connects via
+            <strong>Tailscale</strong> at <code>100.91.10.22</code>.</p>
+
+          <h4>Why leave LM Studio</h4>
+          <p class="text-justify">LM Studio was convenient but leaving roughly half of
+            the tokens on the table. During inference, GPU utilization sat at
+            <strong>30&ndash;34%</strong>, drawing about 70&nbsp;W out of a 285&nbsp;W
+            TGP. Two bottlenecks were identified:</p>
+          <ul>
+            <li><strong>Generic offload doesn't work for MoE.</strong> LM Studio splits
+              &ldquo;N% of the layers on the GPU&rdquo;. For
+              <em>Mixture-of-Experts</em> models, what matters is keeping attention/norm
+              on the GPU and the experts on the CPU. The <code>-n-cpu-moe</code> flag
+              in llama.cpp does exactly that. LM Studio doesn't expose it.</li>
+            <li><strong>Model larger than VRAM.</strong> Qwen3.6-27B Q4_K_M takes 17 GB
+              &mdash; doesn't fit in 16 GB. With the <strong>TQ3_4S</strong> quant
+              (3-bit ternary, <code>turbo-tan/llama.cpp-tq3</code> fork) it drops to
+              13 GB and fits 100% on GPU.</li>
+          </ul>
+
+          <h4>Measured gains</h4>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Configuration</th>
+                <th>GPU util</th>
+                <th>Power</th>
+                <th>tok/s gen</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>LM Studio &mdash; qwen3-coder Q4_K_M</td>
+                <td>30%</td>
+                <td>67&nbsp;W</td>
+                <td>64.5</td>
+              </tr>
+              <tr>
+                <td>llama.cpp upstream &mdash; coder <code>-ncmoe&nbsp;10</code></td>
+                <td>36%</td>
+                <td>101&nbsp;W</td>
+                <td><strong>81.5</strong></td>
+              </tr>
+              <tr>
+                <td>LM Studio &mdash; Qwen3.6-27B Q4_K_M</td>
+                <td>34%</td>
+                <td>94&nbsp;W</td>
+                <td>13.7</td>
+              </tr>
+              <tr>
+                <td>llama.cpp TQ3 fork &mdash; Qwen3.6-27B-TQ3_4S</td>
+                <td><strong>96%</strong></td>
+                <td><strong>292&nbsp;W</strong></td>
+                <td><strong>36.8</strong></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h4>Three presets, one port</h4>
+          <p class="text-justify">The server exposes three models via systemd, each in
+            a service with <code>Conflicts=</code> declared &mdash; only one is up at a
+            time, and systemd stops the previous one automatically:</p>
+          <ul>
+            <li><strong>Qwen3-Coder 30B</strong> &mdash; coding (MoE with
+              <code>--n-cpu-moe 16</code>, ctx 96K)</li>
+            <li><strong>Qwen3.6-27B TQ3_4S</strong> &mdash; reasoning/thinking (100%
+              GPU, ctx 40K)</li>
+            <li><strong>Gemma 4 26B-A4B</strong> &mdash; general use (MoE with
+              <code>--n-cpu-moe 8</code>, ctx 96K)</li>
+          </ul>
+          <p class="text-justify">All on the same port <strong>1234</strong> (the same
+            as LM Studio) &mdash; existing clients don't need to change URLs. An
+            <code>lmswitch</code> wrapper alternates between services with health
+            polling. SSH aliases on the Mac (<code>llcoder</code>, <code>llq36</code>,
+            <code>llgemma4</code>, <code>lloff</code>) make remote control trivial.</p>
+
+          <h4>Usage flow</h4>
+<pre>
+Glaurung (Mac)                    Ancalagon (Ubuntu)
+                                  100.91.10.22 / :1234
+aliases:                          systemd --user:
+  llcoder  ──ssh──&gt;                 llama-coder.service ──┐
+  llq36    ──ssh──&gt;                 llama-qwen36.service ─┤ Conflicts=
+  llgemma4 ──ssh──&gt;                 llama-gemma4.service ─┘ (only one up)
+  lloff    ──ssh──&gt;                       │
+                                          ▼
+                                   :1234 (OpenAI-compat API)
+                                          ▲
+curl http://100.91.10.22:1234 ────────────┘
+</pre>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>The Client &mdash; local-claude</h3>
+          <p class="text-justify">Claude Code is an excellent coding agent, but it
+            only talks to the Anthropic API. I wanted the agent, not the vendor
+            lock-in. <strong>local-claude</strong> is a bash wrapper that injects
+            environment variables (<code>ANTHROPIC_BASE_URL</code>,
+            <code>CLAUDE_CONFIG_DIR=~/.claude-local</code> to isolate config) and
+            routes traffic to a local or remote OpenAI-compatible server. The
+            original <code>claude</code> stays untouched.</p>
+
+          <h4>Five backends</h4>
+          <ul>
+            <li><strong>LM Studio</strong> &mdash; connects to a local server</li>
+            <li><strong>llama.cpp local</strong> &mdash; spawns and kills a
+              <code>llama-server</code> automatically</li>
+            <li><strong>llama.cpp remote via SSH</strong> &mdash; same, but on a remote
+              host (the Mac &rarr; Ancalagon scenario)</li>
+            <li><strong><code>remote</code></strong> &mdash; connects to an
+              already-running server (e.g., the Ancalagon service)</li>
+            <li><strong>Apple Intelligence</strong> via
+              <a href="https://github.com/Arthur-Ficial/apfel">apfel</a> &mdash;
+              on-device model on macOS Tahoe</li>
+          </ul>
+
+          <h4>Automatic speculative decoding</h4>
+          <p class="text-justify">When a smaller model from the same family exists in
+            the directory, the script enables <strong>speculative decoding</strong>: a
+            small &ldquo;draft&rdquo; generates candidate tokens that the large model
+            verifies in batch. Accepted tokens are free; rejected ones are regenerated
+            normally.</p>
+
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Platform (Qwen2.5-7B Q8_0 + 0.5B Q8_0 draft)</th>
+                <th>No draft</th>
+                <th>With draft</th>
+                <th>Speedup</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Apple M4 Pro (24 GB)</td>
+                <td>29 t/s</td>
+                <td>57 t/s</td>
+                <td>~2&times;</td>
+              </tr>
+              <tr>
+                <td>RTX 4070 Ti SUPER (16 GB)</td>
+                <td>29 t/s</td>
+                <td><strong>177 t/s</strong></td>
+                <td><strong>~6&times;</strong></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <p class="text-justify"><em>Insight:</em> the smallest draft wins. The 3B
+            draft is slower than the 1.5B despite a higher acceptance rate &mdash;
+            verification overhead dominates.</p>
+
+          <h4>Apple Intelligence is a special case</h4>
+          <p class="text-justify">The Apple Intelligence context window is
+            <strong>4096 tokens</strong>. Claude Code's system prompt and tools alone
+            already total around 27K tokens &mdash; seven times more than fits. The
+            backend runs in <strong>chat-only mode</strong>
+            (<code>--bare --tools ""</code>): you can have a conversation, but the
+            agent cannot use tools (edit files, run commands). It's a physical reminder
+            that <em>context = memory</em>.</p>
+
+          <h4>Integrating with the server</h4>
+          <p class="text-justify">On the Mac, the <code>srl-coder</code> alias
+            connects directly to whichever service is up (<code>specstory run claude
+            -c &quot;local-claude --backend remote --port 1234&quot;</code>). Zero
+            process management on the client: the Ancalagon service is the
+            infrastructure, local-claude is just the bridge.</p>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>The Application &mdash; Local OCR Pipeline</h3>
+          <p class="text-justify">The first two pieces are development tools. The
+            third is a concrete application: a vision pipeline replacing the Google
+            Gemini API in an
+            <strong>electrical transformer auditing system</strong>. Field photos of
+            equipment nameplates go in, structured JSON with 11 fields comes out
+            (rated power, manufacturer, serial number, manufacturing date, fuse link,
+            primary and secondary voltages, phases, self-protection, asset tag,
+            registration ID).</p>
+
+          <h4>Architecture</h4>
+          <p class="text-justify">Dedicated server: another PC with an
+            <strong>RTX 5070 12 GB</strong>, Ubuntu 24.04, CUDA 12.8. The pipeline has
+            <strong>two main stages</strong> and two auxiliary ones:</p>
+
+<pre>
+nameplate ─▶ YOLO Stage 0 ─▶ Stage 1 (vision) ─▶ Stage 2 (reasoning) ─▶ JSON
+  photo         crop the         Qwen3.5-VLM         qwen2.5:14b           ▲
+ (SMB or       nameplate         9B (llama.cpp)     (Ollama)               │
+  base64           │                :8090            :11434                │
+  upload)          │                                    │                  │
+                   ▼                                    ▼                  │
+             YOLO Stage 3 ◀─────── audit ──────────────┘                   │
+              (revalidates detected classes)                               │
+                                                                           │
+                                  OCR × records cross-check ───────────────┘
+</pre>
+
+          <ul>
+            <li><strong>Stage 0 (YOLO)</strong> &mdash; detects the
+              <code>placa_transformador</code> bounding box, crops with 10% padding
+              and passes only the nameplate region to the VLM at high resolution.
+              Fallback: resize to 1600&nbsp;px if YOLO fails.</li>
+            <li><strong>Stage 1 (vision)</strong> &mdash; Qwen3.5-VLM 9B via llama.cpp
+              extracts <em>all</em> visible text from the cropped image.</li>
+            <li><strong>Stage 2 (reasoning)</strong> &mdash; qwen2.5:14b via Ollama
+              receives the raw text and returns JSON with 11 validated fields.</li>
+            <li><strong>Stage 3 (YOLO)</strong> &mdash; post-Stage 2 audit: if
+              manufacturer was extracted but YOLO didn't see any
+              <code>placa_identificacao</code>, mark <code>_needs_review=True</code>
+              for human review.</li>
+          </ul>
+
+          <h4>Why two stages and not a single model</h4>
+          <p class="text-justify">I tested seven vision models (glm-ocr, qwen2.5vl,
+            Qianfan-OCR, Gemma 4 E4B, among others). <strong>Qwen3.5-VLM reads
+            well</strong>, but it's not reliable for emitting structured JSON
+            directly &mdash; it hallucinated fields, swapped values, dropped numbers.
+            Splitting pure OCR from structured reasoning gave
+            <strong>11/11 fields correct</strong> on the initial validation set
+            (Romagnole 112.5 kVA nameplates).</p>
+
+          <h4>Three weeks of evolution</h4>
+          <p class="text-justify">The pipeline went from zero (<strong>v1.0</strong>)
+            to <strong>v3.1 with 11/11 fields</strong> in a single session (April 6).
+            Over 18 days, it evolved through <strong>v3.2 &rarr; v3.7 &rarr; v4.0
+            &rarr; v4.1-dev</strong>, ending with <strong>176 automated tests</strong>
+            and <strong>&ge;85.3% field accuracy</strong> on a real feeder
+            (LDA NINA, 34 poles compared against records).</p>
+
+          <h4>Practical findings</h4>
+          <ul>
+            <li><strong>Python filters &gt; prompt rules.</strong> qwen2.5:14b doesn't
+              follow complex rules in natural language. Every time I was tempted to
+              add a rule to the prompt, regex in Python turned out to be more
+              reliable. Filters like <code>_classify_text</code> and
+              <code>_filter_ocr_for_stage2</code> separate nameplate text from meter
+              text, pole engravings, and telecom labels <em>before</em> Stage 2
+              ever sees them.</li>
+            <li><strong>YOLO as context, not just crop.</strong> The detected class
+              (<code>cls4=placa_identificacao</code> vs
+              <code>cls6=placa_transformador</code>) propagates a
+              <code>pole_id_context</code> that steers downstream filters. Detecting
+              is easy; using detection to change pipeline behavior is what generates
+              the gain.</li>
+            <li><strong>GPU semaphore.</strong> Stage 1 (~7 GB) + Stage 2 (~9 GB)
+              exceed the RTX 5070's 12 GB. Solution:
+              <code>threading.Semaphore(1)</code> in FastAPI, serializing stages
+              within a single request.</li>
+            <li><strong>banco_trafo via DB tags.</strong> Detecting transformer banks
+              by counting nameplates in the same YOLO frame doesn't work &mdash;
+              each transformer of the bank has its own photo. Solution: count
+              <em>distinct images</em> tagged <code>placa_transformador</code> in
+              the database. If &ge; 2 &rarr; bank confirmed, and the comparison
+              becomes <code>OCR_pwr &times; N</code> vs records (&plusmn;5%).</li>
+          </ul>
+
+          <h4>Integrating with the consumer application</h4>
+          <p class="text-justify">The REST API runs on <strong>FastAPI on port
+            8091</strong> with a Gemini-style envelope
+            (<code>contents[].parts[].inline_data</code>) so it's a drop-in for the
+            C# code that previously called Google. The application triggers it via
+            two new schedule types in the existing scheduler:</p>
+          <ul>
+            <li><strong>TRA</strong> &mdash; processes an entire feeder reading
+              images via SMB.</li>
+            <li><strong>ALT</strong> &mdash; sends images directly as base64 (batches
+              of up to 50 poles / 30 images per pole / 200 MB).</li>
+          </ul>
+          <p class="text-justify">There's also an OCR-only endpoint
+            <code>POST /api/v41/ocr/poste/{id}/texto</code> for cases where only the
+            raw text matters &mdash; used for <em>pole</em> data extraction
+            (separated from transformer data, with its own filters).</p>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>The Price of Context: Memory</h3>
+          <p class="text-justify">In the cloud, context appears free (Claude has 1&nbsp;M,
+            Gemini has 2&nbsp;M). Locally, context is VRAM. The equation is simple:</p>
+          <p class="text-center"><strong>VRAM = model weights + KV cache</strong></p>
+          <p class="text-justify">The KV cache grows linearly with context and batch
+            size. Each combination of model &times; ctx &times; quantization
+            &times; KV quant either fits on the card or it doesn't. In practice,
+            this is how it played out across the three projects:</p>
+
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Server</th>
+                <th>VRAM</th>
+                <th>Model</th>
+                <th>Quant</th>
+                <th>Ctx</th>
+                <th>KV</th>
+                <th>Note</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Ancalagon</td>
+                <td>16 GB</td>
+                <td>Qwen3-Coder 30B (MoE)</td>
+                <td>Q4_K_M</td>
+                <td>96K</td>
+                <td>q4_0</td>
+                <td>experts on CPU (<code>-ncmoe 16</code>)</td>
+              </tr>
+              <tr>
+                <td>Ancalagon</td>
+                <td>16 GB</td>
+                <td>Qwen3.6-27B</td>
+                <td>TQ3_4S</td>
+                <td>40K</td>
+                <td>q8_0</td>
+                <td>100% GPU, 96% util</td>
+              </tr>
+              <tr>
+                <td>Ancalagon</td>
+                <td>16 GB</td>
+                <td>Gemma 4 26B (MoE)</td>
+                <td>Q4_K_M</td>
+                <td>96K</td>
+                <td>q4_0</td>
+                <td><code>-ncmoe 8</code></td>
+              </tr>
+              <tr>
+                <td>OCR server</td>
+                <td>12 GB</td>
+                <td>Qwen3.5-VLM + qwen2.5</td>
+                <td>Q4 / Q5</td>
+                <td>n/a</td>
+                <td>&mdash;</td>
+                <td>serialized via semaphore</td>
+              </tr>
+              <tr>
+                <td>Mac (apfel)</td>
+                <td>unified</td>
+                <td>Apple Intelligence</td>
+                <td>&mdash;</td>
+                <td><strong>4096</strong></td>
+                <td>&mdash;</td>
+                <td>chat-only, no tools</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <p class="text-justify">For Claude Code (system prompt ~27K + tools), 4096
+            tokens doesn't work. But <strong>96K with a 30B MoE model on 16 GB of
+            consumer-grade VRAM</strong> works &mdash; and that was unthinkable two
+            years ago.</p>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>Lessons Learned</h3>
+          <ul>
+            <li><strong>KV quant in LM Studio requires a specific wrapper.</strong>
+              Without <code>{checked: true, value: &quot;q4_0&quot;}</code> the field
+              is silently ignored and the cache stays in f16. Discovered by measuring
+              VRAM before and after &mdash; nothing in the UI signals it.</li>
+            <li><strong>Asymmetric K and V break the coder.</strong>
+              <code>K=q8 / V=q4</code> &rarr; catastrophic CUDA fallback on Qwen3-Coder
+              (3 tok/s). Match them or don't use it.</li>
+            <li><strong>Blackwell GPU hang.</strong> The RTX 5070 dropped off the PCIe
+              bus under intermittent load. Five layers of protection: persistence mode
+              at boot, <code>pcie_aspm=off</code>, semaphore in FastAPI,
+              <code>GpuHangError</code> propagated to the client, and a drop-in to
+              stop concurrent processes before the main service comes up.</li>
+            <li><strong><code>gemini-1.5-pro</code> 404 overnight.</strong> No warning.
+              Emergency migration to <code>gemini-2.5-flash</code> in production.
+              A physical reminder of why having a local fallback is worth it.</li>
+            <li><strong><code>File.Exists()</code> silent in C#.</strong> For an
+              unreachable SMB path, it returns <code>false</code> without an exception.
+              Result: zero images sent to Gemini with no error message. Always check
+              network paths explicitly.</li>
+            <li><strong>JSON serializer mixing in C#.</strong>
+              <code>[JsonPropertyName]</code> (System.Text.Json) is ignored by
+              Newtonsoft.Json. Result: every field as &ldquo;NI&rdquo; with no error.
+              Always confirm which serializer actually performs deserialization.</li>
+            <li><strong>Python filters &gt; prompt rules.</strong> Mid-sized models
+              don't follow complex rules in natural language. When regex solves it,
+              regex solves it better.</li>
+            <li><strong>YOLO as context, not just crop.</strong> The detected class
+              propagates state to downstream filters and changes pipeline behavior.
+              Detecting is easy; using detection is what differentiates.</li>
+          </ul>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>Reflection</h3>
+          <p class="text-justify">The main gain isn't cost savings (although those are
+            real &mdash; zero marginal cost per token). It's
+            <strong>iterating without fear</strong>.</p>
+          <p class="text-justify">When every call costs, you prune experiments before
+            they start. Locally, you can run 4 A/B configurations on the same dataset
+            (25 poles &times; 4 = 100 inferences) in an afternoon without thinking
+            twice &mdash; which is exactly what I did to validate that the baseline
+            Qwen3.5-VLM + qwen2.5:14b beats the alternatives (Qwen3-VL-8B,
+            qwen3:14b with <code>/no_think</code>, qwen3:8b).</p>
+          <p class="text-justify">And when the model is yours, it doesn't disappear.
+            Today's Qwen3-Coder Q4_K_M will be running exactly the same in 2030, if
+            I want it to. That changes the time scale of projects: model dependencies
+            stop being operational risk.</p>
+          <p class="text-justify">The trade-off is real: context is finite. For tasks
+            that need over 100K tokens (large refactor, gigantic codebase), Claude
+            in the cloud still wins. But for 90% of what I do day to day &mdash;
+            focused features, iterative debugging, nameplate OCR, structured
+            validation &mdash; the local stack handles it. And it handles it without
+            the next plan renewal tightening limits coming back as a source of
+            friction.</p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <footer class="probootstrap-footer" role="contentinfo">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <p>Site template developed by <a href="https://uicookies.com">uiCookies</a>.</p>
+          <ul class="probootstrap-social">
+            <li><a href="https://www.youtube.com/@lucaspwo"><i class="icon-youtube"></i></a></li>
+            <li><a href="https://www.linkedin.com/in/lucaspwo"><i class="icon-linkedin"></i></a></li>
+            <li><a href="https://github.com/lucaspwo"><i class="icon-github2"></i></a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <div class="gototop js-top">
+    <a href="#" class="js-gotop"><i class="icon-chevron-thin-up"></i></a>
+  </div>
+
+
+  <script src="js/scripts.min.js"></script>
+  <script src="js/main.min.js"></script>
+  <script src="js/custom.js"></script>
+
+</body>
+</html>
