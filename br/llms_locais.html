@@ -251,6 +251,84 @@ curl http://100.91.10.22:1234 ────────────┘
           <hr>
         </div>
 
+        <div class="col-md-12">
+          <h3>O Cliente &mdash; local-claude</h3>
+          <p class="text-justify">Claude Code é um agente de codificação excelente, mas
+            só fala com a API da Anthropic. Eu queria o agente, não o vendor lock-in.
+            <strong>local-claude</strong> é um wrapper bash que injeta variáveis de
+            ambiente (<code>ANTHROPIC_BASE_URL</code>,
+            <code>CLAUDE_CONFIG_DIR=~/.claude-local</code> para isolar config) e roteia
+            o tráfego para um servidor OpenAI-compatível local ou remoto. O
+            <code>claude</code> original fica intocado.</p>
+
+          <h4>Cinco backends</h4>
+          <ul>
+            <li><strong>LM Studio</strong> &mdash; conecta ao servidor local</li>
+            <li><strong>llama.cpp local</strong> &mdash; sobe e mata um
+              <code>llama-server</code> automaticamente</li>
+            <li><strong>llama.cpp remoto via SSH</strong> &mdash; mesmo, mas via SSH
+              num host remoto (cenário Mac &rarr; Ancalagon)</li>
+            <li><strong><code>remote</code></strong> &mdash; conecta a um servidor já
+              em pé (ex.: o service do Ancalagon)</li>
+            <li><strong>Apple Intelligence</strong> via
+              <a href="https://github.com/Arthur-Ficial/apfel">apfel</a> &mdash; modelo
+              on-device do macOS Tahoe</li>
+          </ul>
+
+          <h4>Speculative decoding automático</h4>
+          <p class="text-justify">Quando há um modelo menor da mesma família no
+            diretório, o script ativa <strong>speculative decoding</strong>: um
+            &ldquo;draft&rdquo; pequeno gera tokens candidatos que o modelo grande
+            verifica em batch. Tokens aceitos são gratuitos; rejeitados são regerados
+            normalmente.</p>
+
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Plataforma (Qwen2.5-7B Q8_0 + 0.5B Q8_0 draft)</th>
+                <th>Sem draft</th>
+                <th>Com draft</th>
+                <th>Speedup</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Apple M4 Pro (24 GB)</td>
+                <td>29 t/s</td>
+                <td>57 t/s</td>
+                <td>~2&times;</td>
+              </tr>
+              <tr>
+                <td>RTX 4070 Ti SUPER (16 GB)</td>
+                <td>29 t/s</td>
+                <td><strong>177 t/s</strong></td>
+                <td><strong>~6&times;</strong></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <p class="text-justify"><em>Insight:</em> o menor draft vence. O draft de 3B é
+            mais lento que o de 1.5B apesar de ter taxa de aceitação maior &mdash; o
+            overhead de verificação domina.</p>
+
+          <h4>Apple Intelligence é caso especial</h4>
+          <p class="text-justify">A janela de contexto da Apple Intelligence é de
+            <strong>4096 tokens</strong>. O system prompt + ferramentas do Claude Code
+            sozinhos somam aproximadamente 27K tokens &mdash; sete vezes mais do que
+            cabe. O backend roda em <strong>chat-only mode</strong>
+            (<code>--bare --tools ""</code>): dá para conversar, mas o agente não pode
+            usar ferramentas (editar arquivos, rodar comandos). É um lembrete físico de
+            que <em>contexto = memória</em>.</p>
+
+          <h4>Integração com o servidor</h4>
+          <p class="text-justify">No Mac, o alias <code>srl-coder</code> conecta direto
+            ao service que está no ar (<code>specstory run claude -c &quot;local-claude
+            --backend remote --port 1234&quot;</code>). Zero gerenciamento de processo
+            no cliente: o service do Ancalagon é a infraestrutura, o local-claude é só
+            a ponte.</p>
+          <hr>
+        </div>
+
         <!-- SECTIONS -->
 
       </div>
