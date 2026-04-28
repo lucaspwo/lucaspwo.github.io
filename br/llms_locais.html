@@ -69,7 +69,7 @@
       <div class="row">
         <div class="col-md-8 col-md-offset-2 mb40 text-center">
           <h2>Aventuras com LLM local</h2>
-          <p>Publicado em 27 de abril de 2026</p>
+          <p>Publicado em 28 de abril de 2026</p>
         </div>
 
         <div class="col-md-12">
@@ -151,6 +151,103 @@
               <p>Chamadas a APIs externas em produção</p>
             </div>
           </div>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>O Servidor &mdash; ancalagon-llm</h3>
+          <p class="text-justify">A primeira peça do stack é o servidor. O hardware é um PC
+            <strong>dual-boot</strong> (Windows + Ubuntu Server 24.04) com Ryzen 7600X,
+            32 GB de RAM e <strong>RTX 4070 Ti SUPER 16 GB</strong>. O Mac acessa via
+            <strong>Tailscale</strong> em <code>100.91.10.22</code>.</p>
+
+          <h4>Por que sair do LM Studio</h4>
+          <p class="text-justify">O LM Studio era prático mas estava deixando metade dos
+            tokens na mesa. Durante inferência, a GPU ficava em <strong>30&ndash;34% de
+            utilização</strong>, consumindo aproximadamente 70&nbsp;W de um TGP de 285&nbsp;W.
+            Dois gargalos foram identificados:</p>
+          <ul>
+            <li><strong>Offload genérico não funciona para MoE.</strong> O LM Studio
+              divide &ldquo;N% das camadas na GPU&rdquo;. Para modelos
+              <em>Mixture-of-Experts</em>, o que importa é colocar attention/norm na GPU
+              e os experts na CPU. A flag <code>-n-cpu-moe</code> do llama.cpp faz
+              exatamente isso. O LM Studio não a expõe.</li>
+            <li><strong>Modelo maior que VRAM.</strong> O Qwen3.6-27B Q4_K_M ocupa 17 GB
+              &mdash; não cabe em 16 GB. Com o quant <strong>TQ3_4S</strong> (3-bit
+              ternary, fork <code>turbo-tan/llama.cpp-tq3</code>) cai para 13 GB e cabe
+              100% em GPU.</li>
+          </ul>
+
+          <h4>Ganhos medidos</h4>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Configuração</th>
+                <th>GPU util</th>
+                <th>Power</th>
+                <th>tok/s gen</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>LM Studio &mdash; qwen3-coder Q4_K_M</td>
+                <td>30%</td>
+                <td>67&nbsp;W</td>
+                <td>64.5</td>
+              </tr>
+              <tr>
+                <td>llama.cpp upstream &mdash; coder <code>-ncmoe&nbsp;10</code></td>
+                <td>36%</td>
+                <td>101&nbsp;W</td>
+                <td><strong>81.5</strong></td>
+              </tr>
+              <tr>
+                <td>LM Studio &mdash; Qwen3.6-27B Q4_K_M</td>
+                <td>34%</td>
+                <td>94&nbsp;W</td>
+                <td>13.7</td>
+              </tr>
+              <tr>
+                <td>llama.cpp TQ3 fork &mdash; Qwen3.6-27B-TQ3_4S</td>
+                <td><strong>96%</strong></td>
+                <td><strong>292&nbsp;W</strong></td>
+                <td><strong>36.8</strong></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h4>Três presets, uma porta</h4>
+          <p class="text-justify">O servidor expõe três modelos via systemd, cada um em
+            um service com <code>Conflicts=</code> declarado &mdash; apenas um sobe por
+            vez, e o systemd para o anterior automaticamente:</p>
+          <ul>
+            <li><strong>Qwen3-Coder 30B</strong> &mdash; codificação (MoE com flag
+              <code>--n-cpu-moe 16</code>, ctx 96K)</li>
+            <li><strong>Qwen3.6-27B TQ3_4S</strong> &mdash; raciocínio/thinking (100%
+              GPU, ctx 40K)</li>
+            <li><strong>Gemma 4 26B-A4B</strong> &mdash; uso geral (MoE com
+              <code>--n-cpu-moe 8</code>, ctx 96K)</li>
+          </ul>
+          <p class="text-justify">Todos na mesma porta <strong>1234</strong> (idêntica à
+            do LM Studio) &mdash; clientes existentes não precisam mudar URL. Um wrapper
+            <code>lmswitch</code> alterna entre services com health-poll. Aliases SSH no
+            Mac (<code>llcoder</code>, <code>llq36</code>, <code>llgemma4</code>,
+            <code>lloff</code>) tornam o controle remoto trivial.</p>
+
+          <h4>Fluxo de uso</h4>
+<pre>
+Glaurung (Mac)                    Ancalagon (Ubuntu)
+                                  100.91.10.22 / :1234
+aliases:                          systemd --user:
+  llcoder  ──ssh──&gt;                 llama-coder.service ──┐
+  llq36    ──ssh──&gt;                 llama-qwen36.service ─┤ Conflicts=
+  llgemma4 ──ssh──&gt;                 llama-gemma4.service ─┘ (apenas um up)
+  lloff    ──ssh──&gt;                       │
+                                          ▼
+                                   :1234 (OpenAI-compat API)
+                                          ▲
+curl http://100.91.10.22:1234 ────────────┘
+</pre>
           <hr>
         </div>
 
