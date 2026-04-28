@@ -161,7 +161,7 @@
             hardware is a <strong>dual-boot</strong> PC (Windows + Ubuntu Server 24.04)
             with a Ryzen 7600X, 32 GB of RAM, and an
             <strong>RTX 4070 Ti SUPER 16 GB</strong>. The Mac connects via
-            <strong>Tailscale</strong> at <code>100.91.10.22</code>.</p>
+            <strong>Tailscale</strong> at <code>100.64.0.10</code>.</p>
 
           <h4>Why leave LM Studio</h4>
           <p class="text-justify">LM Studio was convenient but leaving roughly half of
@@ -239,7 +239,7 @@
           <h4>Usage flow</h4>
 <pre>
 Glaurung (Mac)                    Ancalagon (Ubuntu)
-                                  100.91.10.22 / :1234
+                                  100.64.0.10 / :1234
 aliases:                          systemd --user:
   llcoder  ──ssh──&gt;                 llama-coder.service ──┐
   llq36    ──ssh──&gt;                 llama-qwen36.service ─┤ Conflicts=
@@ -248,7 +248,7 @@ aliases:                          systemd --user:
                                           ▼
                                    :1234 (OpenAI-compat API)
                                           ▲
-curl http://100.91.10.22:1234 ────────────┘
+curl http://100.64.0.10:1234 ────────────┘
 </pre>
           <hr>
         </div>
@@ -389,8 +389,8 @@ nameplate ─▶ YOLO Stage 0 ─▶ Stage 1 (vision) ─▶ Stage 2 (reasoning)
             to <strong>v3.1 with 11/11 fields</strong> in a single session (April 6).
             Over 18 days, it evolved through <strong>v3.2 &rarr; v3.7 &rarr; v4.0
             &rarr; v4.1-dev</strong>, ending with <strong>176 automated tests</strong>
-            and <strong>&ge;85.3% field accuracy</strong> on a real feeder
-            (LDA NINA, 34 poles compared against records).</p>
+            and <strong>&ge;85.3% field accuracy</strong> on an electrical
+            grid feeder (34 poles compared against records).</p>
 
           <h4>Practical findings</h4>
           <ul>

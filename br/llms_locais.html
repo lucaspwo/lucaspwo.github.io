@@ -159,7 +159,7 @@
           <p class="text-justify">A primeira peça do stack é o servidor. O hardware é um PC
             <strong>dual-boot</strong> (Windows + Ubuntu Server 24.04) com Ryzen 7600X,
             32 GB de RAM e <strong>RTX 4070 Ti SUPER 16 GB</strong>. O Mac acessa via
-            <strong>Tailscale</strong> em <code>100.91.10.22</code>.</p>
+            <strong>Tailscale</strong> em <code>100.64.0.10</code>.</p>
 
           <h4>Por que sair do LM Studio</h4>
           <p class="text-justify">O LM Studio era prático mas estava deixando metade dos
@@ -237,7 +237,7 @@
           <h4>Fluxo de uso</h4>
 <pre>
 Glaurung (Mac)                    Ancalagon (Ubuntu)
-                                  100.91.10.22 / :1234
+                                  100.64.0.10 / :1234
 aliases:                          systemd --user:
   llcoder  ──ssh──&gt;                 llama-coder.service ──┐
   llq36    ──ssh──&gt;                 llama-qwen36.service ─┤ Conflicts=
@@ -246,7 +246,7 @@ aliases:                          systemd --user:
                                           ▼
                                    :1234 (OpenAI-compat API)
                                           ▲
-curl http://100.91.10.22:1234 ────────────┘
+curl http://100.64.0.10:1234 ────────────┘
 </pre>
           <hr>
         </div>
@@ -385,8 +385,8 @@ foto de placa ─▶ YOLO Stage 0 ─▶ Stage 1 (visão) ─▶ Stage 2 (racioc
             <strong>v3.1 com 11/11 campos</strong> em uma única sessão (06 de abril).
             Em 18 dias, evoluiu por <strong>v3.2 &rarr; v3.7 &rarr; v4.0 &rarr;
             v4.1-dev</strong>, terminando com <strong>176 testes automatizados</strong>
-            e <strong>&ge;85.3% de acurácia em campo</strong> em um alimentador real
-            (LDA NINA, 34 postes comparados com cadastro).</p>
+            e <strong>&ge;85.3% de acurácia em campo</strong> em um alimentador
+            de rede elétrica (34 postes comparados com cadastro).</p>
 
           <h4>Descobertas práticas</h4>
           <ul>
