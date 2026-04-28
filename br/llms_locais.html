@@ -433,7 +433,141 @@ foto de placa ─▶ YOLO Stage 0 ─▶ Stage 1 (visão) ─▶ Stage 2 (racioc
           <hr>
         </div>
 
-        <!-- SECTIONS -->
+        <div class="col-md-12">
+          <h3>O Preço do Contexto: Memória</h3>
+          <p class="text-justify">Na nuvem, contexto parece grátis (Claude tem 1&nbsp;M,
+            Gemini tem 2&nbsp;M). Localmente, contexto é VRAM. A equação é simples:</p>
+          <p class="text-center"><strong>VRAM = pesos do modelo + KV cache</strong></p>
+          <p class="text-justify">O KV cache cresce linearmente com contexto e batch.
+            Cada combinação modelo &times; ctx &times; quantização &times; KV quant
+            ou cabe ou não cabe na placa. Na prática, foi assim nos três projetos:</p>
+
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Servidor</th>
+                <th>VRAM</th>
+                <th>Modelo</th>
+                <th>Quant</th>
+                <th>Ctx</th>
+                <th>KV</th>
+                <th>Observação</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Ancalagon</td>
+                <td>16 GB</td>
+                <td>Qwen3-Coder 30B (MoE)</td>
+                <td>Q4_K_M</td>
+                <td>96K</td>
+                <td>q4_0</td>
+                <td>experts na CPU (<code>-ncmoe 16</code>)</td>
+              </tr>
+              <tr>
+                <td>Ancalagon</td>
+                <td>16 GB</td>
+                <td>Qwen3.6-27B</td>
+                <td>TQ3_4S</td>
+                <td>40K</td>
+                <td>q8_0</td>
+                <td>100% GPU, 96% util</td>
+              </tr>
+              <tr>
+                <td>Ancalagon</td>
+                <td>16 GB</td>
+                <td>Gemma 4 26B (MoE)</td>
+                <td>Q4_K_M</td>
+                <td>96K</td>
+                <td>q4_0</td>
+                <td><code>-ncmoe 8</code></td>
+              </tr>
+              <tr>
+                <td>Servidor OCR</td>
+                <td>12 GB</td>
+                <td>Qwen3.5-VLM + qwen2.5</td>
+                <td>Q4 / Q5</td>
+                <td>n/a</td>
+                <td>&mdash;</td>
+                <td>serializado por semáforo</td>
+              </tr>
+              <tr>
+                <td>Mac (apfel)</td>
+                <td>unified</td>
+                <td>Apple Intelligence</td>
+                <td>&mdash;</td>
+                <td><strong>4096</strong></td>
+                <td>&mdash;</td>
+                <td>chat-only, sem ferramentas</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <p class="text-justify">Para Claude Code (system prompt ~27K + ferramentas),
+            4096 tokens não funciona. Mas <strong>96K com modelo MoE de 30B em 16 GB
+            de VRAM consumer-grade</strong> funciona &mdash; e era impensável dois anos
+            atrás.</p>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>Lições Aprendidas</h3>
+          <ul>
+            <li><strong>KV quant no LM Studio exige wrapper específico.</strong> Sem
+              <code>{checked: true, value: &quot;q4_0&quot;}</code> o campo é
+              silenciosamente ignorado e o cache fica em f16. Descoberto medindo VRAM
+              antes e depois &mdash; nada na UI sinaliza.</li>
+            <li><strong>K e V assimétricos quebram o coder.</strong>
+              <code>K=q8 / V=q4</code> &rarr; fallback CUDA catastrófico no Qwen3-Coder
+              (3 tok/s). Iguale ou não use.</li>
+            <li><strong>GPU hang na Blackwell.</strong> A RTX 5070 saiu do barramento
+              PCIe sob carga intermitente. Cinco camadas de proteção: persistence mode
+              no boot, <code>pcie_aspm=off</code>, semáforo no FastAPI,
+              <code>GpuHangError</code> propagado para o cliente, e drop-in para parar
+              processos concorrentes antes de subir o serviço principal.</li>
+            <li><strong><code>gemini-1.5-pro</code> 404 do dia para a noite.</strong>
+              Sem aviso. Migração emergencial para <code>gemini-2.5-flash</code> em
+              produção. Lembrete físico de por que vale a pena ter alternativa
+              local.</li>
+            <li><strong><code>File.Exists()</code> silencioso em C#.</strong> Para path
+              SMB inacessível, retorna <code>false</code> sem exceção. Resultado: zero
+              imagens enviadas ao Gemini sem nenhuma mensagem de erro. Verifique acesso
+              explicitamente em paths de rede.</li>
+            <li><strong>Mistura de serializadores JSON em C#.</strong>
+              <code>[JsonPropertyName]</code> (System.Text.Json) é ignorado pelo
+              Newtonsoft.Json. Resultado: campos todos &ldquo;NI&rdquo; sem erro.
+              Confira sempre qual serializador faz a desserialização de fato.</li>
+            <li><strong>Filtros Python &gt; regras no prompt.</strong> Modelos de porte
+              médio não seguem regras complexas em linguagem natural. Quando regex
+              resolve, regex resolve melhor.</li>
+            <li><strong>YOLO como contexto, não só crop.</strong> A classe detectada
+              propaga estado para filtros downstream e muda comportamento do pipeline.
+              Detectar é fácil; usar a detecção é o que diferencia.</li>
+          </ul>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>Reflexão</h3>
+          <p class="text-justify">O ganho principal não é economia (embora seja real
+            &mdash; zero custo por token marginal). É <strong>iterar sem medo</strong>.</p>
+          <p class="text-justify">Quando cada chamada custa, você poda experimentos
+            antes deles começarem. Localmente, dá para rodar 4 configurações A/B no
+            mesmo dataset (25 postes &times; 4 = 100 inferências) numa tarde sem pensar
+            duas vezes &mdash; foi exatamente o que fiz para validar que o baseline
+            Qwen3.5-VLM + qwen2.5:14b vence as alternativas (Qwen3-VL-8B, qwen3:14b
+            com <code>/no_think</code>, qwen3:8b).</p>
+          <p class="text-justify">E quando o modelo é seu, ele não some. O Qwen3-Coder
+            Q4_K_M de hoje vai estar rodando igualzinho em 2030, se eu quiser. Isso
+            muda a escala de tempo dos projetos: dependências de modelo deixam de ser
+            risco operacional.</p>
+          <p class="text-justify">O trade-off é real: contexto é finito. Para tarefas
+            que exigem mais de 100K tokens (refator grande, base de código gigante),
+            Claude na nuvem ainda ganha. Mas para 90% do que faço no dia a dia
+            &mdash; feature focada, debug iterativo, OCR de placa, validação
+            estruturada &mdash; o stack local resolve. E resolve sem que a próxima
+            renovação de plano apertando os limites volte a ser uma fricção.</p>
+        </div>
 
       </div>
     </div>
