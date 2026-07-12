@@ -192,8 +192,231 @@ lspci -nn | grep -iE "VGA|Display|Audio"
           <hr>
         </div>
 
+        <div class="col-md-12">
+          <h3>Passo 1 &mdash; IOMMU + módulos vfio (host)</h3>
+          <p class="text-justify">Em <code>/etc/default/grub</code>, na linha
+            <code>GRUB_CMDLINE_LINUX_DEFAULT</code>, adicione
+            <code>intel_iommu=on iommu=pt</code>. Em <code>/etc/modules</code>,
+            adicione <code>vfio</code>, <code>vfio_iommu_type1</code> e
+            <code>vfio_pci</code>.</p>
+
+<pre>
+# /etc/default/grub
+GRUB_CMDLINE_LINUX_DEFAULT="... intel_iommu=on iommu=pt"
+
+# /etc/modules
+vfio
+vfio_iommu_type1
+vfio_pci
+</pre>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>Passo 2 &mdash; <code>allow_unsafe_interrupts</code> (obrigatório no Mac Pro 6,1)</h3>
+
+<pre>
+echo "options vfio_iommu_type1 allow_unsafe_interrupts=1" &gt; /etc/modprobe.d/iommu_unsafe_interrupts.conf
+</pre>
+
+          <p class="text-justify">Sem isso o vfio recusa
+            (<code>Operation not permitted</code>). <strong>Implicação de
+            segurança:</strong> uma VM maliciosa poderia, em teoria, injetar
+            interrupções no host &mdash; aceitável num ambiente
+            single-user/confiável; é o único caminho neste hardware (que não
+            tem interrupt remapping).</p>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>Passo 3 &mdash; Early-bind: a peça-chave</h3>
+          <p class="text-justify">Prenda as GPUs ao <code>vfio-pci</code>
+            <strong>antes</strong> do <code>amdgpu</code> carregar, senão o
+            amdgpu inicializa a GPU no boot, ela fica &ldquo;suja&rdquo;, e o
+            passthrough falha (ou trava o host).</p>
+
+          <p class="text-justify">No <code>GRUB_CMDLINE_LINUX_DEFAULT</code>
+            adicione (use os IDs do seu hardware):</p>
+
+<pre>
+vfio-pci.ids=1002:679e,1002:aaa0 video=efifb:off
+</pre>
+
+          <p class="text-justify">E garanta a ordem dos drivers:</p>
+
+<pre>
+printf 'softdep amdgpu pre: vfio-pci\nsoftdep radeon pre: vfio-pci\n' &gt; /etc/modprobe.d/vfio.conf
+</pre>
+
+          <p class="text-justify">Aplique e reinicie o host:</p>
+
+<pre>
+update-grub &amp;&amp; update-initramfs -u -k all &amp;&amp; reboot
+</pre>
+
+          <p class="text-justify">Após o reboot, <strong>valide</strong>
+            (todas devem estar em <code>vfio-pci</code>, e o amdgpu NÃO deve
+            ter inicializado nenhuma):</p>
+
+<pre>
+for d in 0000:06:00.0 0000:06:00.1 0000:02:00.0 0000:02:00.1; do echo "$d -&gt; $(basename "$(readlink /sys/bus/pci/devices/$d/driver)")"; done
+dmesg | grep -c "amdgpu .*initializing kernel"   # deve ser 0
+</pre>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>Passo 4 &mdash; Extrair a vBIOS real da GPU</h3>
+          <p class="text-justify">As D500 de Mac não expõem expansion ROM
+            x86, mas a vBIOS (atombios) está acessível pelo host. O jeito
+            mais fácil é capturá-la <strong>antes</strong> do early-bind
+            (com a GPU ainda no <code>amdgpu</code>):</p>
+
+<pre>
+cat /sys/kernel/debug/dri/0000:06:00.0/amdgpu_vbios &gt; /usr/share/kvm/d500.rom
+# valide: ~64KB, header 55aa, contém "ATOMBIOSBK-AMD ... AMD_TAHITI_LE"
+od -A x -t x1 -N 4 /usr/share/kvm/d500.rom   # 55 aa ...
+</pre>
+
+          <p class="text-justify">Alternativa (sempre disponível, mesmo
+            pós early-bind): a tabela ACPI <strong>VFCT</strong>
+            (<code>/sys/firmware/acpi/tables/VFCT</code> contém a vBIOS +
+            header). <strong>Guarde cópias</strong> &mdash; é
+            insubstituível.</p>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>Passo 5 &mdash; Configurar a VM (sem <code>x-vga</code>, com <code>romfile</code>, <code>vga: none</code>)</h3>
+
+<pre>
+qm set &lt;VMID&gt; -hostpci0 0000:06:00,pcie=1,romfile=d500.rom -vga none
+qm set &lt;VMID&gt; -cpu host        # p/ Windows, usar: -cpu host,hidden=1  (anti Code 43)
+</pre>
+
+          <ul>
+            <li><strong>Não</strong> use <code>x-vga=1</code> (o OVMF não
+              consegue POST da vBIOS de Mac &rarr; sem sinal).</li>
+            <li><code>vga: none</code> faz a GPU física ser o único
+              display. A VM deve ser <strong>OVMF/UEFI + q35</strong>.</li>
+          </ul>
+
+          <p class="text-justify">⚠️ Em <code>vga: none</code> o console
+            SPICE/noVNC do Proxmox <strong>não conecta</strong> (não há
+            display virtual). Para acesso remoto/instalação, use
+            <code>vga: std</code> temporariamente; troque para
+            <code>none</code> só no modo &ldquo;tela física&rdquo;.</p>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>Passo 6 &mdash; Forçar o driver <code>amdgpu</code> dentro da VM</h3>
+          <p class="text-justify">O <code>radeon</code> legado carrega mas
+            <strong>não faz scanout</strong> na Tahiti &rarr; tela preta.
+            Force o <code>amdgpu</code>:</p>
+
+          <p class="text-justify"><strong>Distro tradicional</strong> (ex.:
+            Linux Mint, Ubuntu, Debian) &mdash; em
+            <code>/etc/default/grub</code>:</p>
+
+<pre>
+radeon.si_support=0 amdgpu.si_support=1 amdgpu.cik_support=1
+</pre>
+
+          <p class="text-justify">Depois <code>update-grub</code> e
+            reiniciar a VM. (Em Mint/Ubuntu o
+            <code>grub.d/50_linuxmint.cfg</code> também é lido; rode
+            <code>update-grub</code> de verdade &mdash; só o
+            <code>/etc/default/grub.d/</code> próprio não basta.)</p>
+
+          <p class="text-justify"><strong>Fedora Atomic</strong> (ex.:
+            Bazzite, Silverblue/Kinoite) &mdash; via kargs:</p>
+
+<pre>
+sudo rpm-ostree kargs --append-if-missing=radeon.si_support=0 --append-if-missing=amdgpu.si_support=1 \
+  --append-if-missing=amdgpu.cik_support=1 --append-if-missing=amdgpu.runpm=0
+</pre>
+
+          <p class="text-justify">Depois reiniciar a VM. (O
+            <code>amdgpu.runpm=0</code> é a mitigação anti-freeze &mdash;
+            ver abaixo.)</p>
+
+          <p class="text-justify">⚠️ <strong>Kernel 7.0 (Bazzite 44) NÃO
+            dispensa os <code>si_support</code></strong> (corrige uma
+            observação anterior): a impressão de que &ldquo;dispensava&rdquo;
+            foi um <strong>boot sortudo</strong> &mdash; há uma
+            <strong>race <code>radeon</code>&times;<code>amdgpu</code></strong>
+            e às vezes <strong>nenhum</strong> pega a Tahiti
+            (<code>card0</code> fica sem driver &rarr; &ldquo;sem
+            sinal&rdquo;). Mantenha os 3 <code>si_support</code>.
+            <strong>Upgrades de imagem Atomic resetam os kargs
+            custom</strong> &rarr; reaplique após um upgrade grande.</p>
+
+          <p class="text-justify">⚠️ <strong><code>amdgpu.runpm=0</code> é
+            praticamente obrigatório</strong> no kernel 7.0/<code>-ogc</code>
+            do Bazzite para o passthrough não <strong>travar o HOST
+            inteiro</strong>: sem ele, o runtime PM (estado BACO) da GPU no
+            guest trava o PCIe do host num <strong>deadlock silencioso</strong>
+            (sem AER/MCE; só power cycle recupera) &mdash; compatível com o
+            <strong>CVE-2026-53293</strong> (deadlock no <code>amdgpu</code>,
+            GCN 1.0+, divulgado jun/2026). Com <code>runpm=0</code> o reset
+            fica limpo (<code>reset done</code>) e o host estável (validado:
+            boot físico + reboot da VM + uso, sem freeze).</p>
+
+          <p class="text-justify">Valide na VM:
+            <code>cat /sys/bus/pci/devices/0000:01:00.0/uevent | grep DRIVER</code>
+            &rarr; <code>DRIVER=amdgpu</code>.</p>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>Passo 7 &mdash; Resolução, teclado/mouse e áudio</h3>
+          <p class="text-justify"><strong>Resolução:</strong> o
+            <strong>HDMI do Mac Pro é HDMI 1.4</strong> &rarr;
+            <strong>não exibe 4K@60</strong> (preto com sinal). No Xorg
+            (Mint), force 1080p ou 1440p (modeline +
+            <code>modesetting</code>). No <strong>Wayland/KDE
+            (Bazzite)</strong> a resolução é negociada automaticamente
+            &mdash; não precisa forçar.</p>
+
+          <p class="text-justify"><strong>Teclado/mouse:</strong> USB
+            passthrough &mdash; pegue os IDs com <code>lsusb</code> e
+            passe cada dispositivo:</p>
+
+<pre>
+qm set &lt;VMID&gt; -usb0 host=VVVV:PPPP -usb1 host=WWWW:QQQQ
+</pre>
+
+          <p class="text-justify">Funciona a quente (sem reiniciar a
+            VM).</p>
+
+          <p class="text-justify"><strong>Áudio:</strong> se o monitor
+            não tem falantes, o áudio HDMI não serve. Passe o
+            <strong>codec analógico do Mac</strong> (no Mac Pro 6,1 é um
+            Cirrus CS4208, <code>0000:00:1b.0</code>) para a VM:</p>
+
+<pre>
+qm set &lt;VMID&gt; -hostpci1 0000:00:1b.0,pcie=1
+</pre>
+
+          <p class="text-justify">(vira &ldquo;CS4208 Analog&rdquo; dentro
+            da VM). O Mac Pro 6,1 tem <strong>duas saídas analógicas
+            traseiras</strong>: <em>fone de ouvido</em> (com jack detection)
+            e <em>saída de linha</em> (combo óptico &mdash; a luzinha
+            vermelha é o TOSLINK, inofensiva). Ligue o fone na
+            <strong>saída de fone</strong> e selecione a porta
+            <strong>&ldquo;Fone de ouvido&rdquo;</strong> no mixer
+            (KDE/PipeWire) &mdash; selecionar &ldquo;Saída de linha&rdquo;
+            usa outro caminho do codec e fica mudo. Sintoma do caminho
+            errado: o <code>Headphone</code> DAC (nó <code>0x02</code>)
+            fica em volume <code>0x00</code> e o pino <code>0x10</code>
+            mutado; ao selecionar a porta certa o WirePlumber sobe o
+            volume de hardware e desmuta.</p>
+          <hr>
+        </div>
+
         <!-- SECTIONS -->
-        <!-- Tasks 4-5 continuam a partir daqui (seção 4 em diante) -->
+        <!-- Task 5 continua a partir daqui (armadilhas, Windows, reversão) -->
 
       </div>
     </div>
