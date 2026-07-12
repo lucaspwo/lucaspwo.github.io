@@ -415,8 +415,73 @@ qm set &lt;VMID&gt; -hostpci1 0000:00:1b.0,pcie=1
           <hr>
         </div>
 
+        <div class="col-md-12">
+          <h3>Armadilhas (aprendidas na marra)</h3>
+          <ul>
+            <li>⚠️ <strong>Nunca reconecte o cabo do monitor com a VM
+              ligada.</strong> O hotplug do display numa GPU AMD passada
+              <strong>trava o kernel do host inteiro</strong> (freeze
+              vfio/PCIe) &mdash; exige power cycle. Desligue a VM antes de
+              mexer no cabo.</li>
+            <li>⚠️ Se o passthrough travar o host de forma recorrente,
+              faça um <strong>power cycle completo</strong> (energia
+              cortada ~1 min) &mdash; reseta o estado de hardware da GPU,
+              o que um reboot de kernel não desfaz.</li>
+            <li>Após reboots, em redes instáveis o <strong>DHCP de
+              containers/VMs pode falhar</strong> (sem rede/DNS) &rarr;
+              renove com <code>dhclient -1 eth0</code>.</li>
+            <li>O <strong>guest agent de distros Atomic (Bazzite) é
+              confinado</strong> &mdash; não roda binários privilegiados
+              via <code>qm guest exec</code>. Escreva um script em
+              <code>/tmp</code> e rode-o pelo terminal da VM.</li>
+          </ul>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>Windows 10/11 (parcial)</h3>
+          <p class="text-justify">A GPU <strong>passa sem Code 43</strong>
+            usando <code>-cpu host,hidden=1</code> + o <code>romfile</code>.
+            A placa aparece como &ldquo;AMD Radeon HD 7800 Series&rdquo;
+            funcionando no Gerenciador de Dispositivos, com o driver
+            <strong>Adrenalin</strong> legacy (21.5.2 ou 22.6.1).</p>
+
+          <p class="text-justify"><strong>Porém o display físico não
+            sai:</strong> com <code>vga: none</code>/<code>x-vga</code> o
+            OVMF não consegue fazer POST da vBIOS de Mac (sem sinal), e
+            com display virtual o Windows não detecta o monitor na GPU
+            secundária. O Linux funciona porque o driver <strong>KMS
+            assume a GPU no boot</strong>; o Windows depende do
+            <strong>POST do firmware</strong>. <strong>Não resolvido
+            aqui.</strong></p>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>Reversão</h3>
+          <p class="text-justify">Para voltar o host ao estado padrão:
+            remova <code>vfio-pci.ids</code>, <code>intel_iommu</code> e
+            <code>video=efifb:off</code> do cmdline, apague
+            <code>/etc/modprobe.d/{vfio,iommu_unsafe_interrupts}.conf</code>
+            e os módulos vfio de <code>/etc/modules</code>, remova
+            <code>hostpci*</code>/<code>usb*</code> da VM e volte
+            <code>vga: std</code>. Depois:</p>
+
+<pre>
+update-grub &amp;&amp; update-initramfs -u -k all &amp;&amp; reboot
+</pre>
+
+          <p class="text-justify">O que fica validado com este guia: uma
+            <strong>saída de vídeo física</strong>, numa VM Linux, com uma
+            <strong>AMD FirePro D500</strong> passada de um
+            <strong>Mac Pro 6,1</strong>. Confirme sempre os device-IDs e
+            slots PCI do seu próprio hardware com <code>lspci -nn</code>
+            antes de reproduzir os passos.</p>
+          <hr>
+        </div>
+
         <!-- SECTIONS -->
-        <!-- Task 5 continua a partir daqui (armadilhas, Windows, reversão) -->
+        <!-- Task 6 continua a partir daqui (cheat sheet / Seção 8) -->
 
       </div>
     </div>
