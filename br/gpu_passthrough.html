@@ -480,8 +480,82 @@ update-grub &amp;&amp; update-initramfs -u -k all &amp;&amp; reboot
           <hr>
         </div>
 
-        <!-- SECTIONS -->
-        <!-- Task 6 continua a partir daqui (cheat sheet / Seção 8) -->
+        <div class="col-md-12">
+          <h3>Cheat sheet &mdash; comandos por local</h3>
+          <p class="text-justify">Resumo copia-e-cola dos comandos já
+            apresentados nas seções acima, agrupados por onde cada um roda.
+            Os device-IDs e slots PCI são do hardware de referência deste
+            guia &mdash; confirme os seus com <code>lspci -nn</code> antes
+            de copiar.</p>
+
+          <h4>1. Host &mdash; <code>/etc/default/grub</code></h4>
+<pre>
+GRUB_CMDLINE_LINUX_DEFAULT="... intel_iommu=on iommu=pt vfio-pci.ids=1002:679e,1002:aaa0 video=efifb:off"
+</pre>
+
+          <h4>2. Host &mdash; <code>/etc/modules</code></h4>
+<pre>
+vfio
+vfio_iommu_type1
+vfio_pci
+</pre>
+
+          <h4>3. Host &mdash; <code>/etc/modprobe.d/</code></h4>
+<pre>
+# /etc/modprobe.d/iommu_unsafe_interrupts.conf
+echo "options vfio_iommu_type1 allow_unsafe_interrupts=1" &gt; /etc/modprobe.d/iommu_unsafe_interrupts.conf
+
+# /etc/modprobe.d/vfio.conf
+printf 'softdep amdgpu pre: vfio-pci\nsoftdep radeon pre: vfio-pci\n' &gt; /etc/modprobe.d/vfio.conf
+</pre>
+
+          <h4>4. Host &mdash; shell (aplicar + extrair vBIOS + validar)</h4>
+<pre>
+# aplicar
+update-grub &amp;&amp; update-initramfs -u -k all &amp;&amp; reboot
+
+# extrair vBIOS (antes do early-bind, com a GPU ainda no amdgpu)
+cat /sys/kernel/debug/dri/0000:06:00.0/amdgpu_vbios &gt; /usr/share/kvm/d500.rom
+
+# validar (após reboot; todas devem estar em vfio-pci)
+for d in 0000:06:00.0 0000:06:00.1 0000:02:00.0 0000:02:00.1; do echo "$d -&gt; $(basename "$(readlink /sys/bus/pci/devices/$d/driver)")"; done
+</pre>
+
+          <h4>5. Proxmox &mdash; <code>qm</code> (config da VM)</h4>
+<pre>
+# GPU (vídeo)
+qm set &lt;VMID&gt; -hostpci0 0000:06:00,pcie=1,romfile=d500.rom -vga none
+
+# CPU (host passthrough)
+qm set &lt;VMID&gt; -cpu host
+
+# teclado/mouse (USB)
+qm set &lt;VMID&gt; -usb0 host=VVVV:PPPP -usb1 host=WWWW:QQQQ
+
+# áudio (codec analógico do Mac)
+qm set &lt;VMID&gt; -hostpci1 0000:00:1b.0,pcie=1
+</pre>
+
+          <h4>6. VM Linux (distro tradicional) &mdash; <code>/etc/default/grub</code></h4>
+<pre>
+radeon.si_support=0 amdgpu.si_support=1 amdgpu.cik_support=1
+
+update-grub
+</pre>
+
+          <h4>7. VM Linux (Fedora Atomic) &mdash; kargs</h4>
+<pre>
+sudo rpm-ostree kargs --append-if-missing=radeon.si_support=0 --append-if-missing=amdgpu.si_support=1 \
+  --append-if-missing=amdgpu.cik_support=1 --append-if-missing=amdgpu.runpm=0
+</pre>
+
+          <h4>8. VM &mdash; validação</h4>
+<pre>
+cat /sys/bus/pci/devices/0000:01:00.0/uevent | grep DRIVER
+# esperado: DRIVER=amdgpu
+</pre>
+          <hr>
+        </div>
 
       </div>
     </div>
