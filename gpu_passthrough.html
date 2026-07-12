@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GPU Passthrough on a Mac Pro 6,1 (Proxmox)</title>
+  <link href="https://fonts.googleapis.com/css?family=Abel" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles-merged.css">
+  <link rel="stylesheet" href="css/style.min.css">
+  <link rel="stylesheet" href="css/custom.css">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="https://lucaspwo.com/assets/favicon180x180.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://lucaspwo.com/assets/favicon16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://lucaspwo.com/assets/favicon32x32.png">
+  <link rel="icon" type="image/x-icon" href="https://lucaspwo.com/assets/favicon.png">
+
+  <meta property="og:title" content="GPU Passthrough on a Mac Pro 6,1 (Proxmox)" />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://lucaspwo.com/gpu_passthrough.html" />
+  <!-- TODO(cover): substituir por foto real do Mac Pro em projetos/gpu_passthrough/gpu_passthrough.jpg -->
+  <meta property="og:image" content="https://lucaspwo.com/projetos/gpu_passthrough/gpu_passthrough.jpg" />
+  <meta property="og:site_name" content="Lucas' Experiments Lab" />
+  <meta property="og:description" content="Passing an AMD FirePro D500 from a 2013 Mac Pro 6,1 to a Linux VM with output on the physical monitor, via Proxmox VE." />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:description" content="Passing an AMD FirePro D500 from a 2013 Mac Pro 6,1 to a Linux VM with output on the physical monitor, via Proxmox VE." />
+  <meta name="twitter:title" content="GPU Passthrough on a Mac Pro 6,1 (Proxmox)" />
+  <meta name="twitter:site" content="@lucaspwo" />
+  <meta name="twitter:creator" content="@lucaspwo" />
+  <meta name="twitter:image" content="https://lucaspwo.com/projetos/gpu_passthrough/gpu_passthrough.jpg" />
+</head>
+
+<body>
+
+  <!-- START: header -->
+  <div class="probootstrap-loader"></div>
+
+  <header role="banner" class="probootstrap-header">
+    <div class="container">
+      <a href="index.html" class="probootstrap-logo">Lucas' Experiments Lab</a>
+
+      <a href="#" class="probootstrap-burger-menu visible-xs"><i>Menu</i></a>
+      <div class="mobile-menu-overlay"></div>
+
+      <nav role="navigation" class="probootstrap-nav hidden-xs">
+        <ul class="probootstrap-main-nav">
+          <li class="active"><a href="index.html">Main</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="contact.html">Contact</a></li>
+          <li><a href="br/gpu_passthrough.html">&#x1F1E7;&#x1F1F7;</a></li>
+        </ul>
+        <div class="extra-text visible-xs">
+          <a href="#" class="probootstrap-burger-menu"><i>Menu</i></a>
+          <h5>Connect</h5>
+          <ul class="social-buttons">
+            <li><a href="https://www.youtube.com/@lucaspwo"><i class="icon-youtube"></i></a></li>
+            <li><a href="https://www.linkedin.com/in/lucaspwo"><i class="icon-linkedin"></i></a></li>
+            <li><a href="https://github.com/lucaspwo"><i class="icon-github2"></i></a></li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+  </header>
+  <!-- END: header -->
+
+  <div class="probootstrap-section">
+    <div class="container">
+
+      <div class="row">
+        <div class="col-md-8 col-md-offset-2 mb40 text-center">
+          <h2>GPU Passthrough on a Mac Pro 6,1 (&ldquo;trashcan&rdquo;)</h2>
+          <p>FirePro D500 &rarr; Linux desktop on the physical monitor, via Proxmox</p>
+          <p>Published on July 11, 2026</p>
+        </div>
+
+        <div class="col-md-12">
+          <p class="text-justify">The goal of this guide is to pass an
+            <strong>AMD FirePro D500</strong> (Tahiti GPU, GCN 1.0 architecture, from 2013)
+            from a <strong>Mac Pro 6,1 (Late 2013, the &ldquo;trashcan&rdquo;)</strong>
+            running <strong>Proxmox VE</strong> into a VM, with the video
+            output appearing on the <strong>physical monitor</strong> (HDMI/DisplayPort)
+            &mdash; not VNC/SPICE.</p>
+
+          <p class="text-justify">The result works end-to-end on
+            <strong>Linux Mint</strong> and <strong>Bazzite</strong> (Fedora Atomic). On
+            <strong>Windows</strong> the GPU passes through to the VM without the
+            infamous <em>Code 43</em>, but the physical display doesn't come up
+            &mdash; the reason is detailed in the Windows section.</p>
+
+          <p class="text-justify">It's an interesting problem because it combines two
+            sources of quirkiness at once: it's a <strong>Mac GPU</strong> (vBIOS in
+            EFI GOP, not legacy x86) running on <strong>2013-era hardware</strong> (no
+            interrupt remapping in the IOMMU). Each of these characteristics alone
+            already requires a specific passthrough adjustment; together, they require
+            a well-defined sequence of steps to work.</p>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>Why it's hard (and what each step solves)</h3>
+          <p class="text-justify">The FirePro D500 are <strong>Tahiti (GCN 1.0 /
+            Southern Islands)</strong> GPUs from 2013, with Mac quirks on top. The
+            table below summarizes the obstacles encountered and the solution applied
+            to each:</p>
+
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Obstacle</th>
+                <th>Symptom</th>
+                <th>Solution</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Mac Pro 6,1 <strong>has no interrupt remapping</strong></td>
+                <td><code>vfio: Failed to set iommu for container: Operation not
+                    permitted</code></td>
+                <td><code>allow_unsafe_interrupts=1</code></td>
+              </tr>
+              <tr>
+                <td>Mac GPU <strong>has no x86 vBIOS</strong> (uses EFI GOP)</td>
+                <td><code>Invalid PCI ROM header signature: got 0xffff</code>; GPU
+                  doesn't enumerate in the VM</td>
+                <td>extract the real vBIOS and pass it as <code>romfile</code></td>
+              </tr>
+              <tr>
+                <td>The host's <strong><code>amdgpu</code> grabs the GPU at boot</strong>
+                  and &ldquo;dirties&rdquo; it</td>
+                <td>host console on screen; then reset
+                  <code>recovery - restoring BARs ... blocked</code>, host may hang</td>
+                <td><strong>early-bind</strong> (<code>vfio-pci.ids</code> in the
+                  cmdline) &mdash; binds the GPU to vfio <em>before</em> amdgpu</td>
+              </tr>
+              <tr>
+                <td><code>x-vga=1</code> / Mac vBIOS POST in OVMF</td>
+                <td>no signal at boot</td>
+                <td>do <strong>NOT</strong> use <code>x-vga</code>; use
+                  <code>vga: none</code> (VM driver takes over)</td>
+              </tr>
+              <tr>
+                <td>Legacy <strong><code>radeon</code></strong> driver doesn't scanout
+                  on Tahiti</td>
+                <td>black screen with signal</td>
+                <td>force <strong><code>amdgpu</code></strong>
+                  (<code>amdgpu.si_support=1</code>)</td>
+              </tr>
+              <tr>
+                <td>Mac's HDMI is <strong>HDMI 1.4</strong> (max 4K@30)</td>
+                <td>black with signal at 4K@60</td>
+                <td>force 1080p/1440p (on Xorg); Wayland/KDE negotiates on its own</td>
+              </tr>
+            </tbody>
+          </table>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>Prerequisites</h3>
+          <ul>
+            <li>Proxmox VE 8/9 on the Mac Pro 6,1; <code>root</code> access via SSH.</li>
+            <li>IOMMU/VT-d available (the Mac Pro's Xeon E5 v2 supports it).</li>
+            <li>One of the two GPUs free for the VM.</li>
+          </ul>
+
+          <p class="text-justify"><strong>Warning:</strong> find out which GPU feeds
+            the physical port the monitor is connected to &mdash; plug in the monitor
+            and check which <code>card</code> shows <code>connected</code>:</p>
+
+<pre>
+for s in /sys/class/drm/card*/card*/status; do
+  [ "$(cat "$s")" = connected ] && echo "$(dirname "$s"|xargs basename) -> PCI $(readlink -f "$(dirname "$s")/../device"|grep -oE '[0-9a-f]{2}:[0-9a-f]{2}\.[0-9]'|tail -1)"
+done
+</pre>
+
+          <p class="text-justify">On a typical Mac Pro 6,1, the native HDMI is usually
+            fed by the GPU in PCI slot <strong><code>0000:06:00</code></strong> (the
+            primary/boot_vga); the other GPU sits at
+            <strong><code>0000:02:00</code></strong>. Always confirm with the command
+            above before proceeding.</p>
+
+          <p class="text-justify">Since both D500s share the <strong>same device-id</strong>
+            (<code>1002:679e</code>), early-bind by id sends <strong>both</strong>
+            GPUs to vfio and the host becomes <strong>headless</strong> (managed via
+            SSH/web). That's intentional and desired here.</p>
+
+          <p class="text-justify">Find out your hardware's IDs:</p>
+
+<pre>
+lspci -nn | grep -iE "VGA|Display|Audio"
+# Referência: GPU 1002:679e (Tahiti LE), áudio HDMI 1002:aaa0, áudio analógico do Mac 8086:1d20 (Cirrus CS4208)
+</pre>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>Step 1 &mdash; IOMMU + vfio modules (host)</h3>
+          <p class="text-justify">In <code>/etc/default/grub</code>, on the
+            <code>GRUB_CMDLINE_LINUX_DEFAULT</code> line, add
+            <code>intel_iommu=on iommu=pt</code>. In <code>/etc/modules</code>,
+            add <code>vfio</code>, <code>vfio_iommu_type1</code>, and
+            <code>vfio_pci</code>.</p>
+
+<pre>
+# /etc/default/grub
+GRUB_CMDLINE_LINUX_DEFAULT="... intel_iommu=on iommu=pt"
+
+# /etc/modules
+vfio
+vfio_iommu_type1
+vfio_pci
+</pre>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>Step 2 &mdash; <code>allow_unsafe_interrupts</code> (required on the Mac Pro 6,1)</h3>
+
+<pre>
+echo "options vfio_iommu_type1 allow_unsafe_interrupts=1" &gt; /etc/modprobe.d/iommu_unsafe_interrupts.conf
+</pre>
+
+          <p class="text-justify">Without this, vfio refuses
+            (<code>Operation not permitted</code>). <strong>Security
+            implication:</strong> a malicious VM could, in theory, inject
+            interrupts into the host &mdash; acceptable in a
+            single-user/trusted environment; it's the only path on this
+            hardware (which has no interrupt remapping).</p>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>Step 3 &mdash; Early-bind: the key piece</h3>
+          <p class="text-justify">Bind the GPUs to <code>vfio-pci</code>
+            <strong>before</strong> <code>amdgpu</code> loads, otherwise the
+            amdgpu initializes the GPU at boot, it gets &ldquo;dirtied&rdquo;,
+            and passthrough fails (or hangs the host).</p>
+
+          <p class="text-justify">In <code>GRUB_CMDLINE_LINUX_DEFAULT</code>
+            add (use your hardware's IDs):</p>
+
+<pre>
+vfio-pci.ids=1002:679e,1002:aaa0 video=efifb:off
+</pre>
+
+          <p class="text-justify">And make sure the driver order is
+            enforced:</p>
+
+<pre>
+printf 'softdep amdgpu pre: vfio-pci\nsoftdep radeon pre: vfio-pci\n' &gt; /etc/modprobe.d/vfio.conf
+</pre>
+
+          <p class="text-justify">Apply and reboot the host:</p>
+
+<pre>
+update-grub &amp;&amp; update-initramfs -u -k all &amp;&amp; reboot
+</pre>
+
+          <p class="text-justify">After the reboot, <strong>verify</strong>
+            (all should be on <code>vfio-pci</code>, and amdgpu should NOT
+            have initialized any of them):</p>
+
+<pre>
+for d in 0000:06:00.0 0000:06:00.1 0000:02:00.0 0000:02:00.1; do echo "$d -&gt; $(basename "$(readlink /sys/bus/pci/devices/$d/driver)")"; done
+dmesg | grep -c "amdgpu .*initializing kernel"   # deve ser 0
+</pre>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>Step 4 &mdash; Extract the GPU's real vBIOS</h3>
+          <p class="text-justify">The Mac D500s don't expose an x86
+            expansion ROM, but the vBIOS (atombios) is accessible from the
+            host. The easiest way is to capture it <strong>before</strong>
+            early-bind (with the GPU still on <code>amdgpu</code>):</p>
+
+<pre>
+cat /sys/kernel/debug/dri/0000:06:00.0/amdgpu_vbios &gt; /usr/share/kvm/d500.rom
+# valide: ~64KB, header 55aa, contém "ATOMBIOSBK-AMD ... AMD_TAHITI_LE"
+od -A x -t x1 -N 4 /usr/share/kvm/d500.rom   # 55 aa ...
+</pre>
+
+          <p class="text-justify">Alternative (always available, even post
+            early-bind): the ACPI <strong>VFCT</strong> table
+            (<code>/sys/firmware/acpi/tables/VFCT</code> contains the vBIOS +
+            header). <strong>Keep copies</strong> &mdash; it's
+            irreplaceable.</p>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>Step 5 &mdash; Configure the VM (without <code>x-vga</code>, with <code>romfile</code>, <code>vga: none</code>)</h3>
+
+<pre>
+qm set &lt;VMID&gt; -hostpci0 0000:06:00,pcie=1,romfile=d500.rom -vga none
+qm set &lt;VMID&gt; -cpu host        # p/ Windows, usar: -cpu host,hidden=1  (anti Code 43)
+</pre>
+
+          <ul>
+            <li><strong>Do not</strong> use <code>x-vga=1</code> (OVMF
+              can't POST the Mac vBIOS &rarr; no signal).</li>
+            <li><code>vga: none</code> makes the physical GPU the only
+              display. The VM must be <strong>OVMF/UEFI + q35</strong>.</li>
+          </ul>
+
+          <p class="text-justify">⚠️ With <code>vga: none</code> Proxmox's
+            SPICE/noVNC console <strong>won't connect</strong> (there's no
+            virtual display). For remote access/installation, use
+            <code>vga: std</code> temporarily; switch to
+            <code>none</code> only in &ldquo;physical screen&rdquo; mode.</p>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>Step 6 &mdash; Force the <code>amdgpu</code> driver inside the VM</h3>
+          <p class="text-justify">The legacy <code>radeon</code> driver
+            loads but <strong>doesn't scanout</strong> on Tahiti &rarr;
+            black screen. Force <code>amdgpu</code>:</p>
+
+          <p class="text-justify"><strong>Traditional distro</strong> (e.g.,
+            Linux Mint, Ubuntu, Debian) &mdash; in
+            <code>/etc/default/grub</code>:</p>
+
+<pre>
+radeon.si_support=0 amdgpu.si_support=1 amdgpu.cik_support=1
+</pre>
+
+          <p class="text-justify">Then <code>update-grub</code> and
+            reboot the VM. (On Mint/Ubuntu
+            <code>grub.d/50_linuxmint.cfg</code> is also read; actually run
+            <code>update-grub</code> &mdash; just editing
+            <code>/etc/default/grub.d/</code> on its own isn't enough.)</p>
+
+          <p class="text-justify"><strong>Fedora Atomic</strong> (e.g.,
+            Bazzite, Silverblue/Kinoite) &mdash; via kargs:</p>
+
+<pre>
+sudo rpm-ostree kargs --append-if-missing=radeon.si_support=0 --append-if-missing=amdgpu.si_support=1 \
+  --append-if-missing=amdgpu.cik_support=1 --append-if-missing=amdgpu.runpm=0
+</pre>
+
+          <p class="text-justify">Then reboot the VM. (The
+            <code>amdgpu.runpm=0</code> is the anti-freeze mitigation
+            &mdash; see below.)</p>
+
+          <p class="text-justify">⚠️ <strong>Kernel 7.0 (Bazzite 44) does
+            NOT eliminate the need for <code>si_support</code></strong>
+            (correcting an earlier observation): the impression that it
+            &ldquo;wasn't needed&rdquo; was a <strong>lucky boot</strong>
+            &mdash; there's a <strong><code>radeon</code>&times;<code>amdgpu</code>
+            race</strong> and sometimes <strong>neither</strong> driver
+            grabs the Tahiti (<code>card0</code> ends up with no driver
+            &rarr; &ldquo;no signal&rdquo;). Keep all 3
+            <code>si_support</code> flags. <strong>Atomic image upgrades
+            reset custom kargs</strong> &rarr; reapply after a major
+            upgrade.</p>
+
+          <p class="text-justify">⚠️ <strong><code>amdgpu.runpm=0</code> is
+            practically mandatory</strong> on Bazzite's kernel
+            7.0/<code>-ogc</code> for passthrough not to
+            <strong>hang the ENTIRE HOST</strong>: without it, the guest
+            GPU's runtime PM (BACO state) locks up the host's PCIe in a
+            <strong>silent deadlock</strong> (no AER/MCE; only a power
+            cycle recovers) &mdash; consistent with
+            <strong>CVE-2026-53293</strong> (amdgpu deadlock, GCN 1.0+,
+            disclosed Jun/2026). With <code>runpm=0</code> the reset comes
+            out clean (<code>reset done</code>) and the host stays stable
+            (validated: physical boot + VM reboot + usage, no freeze).</p>
+
+          <p class="text-justify">Verify on the VM:
+            <code>cat /sys/bus/pci/devices/0000:01:00.0/uevent | grep DRIVER</code>
+            &rarr; <code>DRIVER=amdgpu</code>.</p>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>Step 7 &mdash; Resolution, keyboard/mouse, and audio</h3>
+          <p class="text-justify"><strong>Resolution:</strong> the
+            <strong>Mac Pro's HDMI is HDMI 1.4</strong> &rarr;
+            <strong>won't display 4K@60</strong> (black with signal). On
+            Xorg (Mint), force 1080p or 1440p (modeline +
+            <code>modesetting</code>). On <strong>Wayland/KDE
+            (Bazzite)</strong> resolution is negotiated automatically
+            &mdash; no need to force it.</p>
+
+          <p class="text-justify"><strong>Keyboard/mouse:</strong> USB
+            passthrough &mdash; grab the IDs with <code>lsusb</code> and
+            pass each device:</p>
+
+<pre>
+qm set &lt;VMID&gt; -usb0 host=VVVV:PPPP -usb1 host=WWWW:QQQQ
+</pre>
+
+          <p class="text-justify">Works hot-plugged (no need to reboot the
+            VM).</p>
+
+          <p class="text-justify"><strong>Audio:</strong> if the monitor
+            has no speakers, HDMI audio is useless. Pass the
+            <strong>Mac's analog codec</strong> (on the Mac Pro 6,1 it's a
+            Cirrus CS4208, <code>0000:00:1b.0</code>) to the VM:</p>
+
+<pre>
+qm set &lt;VMID&gt; -hostpci1 0000:00:1b.0,pcie=1
+</pre>
+
+          <p class="text-justify">(shows up as &ldquo;CS4208 Analog&rdquo;
+            inside the VM). The Mac Pro 6,1 has <strong>two rear analog
+            outputs</strong>: <em>headphone</em> (with jack detection) and
+            <em>line out</em> (optical combo &mdash; the red light is
+            TOSLINK, harmless). Plug the headphones into the
+            <strong>headphone output</strong> and select the
+            <strong>&ldquo;Headphone&rdquo;</strong> port in the mixer
+            (KDE/PipeWire) &mdash; selecting &ldquo;Line Out&rdquo; uses a
+            different codec path and stays silent. Symptom of the wrong
+            path: the <code>Headphone</code> DAC (node <code>0x02</code>)
+            sits at volume <code>0x00</code> with pin <code>0x10</code>
+            muted; selecting the right port makes WirePlumber raise the
+            hardware volume and unmute it. On <strong>Bazzite</strong>
+            (PipeWire) the internal speaker also played without a quirk;
+            on <strong>Mint</strong> only the rear output works (internal
+            speaker silent without <code>model=</code> on
+            <code>snd_hda_intel</code>).</p>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>Pitfalls (learned the hard way)</h3>
+          <ul>
+            <li>⚠️ <strong>Never reconnect the monitor cable while the VM
+              is running.</strong> Display hotplug on a passed-through AMD
+              GPU <strong>hangs the entire host kernel</strong> (vfio/PCIe
+              freeze) &mdash; requires a power cycle. Shut down the VM
+              before touching the cable.</li>
+            <li>⚠️ If passthrough repeatedly hangs the host, do a
+              <strong>full power cycle</strong> (power cut ~1 min)
+              &mdash; it resets the GPU's hardware state, which a kernel
+              reboot won't undo.</li>
+            <li>After reboots, on unstable networks <strong>DHCP for
+              containers/VMs can fail</strong> (no network/DNS) &rarr;
+              renew with <code>dhclient -1 eth0</code>.</li>
+            <li>The <strong>guest agent on Atomic distros (Bazzite) is
+              sandboxed</strong> &mdash; it won't run privileged binaries
+              via <code>qm guest exec</code>. Write a script to
+              <code>/tmp</code> and run it from the VM's terminal
+              instead.</li>
+          </ul>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>Windows 10/11 (partial)</h3>
+          <p class="text-justify">The GPU <strong>passes through without
+            Code 43</strong> using <code>-cpu host,hidden=1</code> + the
+            <code>romfile</code>. The card shows up as &ldquo;AMD Radeon HD
+            7800 Series&rdquo; working in Device Manager, with the
+            legacy <strong>Adrenalin</strong> driver (21.5.2 or 22.6.1).</p>
+
+          <p class="text-justify"><strong>However the physical display
+            doesn't come up:</strong> with <code>vga: none</code>/<code>x-vga</code>
+            OVMF can't POST the Mac vBIOS (no signal), and with a virtual
+            display Windows doesn't detect the monitor on the secondary
+            GPU. Linux works because the <strong>KMS driver takes over the
+            GPU at boot</strong>; Windows depends on
+            <strong>firmware POST</strong>. <strong>Not solved
+            here.</strong></p>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>Rollback</h3>
+          <p class="text-justify">To return the host to its default state:
+            remove <code>vfio-pci.ids</code>, <code>intel_iommu</code>, and
+            <code>video=efifb:off</code> from the cmdline, delete
+            <code>/etc/modprobe.d/{vfio,iommu_unsafe_interrupts}.conf</code>
+            and the vfio modules from <code>/etc/modules</code>, remove
+            <code>hostpci*</code>/<code>usb*</code> from the VM, and switch
+            back to <code>vga: std</code>. Then:</p>
+
+<pre>
+update-grub &amp;&amp; update-initramfs -u -k all &amp;&amp; reboot
+</pre>
+
+          <p class="text-justify">What this guide validates: a
+            <strong>physical video output</strong>, on a Linux VM, with an
+            <strong>AMD FirePro D500</strong> passed through from a
+            <strong>Mac Pro 6,1</strong>. Always confirm the device-IDs and
+            PCI slots of your own hardware with <code>lspci -nn</code>
+            before reproducing the steps.</p>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>Cheat sheet &mdash; commands by location</h3>
+          <p class="text-justify">Copy-paste summary of the commands
+            already presented in the sections above, grouped by where each
+            one runs. The device-IDs and PCI slots are from this guide's
+            reference hardware &mdash; confirm your own with
+            <code>lspci -nn</code> before copying.</p>
+
+          <h4>1. Host &mdash; <code>/etc/default/grub</code></h4>
+<pre>
+GRUB_CMDLINE_LINUX_DEFAULT="... intel_iommu=on iommu=pt vfio-pci.ids=1002:679e,1002:aaa0 video=efifb:off"
+</pre>
+
+          <h4>2. Host &mdash; <code>/etc/modules</code></h4>
+<pre>
+vfio
+vfio_iommu_type1
+vfio_pci
+</pre>
+
+          <h4>3. Host &mdash; <code>/etc/modprobe.d/</code></h4>
+<pre>
+# /etc/modprobe.d/iommu_unsafe_interrupts.conf
+echo "options vfio_iommu_type1 allow_unsafe_interrupts=1" &gt; /etc/modprobe.d/iommu_unsafe_interrupts.conf
+
+# /etc/modprobe.d/vfio.conf
+printf 'softdep amdgpu pre: vfio-pci\nsoftdep radeon pre: vfio-pci\n' &gt; /etc/modprobe.d/vfio.conf
+</pre>
+
+          <h4>4. Host &mdash; shell (apply + extract vBIOS + verify)</h4>
+<pre>
+# aplicar
+update-grub &amp;&amp; update-initramfs -u -k all &amp;&amp; reboot
+
+# extrair vBIOS (antes do early-bind, com a GPU ainda no amdgpu)
+cat /sys/kernel/debug/dri/0000:06:00.0/amdgpu_vbios &gt; /usr/share/kvm/d500.rom
+
+# validar (após reboot; todas devem estar em vfio-pci)
+for d in 0000:06:00.0 0000:06:00.1 0000:02:00.0 0000:02:00.1; do echo "$d -&gt; $(basename "$(readlink /sys/bus/pci/devices/$d/driver)")"; done
+</pre>
+
+          <h4>5. Proxmox &mdash; <code>qm</code> (VM config)</h4>
+<pre>
+# GPU (vídeo)
+qm set &lt;VMID&gt; -hostpci0 0000:06:00,pcie=1,romfile=d500.rom -vga none
+
+# CPU (host passthrough)
+qm set &lt;VMID&gt; -cpu host
+
+# teclado/mouse (USB)
+qm set &lt;VMID&gt; -usb0 host=VVVV:PPPP -usb1 host=WWWW:QQQQ
+
+# áudio (codec analógico do Mac)
+qm set &lt;VMID&gt; -hostpci1 0000:00:1b.0,pcie=1
+</pre>
+
+          <h4>6. Linux VM (traditional distro) &mdash; <code>/etc/default/grub</code></h4>
+<pre>
+radeon.si_support=0 amdgpu.si_support=1 amdgpu.cik_support=1
+
+update-grub
+</pre>
+
+          <h4>7. Linux VM (Fedora Atomic) &mdash; kargs</h4>
+<pre>
+sudo rpm-ostree kargs --append-if-missing=radeon.si_support=0 --append-if-missing=amdgpu.si_support=1 \
+  --append-if-missing=amdgpu.cik_support=1 --append-if-missing=amdgpu.runpm=0
+</pre>
+
+          <h4>8. VM &mdash; verification</h4>
+<pre>
+cat /sys/bus/pci/devices/0000:01:00.0/uevent | grep DRIVER
+# esperado: DRIVER=amdgpu
+</pre>
+          <hr>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <footer class="probootstrap-footer" role="contentinfo">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <p>Site template developed by <a href="https://uicookies.com">uiCookies</a>.</p>
+          <ul class="probootstrap-social">
+            <li><a href="https://www.youtube.com/@lucaspwo"><i class="icon-youtube"></i></a></li>
+            <li><a href="https://www.linkedin.com/in/lucaspwo"><i class="icon-linkedin"></i></a></li>
+            <li><a href="https://github.com/lucaspwo"><i class="icon-github2"></i></a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <div class="gototop js-top">
+    <a href="#" class="js-gotop"><i class="icon-chevron-thin-up"></i></a>
+  </div>
+
+
+  <script src="js/scripts.min.js"></script>
+  <script src="js/main.min.js"></script>
+  <script src="js/custom.js"></script>
+
+</body>
+</html>
