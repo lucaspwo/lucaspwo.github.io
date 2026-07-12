@@ -74,7 +74,126 @@
           <p>Publicado em 11 de julho de 2026</p>
         </div>
 
+        <div class="col-md-12">
+          <p class="text-justify">O objetivo deste guia é passar uma
+            <strong>AMD FirePro D500</strong> (GPU Tahiti, arquitetura GCN 1.0, de 2013)
+            de um <strong>Mac Pro 6,1 (Late 2013, o &ldquo;trashcan&rdquo;)</strong>
+            rodando <strong>Proxmox VE</strong> para dentro de uma VM, com a saída de
+            vídeo aparecendo no <strong>monitor físico</strong> (HDMI/DisplayPort) &mdash;
+            não em VNC/SPICE.</p>
+
+          <p class="text-justify">O resultado funciona de ponta a ponta em
+            <strong>Linux Mint</strong> e <strong>Bazzite</strong> (Fedora Atomic). No
+            <strong>Windows</strong> a GPU passa para a VM sem o famoso
+            <em>Code 43</em>, mas o display físico não sai &mdash; o motivo está
+            detalhado na seção sobre Windows.</p>
+
+          <p class="text-justify">É um problema interessante porque combina duas fontes
+            de peculiaridade ao mesmo tempo: é uma <strong>GPU de Mac</strong> (vBIOS em
+            EFI GOP, não x86 legado) rodando em <strong>hardware de 2013</strong> (sem
+            interrupt remapping na IOMMU). Cada uma dessas características, sozinha, já
+            exige um ajuste específico no passthrough; juntas, exigem uma sequência de
+            passos bem definida para funcionar.</p>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>Por que é difícil (e o que cada passo resolve)</h3>
+          <p class="text-justify">As FirePro D500 são GPUs <strong>Tahiti (GCN 1.0 /
+            Southern Islands)</strong> de 2013, com peculiaridades de Mac. A tabela abaixo
+            resume os obstáculos encontrados e a solução aplicada a cada um:</p>
+
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Obstáculo</th>
+                <th>Sintoma</th>
+                <th>Solução</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Mac Pro 6,1 <strong>não tem interrupt remapping</strong></td>
+                <td><code>vfio: Failed to set iommu for container: Operation not
+                    permitted</code></td>
+                <td><code>allow_unsafe_interrupts=1</code></td>
+              </tr>
+              <tr>
+                <td>GPU de Mac <strong>não tem vBIOS x86</strong> (usa EFI GOP)</td>
+                <td><code>Invalid PCI ROM header signature: got 0xffff</code>; GPU não
+                  enumera na VM</td>
+                <td>extrair a vBIOS real e passar como <code>romfile</code></td>
+              </tr>
+              <tr>
+                <td>O <strong><code>amdgpu</code> do host pega a GPU no boot</strong> e a
+                  &ldquo;suja&rdquo;</td>
+                <td>console do host na tela; depois reset
+                  <code>recovery - restoring BARs ... blocked</code>, host pode travar</td>
+                <td><strong>early-bind</strong> (<code>vfio-pci.ids</code> no cmdline)
+                  &mdash; prende a GPU ao vfio <em>antes</em> do amdgpu</td>
+              </tr>
+              <tr>
+                <td><code>x-vga=1</code> / POST da vBIOS de Mac no OVMF</td>
+                <td>sem sinal no boot</td>
+                <td><strong>NÃO</strong> usar <code>x-vga</code>; usar
+                  <code>vga: none</code> (driver da VM assume)</td>
+              </tr>
+              <tr>
+                <td>Driver <strong><code>radeon</code></strong> legado não faz scanout
+                  na Tahiti</td>
+                <td>tela preta com sinal</td>
+                <td>forçar <strong><code>amdgpu</code></strong>
+                  (<code>amdgpu.si_support=1</code>)</td>
+              </tr>
+              <tr>
+                <td>HDMI do Mac é <strong>HDMI 1.4</strong> (máx 4K@30)</td>
+                <td>preto com sinal em 4K@60</td>
+                <td>forçar 1080p/1440p (no Xorg); Wayland/KDE negocia sozinho</td>
+              </tr>
+            </tbody>
+          </table>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>Pré-requisitos</h3>
+          <ul>
+            <li>Proxmox VE 8/9 no Mac Pro 6,1; acesso <code>root</code> por SSH.</li>
+            <li>IOMMU/VT-d disponível (o Xeon E5 v2 do Mac Pro suporta).</li>
+            <li>Uma das duas GPUs livre para a VM.</li>
+          </ul>
+
+          <p class="text-justify"><strong>Atenção:</strong> descubra qual GPU alimenta a
+            porta física onde o monitor está &mdash; plugue o monitor e veja qual
+            <code>card</code> fica <code>connected</code>:</p>
+
+<pre>
+for s in /sys/class/drm/card*/card*/status; do
+  [ "$(cat "$s")" = connected ] && echo "$(dirname "$s"|xargs basename) -> PCI $(readlink -f "$(dirname "$s")/../device"|grep -oE '[0-9a-f]{2}:[0-9a-f]{2}\.[0-9]'|tail -1)"
+done
+</pre>
+
+          <p class="text-justify">Em um Mac Pro 6,1 típico, o HDMI nativo costuma ser
+            alimentado pela GPU no slot PCI <strong><code>0000:06:00</code></strong> (a
+            primária/boot_vga); a outra GPU fica em <strong><code>0000:02:00</code></strong>.
+            Confirme sempre com o comando acima antes de prosseguir.</p>
+
+          <p class="text-justify">Como as duas D500 têm o <strong>mesmo device-id</strong>
+            (<code>1002:679e</code>), o early-bind por id manda <strong>as duas</strong>
+            GPUs para o vfio e o host fica <strong>headless</strong> (administrado por
+            SSH/web). Isso é intencional e desejável aqui.</p>
+
+          <p class="text-justify">Descubra os IDs do seu hardware:</p>
+
+<pre>
+lspci -nn | grep -iE "VGA|Display|Audio"
+# Referência: GPU 1002:679e (Tahiti LE), áudio HDMI 1002:aaa0, áudio analógico do Mac 8086:1d20 (Cirrus CS4208)
+</pre>
+          <hr>
+        </div>
+
         <!-- SECTIONS -->
+        <!-- Tasks 4-5 continuam a partir daqui (seção 4 em diante) -->
 
       </div>
     </div>
