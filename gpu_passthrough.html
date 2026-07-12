@@ -189,7 +189,7 @@ done
 
 <pre>
 lspci -nn | grep -iE "VGA|Display|Audio"
-# Referência: GPU 1002:679e (Tahiti LE), áudio HDMI 1002:aaa0, áudio analógico do Mac 8086:1d20 (Cirrus CS4208)
+# Reference: GPU 1002:679e (Tahiti LE), HDMI audio 1002:aaa0, Mac analog audio 8086:1d20 (Cirrus CS4208)
 </pre>
           <hr>
         </div>
@@ -263,7 +263,7 @@ update-grub &amp;&amp; update-initramfs -u -k all &amp;&amp; reboot
 
 <pre>
 for d in 0000:06:00.0 0000:06:00.1 0000:02:00.0 0000:02:00.1; do echo "$d -&gt; $(basename "$(readlink /sys/bus/pci/devices/$d/driver)")"; done
-dmesg | grep -c "amdgpu .*initializing kernel"   # deve ser 0
+dmesg | grep -c "amdgpu .*initializing kernel"   # should be 0
 </pre>
           <hr>
         </div>
@@ -277,7 +277,7 @@ dmesg | grep -c "amdgpu .*initializing kernel"   # deve ser 0
 
 <pre>
 cat /sys/kernel/debug/dri/0000:06:00.0/amdgpu_vbios &gt; /usr/share/kvm/d500.rom
-# valide: ~64KB, header 55aa, contém "ATOMBIOSBK-AMD ... AMD_TAHITI_LE"
+# validate: ~64KB, header 55aa, contains "ATOMBIOSBK-AMD ... AMD_TAHITI_LE"
 od -A x -t x1 -N 4 /usr/share/kvm/d500.rom   # 55 aa ...
 </pre>
 
@@ -294,7 +294,7 @@ od -A x -t x1 -N 4 /usr/share/kvm/d500.rom   # 55 aa ...
 
 <pre>
 qm set &lt;VMID&gt; -hostpci0 0000:06:00,pcie=1,romfile=d500.rom -vga none
-qm set &lt;VMID&gt; -cpu host        # p/ Windows, usar: -cpu host,hidden=1  (anti Code 43)
+qm set &lt;VMID&gt; -cpu host        # for Windows, use: -cpu host,hidden=1  (anti Code 43)
 </pre>
 
           <ul>
@@ -521,28 +521,28 @@ printf 'softdep amdgpu pre: vfio-pci\nsoftdep radeon pre: vfio-pci\n' &gt; /etc/
 
           <h4>4. Host &mdash; shell (apply + extract vBIOS + verify)</h4>
 <pre>
-# aplicar
+# apply
 update-grub &amp;&amp; update-initramfs -u -k all &amp;&amp; reboot
 
-# extrair vBIOS (antes do early-bind, com a GPU ainda no amdgpu)
+# extract vBIOS (before early-bind, with GPU still on amdgpu)
 cat /sys/kernel/debug/dri/0000:06:00.0/amdgpu_vbios &gt; /usr/share/kvm/d500.rom
 
-# validar (após reboot; todas devem estar em vfio-pci)
+# validate (after reboot; all should be on vfio-pci)
 for d in 0000:06:00.0 0000:06:00.1 0000:02:00.0 0000:02:00.1; do echo "$d -&gt; $(basename "$(readlink /sys/bus/pci/devices/$d/driver)")"; done
 </pre>
 
           <h4>5. Proxmox &mdash; <code>qm</code> (VM config)</h4>
 <pre>
-# GPU (vídeo)
+# GPU (video)
 qm set &lt;VMID&gt; -hostpci0 0000:06:00,pcie=1,romfile=d500.rom -vga none
 
 # CPU (host passthrough)
 qm set &lt;VMID&gt; -cpu host
 
-# teclado/mouse (USB)
+# keyboard/mouse (USB)
 qm set &lt;VMID&gt; -usb0 host=VVVV:PPPP -usb1 host=WWWW:QQQQ
 
-# áudio (codec analógico do Mac)
+# audio (Mac's analog codec)
 qm set &lt;VMID&gt; -hostpci1 0000:00:1b.0,pcie=1
 </pre>
 
@@ -562,7 +562,7 @@ sudo rpm-ostree kargs --append-if-missing=radeon.si_support=0 --append-if-missin
           <h4>8. VM &mdash; verification</h4>
 <pre>
 cat /sys/bus/pci/devices/0000:01:00.0/uevent | grep DRIVER
-# esperado: DRIVER=amdgpu
+# expected: DRIVER=amdgpu
 </pre>
           <hr>
         </div>
