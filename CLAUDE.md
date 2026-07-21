@@ -28,6 +28,14 @@ Não há testes nem lint configurados nesta branch.
 - Mapa de símbolos e comandos → [AGENTS.md](AGENTS.md)
 - Relação entre as branches (`master`, `automation`, `worktree-react-spa`, `ia-llm`, `post-llms-locais`, `fallback`) → [MANUTENCAO.md#branches-do-repositório](MANUTENCAO.md#branches-do-repositório)
 
+## Manutenção destes docs
+
+Se sua mudança invalidar algo citado aqui ou nos docs irmãos — um comando, um
+símbolo, uma referência `arquivo:linha`, a estrutura de pastas — corrija a
+referência **no mesmo commit**. Não reescreva proativamente o que ainda está
+correto. Para um refresh completo, use a skill `/atualizando-docs-manutencao`
+(ela verifica cada ref com `git grep`).
+
 ## Commit/push
 
 O remote `origin` tem duas push-URLs (GitHub + mirror GitLab pessoal) — `git push` vai para os dois automaticamente (espelhamento multi-remote configurado). Nunca usar `--no-verify`. Como o deploy do GitHub Pages é direto a partir de `fallback` sem CI, revisar o diff com cuidado antes de dar push nesta branch.
