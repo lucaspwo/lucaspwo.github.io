@@ -20,7 +20,7 @@ Não há testes nem lint configurados nesta branch.
 2. **Push vai para dois remotes.** `origin` tem duas push-URLs configuradas: GitHub e um mirror GitLab (`gitlab.lab.lucaspwo.com`). `git push` sem argumentos manda para os dois (confirmado com `git remote -v`).
 3. **Nav duplicado em cada HTML.** Não há partial/include — mudar o menu exige editar todo arquivo `.html` manualmente. `pdi.html` é um exemplo de página órfã (existe, mas o link para ela está comentado).
 4. **`builder/` no disco ≠ `builder/` no git desta branch.** Nesta branch, `builder/` é só `node_modules/` untracked (resíduo de outra branch) — **não editar, não versionar**. Em `master`, `builder/` é o gerador real do site.
-5. **Deploy é direto, sem CI.** Todo commit dado push em `fallback` vai para produção assim como está — não há build, review automático ou staging intermediário.
+5. **Deploy é direto, sem CI — mas o Jekyll do Pages ainda roda e PODE falhar.** `.nojekyll` está na raiz desde 24/09/2026 justamente porque, sem ele, um erro de sintaxe Liquid em qualquer `.md`/`.html` do repo derruba o deploy inteiro sem avisar (foi o que travou o site no snapshot de 12/07 por 2 meses, via um `{% image %}` ilustrativo em `MANUTENCAO.md`). Depois de um push, conferir com `gh run list --repo lucaspwo/lucaspwo.github.io --branch fallback --limit 3`.
 
 ## Ponteiros
 
@@ -38,4 +38,4 @@ correto. Para um refresh completo, use a skill `/atualizando-docs-manutencao`
 
 ## Commit/push
 
-O remote `origin` tem duas push-URLs (GitHub + mirror GitLab pessoal) — `git push` vai para os dois automaticamente (espelhamento multi-remote configurado). Nunca usar `--no-verify`. Como o deploy do GitHub Pages é direto a partir de `fallback` sem CI, revisar o diff com cuidado antes de dar push nesta branch.
+O remote `origin` tem duas push-URLs (GitHub + mirror GitLab pessoal) — `git push` vai para os dois automaticamente (espelhamento multi-remote configurado). Nunca usar `--no-verify`. Como o deploy do GitHub Pages é direto a partir de `fallback` sem CI, revisar o diff com cuidado antes de dar push nesta branch. **E depois do push, conferir que o build do Pages passou** (`gh run list --repo lucaspwo/lucaspwo.github.io --branch fallback --limit 3`) — ver gotcha 5 acima; "sem CI" não é o mesmo que "sem como falhar".
