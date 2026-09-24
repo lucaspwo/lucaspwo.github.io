@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>The GPU That Refused to Shift Gears</title>
+  <link href="https://fonts.googleapis.com/css?family=Abel" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles-merged.css">
+  <link rel="stylesheet" href="css/style.min.css">
+  <link rel="stylesheet" href="css/custom.css">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="https://lucaspwo.com/assets/favicon180x180.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://lucaspwo.com/assets/favicon16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://lucaspwo.com/assets/favicon32x32.png">
+  <link rel="icon" type="image/x-icon" href="https://lucaspwo.com/assets/favicon.png">
+
+  <meta property="og:title" content="The GPU That Refused to Shift Gears" />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://lucaspwo.com/amdgpu_dpm_bug.html" />
+  <meta property="og:image" content="https://lucaspwo.com/projetos/amdgpu_dpm_bug/amdgpu_dpm_bug.jpg" />
+  <meta property="og:site_name" content="Lucas' Experiments Lab" />
+  <meta property="og:description" content="Bisecting a kernel DPM regression on a 12-year-old GPU, down to the exact commit and the exact two lines &mdash; with the upstream maintainer along for the ride." />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:description" content="Bisecting a kernel DPM regression on a 12-year-old GPU, down to the exact commit and the exact two lines &mdash; with the upstream maintainer along for the ride." />
+  <meta name="twitter:title" content="The GPU That Refused to Shift Gears" />
+  <meta name="twitter:site" content="@lucaspwo" />
+  <meta name="twitter:creator" content="@lucaspwo" />
+  <meta name="twitter:image" content="https://lucaspwo.com/projetos/amdgpu_dpm_bug/amdgpu_dpm_bug.jpg" />
+</head>
+
+<body>
+
+  <!-- START: header -->
+  <div class="probootstrap-loader"></div>
+
+  <header role="banner" class="probootstrap-header">
+    <div class="container">
+      <a href="index.html" class="probootstrap-logo">Lucas' Experiments Lab</a>
+
+      <a href="#" class="probootstrap-burger-menu visible-xs"><i>Menu</i></a>
+      <div class="mobile-menu-overlay"></div>
+
+      <nav role="navigation" class="probootstrap-nav hidden-xs">
+        <ul class="probootstrap-main-nav">
+          <li class="active"><a href="index.html">Main</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="contact.html">Contact</a></li>
+          <li><a href="br/amdgpu_dpm_bug.html">&#x1F1E7;&#x1F1F7;</a></li>
+        </ul>
+        <div class="extra-text visible-xs">
+          <a href="#" class="probootstrap-burger-menu"><i>Menu</i></a>
+          <h5>Connect</h5>
+          <ul class="social-buttons">
+            <li><a href="https://www.youtube.com/@lucaspwo"><i class="icon-youtube"></i></a></li>
+            <li><a href="https://www.linkedin.com/in/lucaspwo"><i class="icon-linkedin"></i></a></li>
+            <li><a href="https://github.com/lucaspwo"><i class="icon-github2"></i></a></li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+  </header>
+  <!-- END: header -->
+
+  <div class="probootstrap-section">
+    <div class="container">
+
+      <div class="row">
+        <div class="col-md-8 col-md-offset-2 mb40 text-center">
+          <h2>The GPU That Refused to Shift Gears</h2>
+          <p>Bisecting a kernel DPM regression on 12-year-old hardware, with the upstream maintainer along for the ride</p>
+          <p>Published on September 24, 2026</p>
+        </div>
+
+        <div class="col-md-12">
+          <p class="text-justify">This one starts with the same GPUs from the
+            <a href="gpu_passthrough.html">passthrough guide</a>: a pair of
+            <strong>AMD FirePro D500</strong> (Tahiti, GCN 1.0, 2013) inside a
+            <strong>Mac Pro 6,1</strong> that now runs Proxmox as a home server. Once
+            passthrough worked, the obvious next question was whether one of those GPUs
+            could pull its weight running a local LLM &mdash; <code>llama.cpp</code>
+            over Vulkan, via the open-source <strong>RADV</strong> driver.</p>
+
+          <p class="text-justify">It could, until a long prompt made it crash the whole
+            VM with a <code>vk::DeviceLostError</code>. Reporting that crash upstream
+            opened a five-day thread with a RADV maintainer that eventually split into
+            three separate bugs, cost the home server seven unexplained hard crashes,
+            and ended with my own name in a kernel commit message next to the words
+            &ldquo;FirePro D500.&rdquo;</p>
+
+          <p class="text-justify">This is the story of the middle bug: a GPU that would
+            not leave first gear.</p>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>Numbers at a Glance</h3>
+          <div class="row">
+            <div class="col-md-3 col-xs-6 text-center mb40">
+              <h2>21.7 &rarr; 6.1</h2>
+              <p>tok/s lost when the GPU got stuck in its lowest power state</p>
+            </div>
+            <div class="col-md-3 col-xs-6 text-center mb40">
+              <h2>1</h2>
+              <p>exact commit isolated, out of 5 candidates, over 8 reboots</p>
+            </div>
+            <div class="col-md-3 col-xs-6 text-center mb40">
+              <h2>7</h2>
+              <p>full host crashes along the way, with zero trace in the logs</p>
+            </div>
+            <div class="col-md-3 col-xs-6 text-center mb40">
+              <h2>2</h2>
+              <p>patches sent to the amd-gfx mailing list, awaiting merge</p>
+            </div>
+          </div>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>How it started: a crash, and a collateral discovery</h3>
+          <p class="text-justify">The original bug was straightforward to describe:
+            feed <code>llama.cpp</code> a prompt past roughly 600&ndash;800 tokens on
+            the D500 over RADV, and the compute context died with
+            <code>vk::DeviceLostError</code>. I filed it against the RADV maintainer
+            <strong>Timur Krist&oacute;f</strong> on Mesa&rsquo;s GitLab. His diagnosis:
+            outdated Mesa, plus a GFX6 soft-reset fix of his own that had just landed in
+            Linux 7.3 and should fix it.</p>
+
+          <p class="text-justify">It did &mdash; a 1161-token prompt that used to hang
+            the whole host now ran clean, on one GPU and on two. But validating a fix
+            on a release-candidate kernel meant booting into it, and that is where the
+            collateral damage started. Passing the GPU through to a desktop VM under
+            7.3-rc3 now triggered a PCIe <strong>AER</strong> error during the GPU
+            reset &mdash; AER stands for <em>Advanced Error Reporting</em>, the PCIe
+            bus&rsquo;s own mechanism for flagging corrupted or lost traffic on the
+            link &mdash; and the guest driver would shut the device down mid-session,
+            reproduced 4 times out of 4 on the RC kernel, 0 times out of 1 on
+            production. That report is still sitting in a drawer (see the closing
+            section), because the very next thing I found made it look small by
+            comparison.</p>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>The real culprit: stuck in P0</h3>
+          <p class="text-justify">Before closing the original issue, Timur asked for an
+            apples-to-apples comparison: same command, same prompt, same GPU, only the
+            kernel changing. The numbers did not match my assumption at all.</p>
+
+          <p class="text-justify">A quick note on the notation: <strong>P0, P3</strong>,
+            and so on are the GPU&rsquo;s DPM (dynamic power management) states &mdash;
+            <code>P0</code> is idle/lowest clocks, and the number climbs as the card
+            ramps up for load, up to whatever the highest state supported here is
+            (<code>P3</code>). A healthy card idles at <code>P0</code> and jumps to a
+            higher state within a couple of seconds of real work landing on it.</p>
+
+          <table class="table">
+            <thead>
+              <tr>
+                <th></th>
+                <th>Production kernel</th>
+                <th>7.3-rc3</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>DPM under load</td>
+                <td>P0 &rarr; <strong>P3</strong> in ~2s (sclk 30 &rarr; 72.5, mclk 15 &rarr; 127)</td>
+                <td><strong>stuck at P0</strong> the entire time</td>
+              </tr>
+              <tr>
+                <td>Generation speed</td>
+                <td>21.7 tok/s</td>
+                <td>6.1 tok/s</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <p class="text-justify">The throughput drop I had been blaming on a longer
+            prompt had nothing to do with context length. The card&rsquo;s dynamic
+            power management (<strong>DPM</strong>) simply never left its lowest clock
+            state under the new kernel &mdash; confirmed by polling
+            <code>amdgpu_pm_info</code> once a second while the load ran.</p>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>The bisect: from &ldquo;somewhere in two releases&rdquo; to one commit</h3>
+          <p class="text-justify">Timur asked for three things: force the highest power
+            state by hand, bisect between kernel 6.19 and 7.3, and write down exact
+            repro steps. Forcing the state turned out to be the cleanest signal of all
+            &mdash; on production, <code>echo high &gt; power_dpm_force_performance_level</code>
+            is accepted; on 7.3-rc3, it returns <code>EINVAL</code> immediately
+            (Linux&rsquo;s generic &ldquo;invalid argument&rdquo; error code &mdash; the
+            kernel refusing the request outright, not a value formatted wrong).
+            No throughput measurement required, just an error code.</p>
+
+<pre>
+# production kernel: accepted
+echo high &gt; /sys/class/drm/card0/device/power_dpm_force_performance_level
+
+# 7.3-rc3: Invalid argument
+echo high &gt; /sys/class/drm/card0/device/power_dpm_force_performance_level
+-bash: echo: write error: Invalid argument
+</pre>
+
+          <p class="text-justify">A release-level bisect narrowed it to between 7.1
+            (behaves like production) and 7.2 (already broken). Timur then pointed out
+            that only a handful of commits had touched <code>si_dpm.c</code> in that
+            window and asked me to revert them and find the guilty one. I found five
+            candidates, not four &mdash; and rather than argue about the discrepancy,
+            just tested all five.</p>
+
+          <p class="text-justify">This meant compiling a custom kernel locally for the
+            first time in this project (on a spare 24-core LXC container &mdash; the
+            Mac Pro&rsquo;s own Xeon, ironically, building the kernel that would later
+            fix its own GPU). Eight reboots and a binary search later, one commit stood
+            out as necessary and sufficient on its own:</p>
+
+<pre>
+e6c5d36756e7 drm/amd/pm/si: Fix updating clock limits from power states
+</pre>
+
+          <p class="text-justify">A patch that, going by its own commit message, was
+            meant to fix laptops. It broke a desktop instead.</p>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>A right answer for the wrong reason</h3>
+          <p class="text-justify">Timur asked for two dmesg captures with driver
+            debugging enabled, one on each side of the commit, to see the actual
+            difference in the DPM tables sent to the card&rsquo;s embedded controller
+            (the SMC). Reading through <code>si_dpm.c</code> with those logs in hand,
+            the chain became visible: the D500&rsquo;s VBIOS ships a
+            <strong><code>battery</code></strong> power state with clocks locked at the
+            minimum &mdash; harmless on its own, since nothing on a desktop should ever
+            select it. The new commit started using that state to populate the
+            driver&rsquo;s notion of &ldquo;maximum clocks allowed on DC (battery)
+            power,&rdquo; which had previously fallen back to the generous AC limits.
+            With real, tiny DC limits now in place, the driver marked the
+            high-performance power state as <em>not</em> DC-compatible &mdash;
+            unconditionally, with no regard for whether the machine was actually
+            running on battery.</p>
+
+          <p class="text-justify">My first fix attempt, suggested by Timur as an
+            isolation test, was to hardcode that compatibility flag to
+            <code>true</code>. It worked <strong>completely</strong>: 21.3 tok/s, DPM
+            climbing to P3 exactly like production. I posted it as a positive result.
+            Timur pushed back anyway: that flag, he said, &ldquo;shouldn&rsquo;t matter
+            unless the SMC thinks it&rsquo;s running on battery&rdquo; &mdash; and a
+            Mac Pro is never running on battery. My hardcode was papering over a
+            different flag entirely, one neither of us had been looking at.</p>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>Two flags with almost the same name</h3>
+          <p class="text-justify">The driver deals with AC/DC in two unrelated places,
+            and the names are close enough to actively mislead:</p>
+
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Flag</th>
+                <th>Scope</th>
+                <th>What it actually does</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>dc_compatible</code> / <code>PPSMC_SWSTATE_FLAG_DC</code></td>
+                <td>Per power-state</td>
+                <td>The one everyone (myself included) assumed mattered. Turned out to be irrelevant on this hardware.</td>
+              </tr>
+              <tr>
+                <td><code>PPSMC_SYSTEMFLAG_GPIO_DC</code></td>
+                <td>System-wide, set once at boot</td>
+                <td>Tells the SMC &ldquo;trust a physical GPIO pin to know if you&rsquo;re on battery.&rdquo; The real gate.</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <p class="text-justify">The system-wide flag is set whenever the VBIOS
+            declares the <code>HARDWAREDC</code> platform capability &mdash; which the
+            D500&rsquo;s VBIOS does, despite the card living in a desktop with no
+            battery and no such GPIO wired to anything. With that flag set, the SMC
+            trusts a pin that permanently reads &ldquo;not AC,&rdquo; and ignores
+            everything else: the per-state flag, and any software notification.</p>
+
+          <p class="text-justify">Two isolation builds nailed it down. Both cleared
+            <code>PPSMC_SYSTEMFLAG_GPIO_DC</code> and left <code>dc_compatible</code>
+            at its normal (broken) value; one of them also sent an explicit
+            &ldquo;running on AC&rdquo; message to the SMC, the other sent nothing at
+            all. Both fully fixed the regression. Neither the per-state flag nor the
+            software notification mattered in the slightest &mdash; only the
+            system-wide GPIO flag did.</p>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>The fix, and going upstream</h3>
+          <p class="text-justify">Before posting that finding, there was an obvious
+            objection to anticipate: unconditionally clearing
+            <code>PPSMC_SYSTEMFLAG_GPIO_DC</code> whenever <code>HARDWAREDC</code> is
+            set would also break real laptops with a genuinely wired GPIO. So the
+            report included a proposed scope &mdash; gate the fix on this card&rsquo;s
+            PCI subsystem ID, Apple&rsquo;s <code>106b:0126</code>.</p>
+
+          <p class="text-justify">Timur agreed with the root cause point for point and
+            proposed a cleaner scope of his own: gate it on the
+            <code>AMD_IS_MOBILITY</code> device flag instead, which the driver already
+            uses to tell laptop SKUs from desktop ones &mdash; covering any GCN1 desktop
+            board with a similarly confused VBIOS, not just this one Mac Pro.</p>
+
+<pre>
+-	if (adev-&gt;pm.dpm.platform_caps &amp; ATOM_PP_PLATFORM_CAP_HARDWAREDC)
++	if ((adev-&gt;flags &amp; AMD_IS_MOBILITY) &amp;&amp;
++	    (adev-&gt;pm.dpm.platform_caps &amp; ATOM_PP_PLATFORM_CAP_HARDWAREDC))
+ 		table-&gt;systemFlags |= PPSMC_SYSTEMFLAG_GPIO_DC;
+</pre>
+
+          <p class="text-justify">Two lines. Tested on a clean release-candidate tree
+            with no other patch applied: <code>auto</code> now climbs to P3 at 21.32
+            tok/s, matching production exactly; <code>high</code> forced is accepted,
+            no more <code>EINVAL</code>. Full parity restored.</p>
+
+          <p class="text-justify">Timur folded the fix into a proper commit, citing the
+            FirePro D500 by name in the message, and sent a two-patch series to the
+            <strong>amd-gfx</strong> mailing list &mdash; the actual review path into
+            the mainline kernel. The second patch is a complementary hardening of the
+            same code, not something I tested myself; both are currently awaiting
+            review.</p>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>What's still open</h3>
+          <p class="text-justify">Two threads from this same week never got resolved.
+            The PCIe AER bug from the very first section &mdash; a passthrough GPU
+            reset that goes fatal under the RC kernel &mdash; has a full writeup with
+            dmesg from both host and guest, but I still haven&rsquo;t decided whether it
+            belongs on <code>bugzilla.kernel.org</code> or on the
+            <code>linux-pci</code> mailing list, so it hasn&rsquo;t been posted yet.</p>
+
+          <p class="text-justify">And along the way, the home server itself hard-crashed
+            seven times with absolutely nothing in the logs &mdash; no panic, no OOM, no
+            AER, <code>pstore</code> empty every time. Most of those correlated with a
+            specific sequence in my own tooling (binding and unbinding the GPU between
+            the kernel driver and <code>vfio-pci</code> in quick succession around a
+            reboot), and removing that dangerous transition from the automation fixed
+            it structurally. The underlying kernel-level cause of <em>why</em> that
+            sequence hangs the host, though, was never root-caused &mdash; it was simply
+            avoided.</p>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>What stuck with me</h3>
+          <ul>
+            <li><strong>A result can be right and still be wrong.</strong> The
+              <code>dc_compatible</code> hardcode fixed the symptom completely. It took
+              a maintainer who understood the hardware better than the test results did
+              to say &ldquo;that shouldn&rsquo;t be the reason&rdquo; and send everyone
+              looking one layer deeper.</li>
+            <li><strong>An error code beats a benchmark.</strong> Once
+              <code>power_dpm_force_performance_level high</code> gave a hard
+              <code>EINVAL</code> instead of a throughput number, every subsequent test
+              took seconds instead of a full inference run.</li>
+            <li><strong>Compiling the kernel yourself is cheap insurance.</strong> Five
+              candidate commits, tested directly instead of argued about, closed a
+              discrepancy with the maintainer in one round trip instead of several.</li>
+            <li><strong>Twelve-year-old hardware still finds real bugs.</strong> A 2013
+              workstation GPU, still running a 2026 GitLab thread, ended up shaping two
+              patches headed into the mainline Linux kernel.</li>
+          </ul>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>Links</h3>
+          <ul>
+            <li>GitLab work item (the full thread): <a href="https://gitlab.freedesktop.org/mesa/mesa/-/work_items/16352">gitlab.freedesktop.org/mesa/mesa/-/work_items/16352</a></li>
+            <li>The commit that introduced the regression: <a href="https://github.com/torvalds/linux/commit/e6c5d36756e7">e6c5d36756e7</a></li>
+            <li>The fix, patch 1/2, on amd-gfx: <a href="https://lists.freedesktop.org/archives/amd-gfx/2026-September/153624.html">drm/amd/pm/si: Check AMD_IS_MOBILITY flag for PPSMC_SYSTEMFLAG_GPIO_DC</a></li>
+            <li>Patch 2/2, on amd-gfx: <a href="https://lists.freedesktop.org/archives/amd-gfx/2026-September/153625.html">drm/amd/pm/si: Fix updating clock limits on AC/DC</a></li>
+            <li>The passthrough setup that made all of this possible in the first place: <a href="gpu_passthrough.html">GPU Passthrough on a Mac Pro 6,1</a></li>
+          </ul>
+        </div>
+
+        <div class="col-md-12 text-center">
+          <hr>
+          <p class="text-muted"><small><em>A note on how this was written:</em> the
+            investigation, decisions, and testing described above are my own. The
+            writing itself was drafted and edited with the help of generative AI
+            (Claude), based on my notes and the real project history.</small></p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <footer class="probootstrap-footer" role="contentinfo">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <p>Site template developed by <a href="https://uicookies.com">uiCookies</a>.</p>
+          <ul class="probootstrap-social">
+            <li><a href="https://www.youtube.com/@lucaspwo"><i class="icon-youtube"></i></a></li>
+            <li><a href="https://www.linkedin.com/in/lucaspwo"><i class="icon-linkedin"></i></a></li>
+            <li><a href="https://github.com/lucaspwo"><i class="icon-github2"></i></a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <div class="gototop js-top">
+    <a href="#" class="js-gotop"><i class="icon-chevron-thin-up"></i></a>
+  </div>
+
+
+  <script src="js/scripts.min.js"></script>
+  <script src="js/main.min.js"></script>
+  <script src="js/custom.js"></script>
+
+</body>
+</html>

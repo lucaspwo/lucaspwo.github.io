@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>A GPU que se recusava a trocar de marcha</title>
+  <link href="https://fonts.googleapis.com/css?family=Abel" rel="stylesheet">
+  <link rel="stylesheet" href="../css/styles-merged.css">
+  <link rel="stylesheet" href="../css/style.min.css">
+  <link rel="stylesheet" href="../css/custom.css">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="https://lucaspwo.com/assets/favicon180x180.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://lucaspwo.com/assets/favicon16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://lucaspwo.com/assets/favicon32x32.png">
+  <link rel="icon" type="image/x-icon" href="https://lucaspwo.com/assets/favicon.png">
+
+  <meta property="og:title" content="A GPU que se recusava a trocar de marcha" />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://lucaspwo.com/br/amdgpu_dpm_bug.html" />
+  <meta property="og:image" content="https://lucaspwo.com/projetos/amdgpu_dpm_bug/amdgpu_dpm_bug.jpg" />
+  <meta property="og:site_name" content="Lucas' Experiments Lab" />
+  <meta property="og:description" content="Fazendo bisect de uma regressão de kernel até o commit exato e as duas linhas exatas — com o mantenedor upstream acompanhando de perto." />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:description" content="Fazendo bisect de uma regressão de kernel até o commit exato e as duas linhas exatas — com o mantenedor upstream acompanhando de perto." />
+  <meta name="twitter:title" content="A GPU que se recusava a trocar de marcha" />
+  <meta name="twitter:site" content="@lucaspwo" />
+  <meta name="twitter:creator" content="@lucaspwo" />
+  <meta name="twitter:image" content="https://lucaspwo.com/projetos/amdgpu_dpm_bug/amdgpu_dpm_bug.jpg" />
+</head>
+
+<body>
+
+  <!-- START: header -->
+  <div class="probootstrap-loader"></div>
+
+  <header role="banner" class="probootstrap-header">
+    <div class="container">
+      <a href="index.html" class="probootstrap-logo col-xs-8">Meu Laboratório de Experimentos</a>
+
+      <a href="#" class="probootstrap-burger-menu visible-xs"><i>Menu</i></a>
+      <div class="mobile-menu-overlay"></div>
+
+      <nav role="navigation" class="probootstrap-nav hidden-xs">
+        <ul class="probootstrap-main-nav">
+          <li class="active"><a href="index.html">Principal</a></li>
+          <li><a href="about.html">Sobre</a></li>
+          <li><a href="contact.html">Contato</a></li>
+          <li><a href="../amdgpu_dpm_bug.html">&#x1F1FA;&#x1F1F8;</a></li>
+        </ul>
+        <div class="extra-text visible-xs">
+          <a href="#" class="probootstrap-burger-menu"><i>Menu</i></a>
+          <h5>Conecte-se</h5>
+          <ul class="social-buttons">
+            <li><a href="https://www.youtube.com/@lucaspwo"><i class="icon-youtube"></i></a></li>
+            <li><a href="https://www.linkedin.com/in/lucaspwo"><i class="icon-linkedin"></i></a></li>
+            <li><a href="https://github.com/lucaspwo"><i class="icon-github2"></i></a></li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+  </header>
+  <!-- END: header -->
+
+  <div class="probootstrap-section">
+    <div class="container">
+
+      <div class="row">
+        <div class="col-md-8 col-md-offset-2 mb40 text-center">
+          <h2>A GPU que se recusava a trocar de marcha</h2>
+          <p>Fazendo bisect de uma regressão de DPM no kernel em hardware de 12 anos, com o mantenedor upstream acompanhando de perto</p>
+          <p>Publicado em 24 de setembro de 2026</p>
+        </div>
+
+        <div class="col-md-12">
+          <p class="text-justify">Esta história começa com as mesmas GPUs do
+            <a href="../gpu_passthrough.html">guia de passthrough</a>: um par de
+            <strong>AMD FirePro D500</strong> (Tahiti, GCN 1.0, de 2013) dentro de um
+            <strong>Mac Pro 6,1</strong> que hoje serve como servidor doméstico rodando
+            Proxmox. Com o passthrough funcionando, a próxima pergunta óbvia era se uma
+            dessas GPUs aguentaria rodar um LLM local &mdash; <code>llama.cpp</code>
+            sobre Vulkan, via o driver open-source <strong>RADV</strong>.</p>
+
+          <p class="text-justify">Aguentava, até um prompt longo derrubar a VM inteira
+            com um <code>vk::DeviceLostError</code>. Reportar essa falha upstream abriu
+            uma conversa de cinco dias com um mantenedor do RADV que acabou se
+            desdobrando em três bugs distintos, custou sete travamentos inexplicados do
+            servidor, e terminou com meu nome citado numa mensagem de commit do kernel
+            ao lado das palavras &ldquo;FirePro D500&rdquo;.</p>
+
+          <p class="text-justify">Esta é a história do bug do meio: uma GPU que não
+            saía da primeira marcha.</p>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>Números em resumo</h3>
+          <div class="row">
+            <div class="col-md-3 col-xs-6 text-center mb40">
+              <h2>21,7 &rarr; 6,1</h2>
+              <p>tok/s perdidos com a GPU presa no menor estado de energia</p>
+            </div>
+            <div class="col-md-3 col-xs-6 text-center mb40">
+              <h2>1</h2>
+              <p>commit exato isolado, entre 5 candidatos, em 8 reboots</p>
+            </div>
+            <div class="col-md-3 col-xs-6 text-center mb40">
+              <h2>7</h2>
+              <p>travamentos completos do host pelo caminho, sem rastro nenhum nos logs</p>
+            </div>
+            <div class="col-md-3 col-xs-6 text-center mb40">
+              <h2>2</h2>
+              <p>patches enviados para a lista amd-gfx, aguardando merge</p>
+            </div>
+          </div>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>Como começou: uma falha, e uma descoberta colateral</h3>
+          <p class="text-justify">O bug original era fácil de descrever: mandar ao
+            <code>llama.cpp</code> um prompt de mais de 600&ndash;800 tokens na D500
+            via RADV, e o contexto de compute morria com
+            <code>vk::DeviceLostError</code>. Registrei o problema para o mantenedor do
+            RADV, <strong>Timur Krist&oacute;f</strong>, no GitLab do Mesa. O
+            diagnóstico dele: Mesa desatualizado, mais um patch de soft-reset do GFX6
+            &mdash; de autoria dele mesmo &mdash; que tinha acabado de entrar no Linux
+            7.3 e deveria resolver.</p>
+
+          <p class="text-justify">E resolveu &mdash; um prompt de 1161 tokens que antes
+            travava o host inteiro rodou limpo, com uma GPU e com duas. Só que validar
+            uma correção num kernel release-candidate significa bootar nele, e foi
+            exatamente aí que o dano colateral começou. Passar a GPU por passthrough
+            para uma VM de desktop sob o 7.3-rc3 passou a disparar um erro
+            <strong>AER</strong> no barramento PCIe durante o reset da GPU &mdash; AER
+            é sigla de <em>Advanced Error Reporting</em>, o mecanismo próprio do
+            barramento PCIe pra sinalizar tráfego corrompido ou perdido no link
+            &mdash; e o driver do guest desligava o dispositivo no meio da sessão,
+            reproduzido 4 vezes em 4 no kernel RC, 0 em 1 na produção. Esse relato
+            ainda está guardado na gaveta (veja a seção final), porque a descoberta
+            seguinte fez ele parecer pequeno em comparação.</p>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>O verdadeiro culpado: preso em P0</h3>
+          <p class="text-justify">Antes de fechar a issue original, o Timur pediu uma
+            comparação maçã-com-maçã: mesmo comando, mesmo prompt, mesma GPU, só o
+            kernel mudando. Os números não bateram nada com minha suposição.</p>
+
+          <p class="text-justify">Uma nota rápida sobre a notação: <strong>P0, P3</strong>
+            e por aí vai são os estados de DPM (gerenciamento dinâmico de energia) da
+            GPU &mdash; <code>P0</code> é ocioso/menor clock, e o número sobe conforme a
+            placa acelera sob carga, até o maior estado suportado aqui
+            (<code>P3</code>). Uma placa saudável fica ociosa em <code>P0</code> e sobe
+            de estado em poucos segundos assim que trabalho de verdade chega nela.</p>
+
+          <table class="table">
+            <thead>
+              <tr>
+                <th></th>
+                <th>Kernel de produção</th>
+                <th>7.3-rc3</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>DPM sob carga</td>
+                <td>P0 &rarr; <strong>P3</strong> em ~2s (sclk 30 &rarr; 72,5, mclk 15 &rarr; 127)</td>
+                <td><strong>preso em P0</strong> o tempo todo</td>
+              </tr>
+              <tr>
+                <td>Velocidade de geração</td>
+                <td>21,7 tok/s</td>
+                <td>6,1 tok/s</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <p class="text-justify">A queda de throughput que eu vinha atribuindo a um
+            prompt mais longo não tinha nada a ver com o tamanho do contexto. O
+            gerenciamento dinâmico de energia da placa (<strong>DPM</strong>) simplesmente
+            nunca saía do menor clock sob o kernel novo &mdash; confirmado fazendo
+            polling em <code>amdgpu_pm_info</code> a cada segundo enquanto a carga
+            rodava.</p>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>O bisect: de &ldquo;em algum lugar entre dois releases&rdquo; a um commit só</h3>
+          <p class="text-justify">O Timur pediu três coisas: forçar o maior estado de
+            energia manualmente, fazer bisect entre o kernel 6.19 e o 7.3, e escrever
+            passos exatos de reprodução. Forçar o estado acabou sendo o sinal mais
+            limpo de todos &mdash; na produção,
+            <code>echo high &gt; power_dpm_force_performance_level</code> é aceito; no
+            7.3-rc3, retorna <code>EINVAL</code> na hora (o código de erro genérico do
+            Linux pra &ldquo;argumento inválido&rdquo; &mdash; o kernel recusando o
+            pedido de cara, não um valor formatado errado). Nenhuma medição de
+            throughput necessária, só um código de erro.</p>
+
+<pre>
+# kernel de producao: aceito
+echo high &gt; /sys/class/drm/card0/device/power_dpm_force_performance_level
+
+# 7.3-rc3: Invalid argument
+echo high &gt; /sys/class/drm/card0/device/power_dpm_force_performance_level
+-bash: echo: write error: Invalid argument
+</pre>
+
+          <p class="text-justify">Um bisect por release estreitou o intervalo entre o
+            7.1 (comporta-se como produção) e o 7.2 (já quebrado). O Timur então
+            observou que só um punhado de commits tinha tocado
+            <code>si_dpm.c</code> nesse intervalo e pediu para eu reverter cada um e
+            achar o culpado. Encontrei cinco candidatos, não quatro &mdash; e em vez de
+            discutir a diferença, simplesmente testei os cinco.</p>
+
+          <p class="text-justify">Isso significou compilar um kernel customizado
+            localmente pela primeira vez neste projeto (num contêiner LXC de sobra com
+            24 núcleos &mdash; o próprio Xeon do Mac Pro, ironicamente, compilando o
+            kernel que mais tarde corrigiria a própria GPU dele). Oito reboots e uma
+            busca binária depois, um commit se destacou como necessário e suficiente
+            sozinho:</p>
+
+<pre>
+e6c5d36756e7 drm/amd/pm/si: Fix updating clock limits from power states
+</pre>
+
+          <p class="text-justify">Um patch que, pela própria mensagem de commit, tinha
+            sido feito para corrigir notebooks. Quebrou um desktop em vez disso.</p>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>Uma resposta certa pelo motivo errado</h3>
+          <p class="text-justify">O Timur pediu duas capturas de dmesg com debug do
+            driver ligado, uma de cada lado do commit, para ver a diferença real nas
+            tabelas de DPM enviadas ao controlador embutido da placa (a SMC). Lendo
+            <code>si_dpm.c</code> com esses logs em mãos, a cadeia ficou visível: a
+            VBIOS da D500 traz um estado de energia
+            <strong><code>battery</code></strong> com os clocks travados no mínimo
+            &mdash; inofensivo sozinho, já que nada num desktop deveria jamais
+            selecioná-lo. O commit novo passou a usar esse estado para popular a noção
+            que o driver tem de &ldquo;clock máximo permitido em energia DC
+            (bateria)&rdquo;, que antes caía de volta nos limites generosos de AC. Com
+            limites de DC reais e minúsculos agora em vigor, o driver marcava o estado
+            de alta performance como <em>não</em> compatível com DC &mdash;
+            incondicionalmente, sem considerar se a máquina estava de fato na
+            bateria.</p>
+
+          <p class="text-justify">Minha primeira tentativa de correção, sugerida pelo
+            Timur como teste de isolamento, foi forçar essa flag de compatibilidade
+            para <code>true</code>. Funcionou <strong>completamente</strong>: 21,3
+            tok/s, DPM subindo a P3 exatamente como na produção. Postei como resultado
+            positivo. O Timur discordou mesmo assim: essa flag, segundo ele, &ldquo;não
+            deveria importar a menos que a SMC ache que está na bateria&rdquo; &mdash;
+            e um Mac Pro nunca está na bateria. Meu hardcode estava mascarando uma
+            flag completamente diferente, que nenhum de nós dois vinha olhando.</p>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>Duas flags com nomes quase idênticos</h3>
+          <p class="text-justify">O driver trata AC/DC em dois lugares sem relação
+            entre si, e os nomes são parecidos o suficiente para confundir de
+            propósito:</p>
+
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Flag</th>
+                <th>Escopo</th>
+                <th>O que ela realmente faz</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>dc_compatible</code> / <code>PPSMC_SWSTATE_FLAG_DC</code></td>
+                <td>Por estado de energia</td>
+                <td>A que todo mundo (eu incluído) presumiu que importava. Acabou sendo irrelevante neste hardware.</td>
+              </tr>
+              <tr>
+                <td><code>PPSMC_SYSTEMFLAG_GPIO_DC</code></td>
+                <td>De sistema, setada uma vez no boot</td>
+                <td>Diz à SMC &ldquo;confie num pino GPIO físico pra saber se está na bateria&rdquo;. O verdadeiro portão.</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <p class="text-justify">A flag de sistema é setada sempre que a VBIOS declara
+            a capability de plataforma <code>HARDWAREDC</code> &mdash; o que a VBIOS da
+            D500 faz, apesar da placa viver num desktop sem bateria e sem nenhum GPIO
+            desse tipo ligado a nada. Com essa flag setada, a SMC confia num pino que lê
+            permanentemente &ldquo;não é AC&rdquo;, e ignora tudo o mais: a flag
+            por-estado, e qualquer notificação de software.</p>
+
+          <p class="text-justify">Dois builds de isolamento fecharam a questão. Os dois
+            desativavam <code>PPSMC_SYSTEMFLAG_GPIO_DC</code> e deixavam
+            <code>dc_compatible</code> no valor normal (quebrado); um deles também
+            mandava uma mensagem explícita de &ldquo;rodando em AC&rdquo; para a SMC, o
+            outro não mandava nada. Os dois corrigiram a regressão por completo. Nem a
+            flag por-estado nem a notificação de software importavam no mínimo &mdash;
+            só a flag de sistema do GPIO.</p>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>A correção, e o caminho até o upstream</h3>
+          <p class="text-justify">Antes de postar esse achado, havia uma objeção óbvia
+            a antecipar: desativar <code>PPSMC_SYSTEMFLAG_GPIO_DC</code>
+            incondicionalmente sempre que <code>HARDWAREDC</code> estivesse setado
+            também quebraria notebooks de verdade com um GPIO genuinamente cabeado.
+            Então o relato incluiu um escopo proposto &mdash; condicionar a correção ao
+            subsystem ID PCI desta placa, o <code>106b:0126</code> da Apple.</p>
+
+          <p class="text-justify">O Timur concordou com a causa raiz ponto a ponto e
+            propôs um escopo mais limpo, dele: condicionar à flag de dispositivo
+            <code>AMD_IS_MOBILITY</code>, que o driver já usa para distinguir SKUs de
+            notebook das de desktop &mdash; cobrindo qualquer placa desktop GCN1 com
+            uma VBIOS igualmente confusa, não só este Mac Pro.</p>
+
+<pre>
+-	if (adev-&gt;pm.dpm.platform_caps &amp; ATOM_PP_PLATFORM_CAP_HARDWAREDC)
++	if ((adev-&gt;flags &amp; AMD_IS_MOBILITY) &amp;&amp;
++	    (adev-&gt;pm.dpm.platform_caps &amp; ATOM_PP_PLATFORM_CAP_HARDWAREDC))
+ 		table-&gt;systemFlags |= PPSMC_SYSTEMFLAG_GPIO_DC;
+</pre>
+
+          <p class="text-justify">Duas linhas. Testado numa árvore release-candidate
+            limpa, sem nenhum outro patch aplicado: <code>auto</code> agora sobe a P3 a
+            21,32 tok/s, igualando a produção exatamente; <code>high</code> forçado é
+            aceito, sem mais <code>EINVAL</code>. Paridade completa restaurada.</p>
+
+          <p class="text-justify">O Timur formalizou a correção num commit propriamente
+            dito, citando a FirePro D500 nominalmente na mensagem, e enviou uma série
+            de dois patches para a lista <strong>amd-gfx</strong> &mdash; o caminho real
+            de review para o kernel mainline. O segundo patch é um endurecimento
+            complementar do mesmo código, que eu não testei pessoalmente; os dois estão
+            aguardando review no momento.</p>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>O que ainda ficou em aberto</h3>
+          <p class="text-justify">Duas linhas de investigação da mesma semana nunca
+            foram resolvidas. O bug de AER no PCIe da primeira seção &mdash; um reset
+            de GPU em passthrough que se torna fatal sob o kernel RC &mdash; tem um
+            relato completo com dmesg do host e do guest lado a lado, mas ainda não
+            decidi se ele pertence ao <code>bugzilla.kernel.org</code> ou à lista
+            <code>linux-pci</code>, então ainda não foi postado.</p>
+
+          <p class="text-justify">E pelo caminho, o servidor doméstico travou por
+            completo sete vezes sem absolutamente nada nos logs &mdash; sem panic, sem
+            OOM, sem AER, <code>pstore</code> vazio todas as vezes. A maioria dessas
+            quedas se correlacionava com uma sequência específica na minha própria
+            automação (alternar a GPU entre o driver do kernel e o
+            <code>vfio-pci</code> em sucessão rápida em torno de um reboot), e remover
+            essa transição perigosa da automação corrigiu o problema estruturalmente. A
+            causa raiz, no nível do kernel, de <em>por que</em> essa sequência trava o
+            host, porém, nunca foi encontrada &mdash; ela só foi evitada.</p>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>O que ficou comigo</h3>
+          <ul>
+            <li><strong>Um resultado pode estar certo e ainda assim estar errado.</strong>
+              O hardcode de <code>dc_compatible</code> corrigiu o sintoma por completo.
+              Foi preciso um mantenedor que entendia o hardware melhor do que os
+              resultados dos testes para dizer &ldquo;esse não deveria ser o
+              motivo&rdquo; e mandar todo mundo olhar uma camada mais fundo.</li>
+            <li><strong>Um código de erro vale mais que um benchmark.</strong> Assim que
+              <code>power_dpm_force_performance_level high</code> passou a dar um
+              <code>EINVAL</code> categórico em vez de um número de throughput, cada
+              teste seguinte levou segundos em vez de uma rodada de inferência
+              inteira.</li>
+            <li><strong>Compilar o próprio kernel é seguro barato.</strong> Cinco
+              commits candidatos, testados diretamente em vez de discutidos, fecharam
+              uma divergência com o mantenedor numa única volta em vez de várias.</li>
+            <li><strong>Hardware de doze anos ainda encontra bugs de verdade.</strong>
+              Uma GPU de workstation de 2013, ainda rodando uma conversa de GitLab de
+              2026, acabou moldando dois patches a caminho do kernel Linux
+              mainline.</li>
+          </ul>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>Links</h3>
+          <ul>
+            <li>Work item do GitLab (a conversa completa): <a href="https://gitlab.freedesktop.org/mesa/mesa/-/work_items/16352">gitlab.freedesktop.org/mesa/mesa/-/work_items/16352</a></li>
+            <li>O commit que introduziu a regressão: <a href="https://github.com/torvalds/linux/commit/e6c5d36756e7">e6c5d36756e7</a></li>
+            <li>A correção, patch 1/2, na amd-gfx: <a href="https://lists.freedesktop.org/archives/amd-gfx/2026-September/153624.html">drm/amd/pm/si: Check AMD_IS_MOBILITY flag for PPSMC_SYSTEMFLAG_GPIO_DC</a></li>
+            <li>Patch 2/2, na amd-gfx: <a href="https://lists.freedesktop.org/archives/amd-gfx/2026-September/153625.html">drm/amd/pm/si: Fix updating clock limits on AC/DC</a></li>
+            <li>A configuração de passthrough que tornou tudo isso possível: <a href="../gpu_passthrough.html">GPU Passthrough no Mac Pro 6,1</a></li>
+          </ul>
+        </div>
+
+        <div class="col-md-12 text-center">
+          <hr>
+          <p class="text-muted"><small><em>Uma nota sobre como isto foi escrito:</em> a
+            investigação, as decisões e os testes descritos acima são meus. O texto em
+            si foi redigido e editado com o auxílio de IA generativa (Claude), a partir
+            das minhas anotações e do histórico real do projeto.</small></p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <footer class="probootstrap-footer" role="contentinfo">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <p>Template do site desenvolvido por <a href="https://uicookies.com">uiCookies</a>.</p>
+          <ul class="probootstrap-social">
+            <li><a href="https://www.youtube.com/@lucaspwo"><i class="icon-youtube"></i></a></li>
+            <li><a href="https://www.linkedin.com/in/lucaspwo"><i class="icon-linkedin"></i></a></li>
+            <li><a href="https://github.com/lucaspwo"><i class="icon-github2"></i></a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <div class="gototop js-top">
+    <a href="#" class="js-gotop"><i class="icon-chevron-thin-up"></i></a>
+  </div>
+
+
+  <script src="../js/scripts.min.js"></script>
+  <script src="../js/main.min.js"></script>
+  <script src="../js/custom.js"></script>
+
+</body>
+</html>
