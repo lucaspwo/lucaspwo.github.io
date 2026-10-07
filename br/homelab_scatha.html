@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Scatha: um homelab num Mac Pro de 2013</title>
+  <link href="https://fonts.googleapis.com/css?family=Abel" rel="stylesheet">
+  <link rel="stylesheet" href="../css/styles-merged.css">
+  <link rel="stylesheet" href="../css/style.min.css">
+  <link rel="stylesheet" href="../css/custom.css">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="https://lucaspwo.com/assets/favicon180x180.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://lucaspwo.com/assets/favicon16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://lucaspwo.com/assets/favicon32x32.png">
+  <link rel="icon" type="image/x-icon" href="https://lucaspwo.com/assets/favicon.png">
+
+  <meta property="og:title" content="Scatha: um homelab num Mac Pro de 2013" />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://lucaspwo.com/br/homelab_scatha.html" />
+  <meta property="og:image" content="https://lucaspwo.com/projetos/homelab_scatha/homelab_scatha.jpg" />
+  <meta property="og:site_name" content="Lucas' Experiments Lab" />
+  <meta property="og:description" content="Como um Mac Pro de 2013 virou servidor doméstico: Proxmox, malha WireGuard atrás de CGNAT, DNS medido, failover de link, backups 3-2-1 e monitoramento em duas camadas." />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:description" content="Como um Mac Pro de 2013 virou servidor doméstico: Proxmox, malha WireGuard atrás de CGNAT, DNS medido, failover de link, backups 3-2-1 e monitoramento em duas camadas." />
+  <meta name="twitter:title" content="Scatha: um homelab num Mac Pro de 2013" />
+  <meta name="twitter:site" content="@lucaspwo" />
+  <meta name="twitter:creator" content="@lucaspwo" />
+  <meta name="twitter:image" content="https://lucaspwo.com/projetos/homelab_scatha/homelab_scatha.jpg" />
+</head>
+
+<body>
+
+  <!-- START: header -->
+  <div class="probootstrap-loader"></div>
+
+  <header role="banner" class="probootstrap-header">
+    <div class="container">
+      <a href="index.html" class="probootstrap-logo col-xs-8">Meu Laboratório de Experimentos</a>
+
+      <a href="#" class="probootstrap-burger-menu visible-xs"><i>Menu</i></a>
+      <div class="mobile-menu-overlay"></div>
+
+      <nav role="navigation" class="probootstrap-nav hidden-xs">
+        <ul class="probootstrap-main-nav">
+          <li class="active"><a href="index.html">Principal</a></li>
+          <li><a href="about.html">Sobre</a></li>
+          <li><a href="contact.html">Contato</a></li>
+          <li><a href="../homelab_scatha.html">&#x1F1FA;&#x1F1F8;</a></li>
+        </ul>
+        <div class="extra-text visible-xs">
+          <a href="#" class="probootstrap-burger-menu"><i>Menu</i></a>
+          <h5>Conecte-se</h5>
+          <ul class="social-buttons">
+            <li><a href="https://www.youtube.com/@lucaspwo"><i class="icon-youtube"></i></a></li>
+            <li><a href="https://www.linkedin.com/in/lucaspwo"><i class="icon-linkedin"></i></a></li>
+            <li><a href="https://github.com/lucaspwo"><i class="icon-github2"></i></a></li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+  </header>
+  <!-- END: header -->
+
+  <div class="probootstrap-section">
+    <div class="container">
+
+      <div class="row">
+        <div class="col-md-8 col-md-offset-2 mb40 text-center">
+          <h2>Scatha: um homelab num Mac Pro de 2013</h2>
+          <p>Proxmox, uma malha WireGuard, DNS dividido e backups 3-2-1 numa workstation de doze anos</p>
+          <p>Publicado em 7 de outubro de 2026</p>
+        </div>
+
+        <div class="col-md-12">
+          <p class="text-justify">Desde junho de 2026, os serviços que hospedo em casa &mdash; fotos, documentos,
+            Git, mídia, automação residencial, alguns servidores de jogo &mdash; rodam no <strong>Scatha</strong>,
+            um <strong>Mac Pro 6,1</strong> (Late 2013, a &ldquo;lixeirinha&rdquo;) rodando
+            <strong>Proxmox VE</strong> direto no hardware. (Todas as minhas máquinas têm nome de dragão do
+            Tolkien.) Antes, tudo ficava num Mac Mini M2 com OrbStack, mas, em ARM, a parte de aprendizado de
+            máquina da minha biblioteca de fotos rodava sob emulação x86, então migrei para x86 nativo. Em
+            agosto o Mac Pro ganhou um <strong>Xeon E5-2697 v2</strong> (12 núcleos, 24 threads) e
+            <strong>64 GiB de RAM ECC</strong>.</p>
+
+          <p class="text-justify">As duas GPUs FirePro D500 dele já renderam dois posts (o
+            <a href="gpu_passthrough.html">guia de passthrough</a> e a
+            <a href="amdgpu_dpm_bug.html">caça ao bug no kernel</a>). Este é sobre todo o resto: como o
+            servidor está organizado, como ele se encaixa na rede e como é feito o backup, o monitoramento e a
+            documentação.</p>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>Números em Destaque</h3>
+          <div class="row">
+            <div class="col-md-3 col-xs-6 text-center mb40">
+              <h2>36</h2>
+              <p>containers rodando no stack principal</p>
+            </div>
+            <div class="col-md-3 col-xs-6 text-center mb40">
+              <h2>~490 GB</h2>
+              <p>de fotos e acervo pessoal sob backup 3-2-1</p>
+            </div>
+            <div class="col-md-3 col-xs-6 text-center mb40">
+              <h2>0</h2>
+              <p>serviços acessíveis pela internet pública</p>
+            </div>
+            <div class="col-md-3 col-xs-6 text-center mb40">
+              <h2>960+</h2>
+              <p>commits no repositório que documenta tudo isso</p>
+            </div>
+          </div>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>Como está organizado</h3>
+          <div class="row">
+            <div class="col-md-10 col-md-offset-1">
+              <a href="../projetos/homelab_scatha/homelab_scatha.jpg" class="image-popup" style="margin-bottom: 1px;">
+                <img src="../projetos/homelab_scatha/homelab_scatha.jpg" class="img-responsive">
+              </a>
+              <p class="text-justify">Visão geral da montagem: a rede local à esquerda, o servidor no centro, o
+                acesso remoto e os destinos de backup à direita.</p>
+            </div>
+          </div>
+
+          <p class="text-justify">O Proxmox divide a máquina em alguns <strong>containers LXC</strong> (mais leves
+            que VMs, compartilham o kernel do host) e em <strong>VMs</strong> que só ligam quando preciso:</p>
+          <ul>
+            <li><strong>&ldquo;docker&rdquo;</strong> &mdash; o stack principal, com um arquivo Docker Compose por
+              serviço: <strong>Immich</strong> (fotos), <strong>Paperless-ngx</strong> (documentos),
+              <strong>Nextcloud</strong>, <strong>Plex</strong>, <strong>GitLab CE</strong> com seus runners de
+              CI, <strong>Uptime Kuma</strong>, um dashboard, um front-end <strong>Open WebUI</strong> cujo
+              gateway acorda meu desktop com GPU via Wake-on-LAN quando alguém abre um chat com um LLM local, e
+              servidores de jogo. O <strong>Traefik</strong> fica na frente de tudo e roteia por labels do
+              Docker, então adicionar um serviço não significa publicar uma porta.</li>
+            <li><strong>&ldquo;dns&rdquo;</strong> &mdash; o <strong>AdGuard Home</strong>, separado do stack
+              Docker, para que o DNS, do qual todo o resto depende, não tenha o mesmo destino dele.</li>
+            <li><strong>&ldquo;home-assistant&rdquo;</strong> &mdash; Home Assistant mais um servidor Matter.</li>
+            <li><strong>VMs sob demanda</strong> &mdash; desktops Linux e macOS usando GPU passthrough no monitor
+              físico, uma máquina Windows de build e VMs macOS/Windows que funcionam como runners de CI.</li>
+          </ul>
+          <p class="text-justify">O armazenamento está dividido em três discos por papel, não por conveniência: um
+            NVMe para o que precisa ser rápido (a biblioteca de fotos e o armazenamento do próprio Docker), um SSD
+            para serviços e bancos de dados ativos, e um HD mecânico que só guarda o repositório de backup
+            local.</p>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>A rede</h3>
+          <p class="text-justify">Esta é a parte que mais me ensinou. A rede de casa em si é simples: uma LAN
+            plana, em que a <strong>ONU</strong> de fibra do provedor é o gateway e o servidor DHCP, e o roteador
+            Wi-Fi roda em <strong>modo access point (bridge)</strong>, servindo só como switch e Wi-Fi. A maior
+            parte do trabalho foi no que fica por cima dela.</p>
+
+          <h4>Dois links, dois equipamentos</h4>
+          <p class="text-justify">O Mac Pro tem duas portas Gigabit Ethernet, e as duas estão num
+            <strong>bond Linux em modo active-backup</strong>. Cada perna vai para um equipamento
+            <em>diferente</em> &mdash; uma para o roteador Wi-Fi, outra direto na ONU &mdash; de modo que nem o
+            cabo, nem a porta, nem o switch são ponto único de falha. As duas pernas compartilham o mesmo MAC
+            forçado, o que mantém a reserva DHCP do servidor, e portanto o IP, estável qualquer que seja a perna
+            ativa. Testei o failover ao vivo, puxando cabos, e confirmei que ele sobrevive a um reboot.</p>
+          <p class="text-justify">Ele tem limites conhecidos, registrados em vez de ignorados: o monitoramento de
+            link (<code>miimon</code>) só percebe um link morto, não um roteador que está vivo mas perdeu o
+            uplink (o monitoramento por ARP pegaria isso, ao custo de mais complexidade com a bridge do Proxmox
+            por cima); e a própria ONU continua sendo ponto único de falha, como acontece com qualquer provedor
+            único.</p>
+
+          <h4>Acesso remoto sem abrir portas</h4>
+          <p class="text-justify">Meu provedor coloca os clientes atrás de <strong>CGNAT</strong>: o IPv4 público é
+            compartilhado com outros clientes, então redirecionamento de porta no roteador não funcionaria de
+            qualquer jeito. Em vez disso, todo acesso remoto passa pelo <strong>Tailscale</strong>, uma VPN em
+            malha construída sobre WireGuard: meu notebook e meu celular alcançam os serviços como se estivessem
+            em casa, e nada fica exposto à internet.</p>
+          <p class="text-justify">Os servidores de jogo têm um detalhe a mais. Cada um roda com um pequeno
+            <strong>container sidecar</strong> que entra na tailnet como um nó próprio e encaminha o tráfego para
+            o jogo via DNAT. Isso permite compartilhar <em>só aquele nó</em> com a conta Tailscale de um amigo
+            &mdash; ele entra no jogo e não enxerga mais nada da minha rede.</p>
+
+          <h4>DNS: medido, não chutado</h4>
+          <p class="text-justify">O <strong>AdGuard Home</strong> resolve nomes para a casa inteira, bloqueia
+            anúncios e rastreadores e encaminha as consultas para o Quad9 via <strong>DNS-over-HTTPS</strong>.
+            Depois que o upstream falhou 105 vezes numa semana, ele ganhou um fallback &mdash; DoH de um provedor
+            <em>diferente</em> (Cloudflare), nunca o resolvedor do provedor de internet, para que a redundância
+            seja de verdade.</p>
+          <p class="text-justify">Antes de ajustar qualquer coisa, medi: um nome interno ou um acerto de cache
+            responde em <strong>0 ms</strong>, e uma consulta fria em <strong>52 ms</strong>, contra um tempo de
+            ida e volta de 54,7 ms até o Quad9 &mdash; ou seja, uma consulta já custa exatamente uma ida e volta,
+            que é o piso físico. Isso descartou várias &ldquo;otimizações&rdquo;: trocar o transporte, trocar de
+            provedor e consultar dois upstreams em paralelo, que cortaria a cauda lenta mas mandaria toda consulta
+            fria para uma segunda empresa, um custo real de privacidade por um ganho cosmético. O único ajuste que
+            importou foi um <strong>TTL mínimo de cache de 60 s</strong> &mdash; e não mais que isso, porque a CDN
+            da Steam usa TTL de 1 segundo para balanceamento e os servidores de jogo se atualizam por ela a cada
+            boot.</p>
+
+          <h4>Sem confiar no resolvedor do provedor</h4>
+          <p class="text-justify">Uma noite, o resolvedor DNS da ONU ficou mudo por 48 minutos enquanto a
+            conectividade IP continuava de pé &mdash; e derrubou junto o backup externo daquele dia. Desde então o
+            host e o container principal resolvem pelo AdGuard, com o Quad9 direto de reserva, fixados na
+            configuração do cliente DHCP em vez do <code>resolv.conf</code> (que o cliente DHCP reescreve a cada
+            renovação). Essa mudança trouxe sua própria lição: o cliente DHCP só lê a configuração quando
+            <em>inicia</em>, então validar logo depois de editar não prova nada &mdash; isso me custou uma hora com
+            o servidor fora da rede até o procedimento ficar certo.</p>
+
+          <h4>Nomes e certificados</h4>
+          <p class="text-justify">O <strong>split DNS</strong> do Tailscale manda meus domínios internos para o
+            AdGuard, que os aponta para o Traefik. O Traefik tem um <strong>certificado curinga do Let&rsquo;s
+            Encrypt</strong> obtido pelo desafio <strong>DNS-01</strong>, que prova a posse do domínio por um
+            registro DNS em vez de uma requisição HTTP &mdash; assim, serviços que nunca tocam a internet pública
+            ainda têm HTTPS válido.</p>
+
+          <h4>Mexer na rede remotamente sem se trancar do lado de fora</h4>
+          <p class="text-justify">Editar a configuração de rede de uma máquina por SSH é um bom jeito de perder o
+            acesso a ela. Antes de aplicar qualquer mudança, armo um <strong>timer que restaura automaticamente a
+            configuração anterior depois de cinco minutos</strong>, aplico a mudança desacoplada da sessão SSH e
+            só cancelo o timer depois de entrar de novo por uma conexão nova. Se todo o resto falhar, o host
+            continua alcançável pelo seu endereço <strong>IPv6 link-local</strong>, que não depende de DHCP.</p>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>Backups: 3-2-1, e conferindo que eles restauram</h3>
+          <p class="text-justify">Dois sistemas complementares, cada um adequado ao tipo de dado que protege:</p>
+          <ul>
+            <li><strong>Kopia &rarr; Cloudflare R2</strong>, diário: dumps de banco de dados e segredos &mdash;
+              pequenos e caros de reconstruir. Ele tenta três vezes antes de alertar, porque um soluço de rede
+              custava o backup do dia inteiro.</li>
+            <li><strong>restic</strong>, toda noite, para o HD local, mais uma cópia diária para um servidor REST
+              <strong>append-only</strong> em outra máquina (um computador de placa única), via Tailscale.
+              Append-only significa que, mesmo se o servidor principal fosse comprometido, ele não conseguiria
+              apagar os snapshots remotos. Isso cobre os ~490 GB de fotos e acervo pessoal.</li>
+          </ul>
+          <p class="text-justify">Também há um <strong>exercício de restauração</strong>, porque um backup que
+            nunca foi restaurado é só uma hipótese.</p>
+          <p class="text-justify">O problema mais interessante aqui não foi uma falha, mas crescimento: o
+            repositório local passou a ganhar uns 10 GiB por dia sem dado novo que justificasse. Comparar os
+            snapshots apontou dois culpados. Os dumps de banco eram reenviados quase inteiros toda noite, porque o
+            <code>pg_dump</code> grava as linhas na ordem física, que as atualizações constantes ficam
+            embaralhando, então a deduplicação não ajuda; eles já eram função do outro sistema de backup e saíram
+            deste. E o arquivo de backup do próprio GitLab carregava 13 GB de artefatos de CI com um nome de
+            arquivo novo a cada dia; pular os artefatos o reduziu de <strong>15,2 para 2,8 GB</strong>, com o
+            código em si continuando coberto.</p>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>Monitoramento em duas camadas</h3>
+          <p class="text-justify">A camada interna é o <strong>Uptime Kuma</strong>, que vigia serviços, containers
+            e backups e alerta no Telegram. Mas ele mora na mesma máquina que vigia &mdash; se o servidor inteiro
+            morrer, ele morre junto, em silêncio. Por isso existe uma camada externa: o
+            <strong>healthchecks.io</strong> recebe um heartbeat do host e do container principal a cada 15
+            minutos, mais um sinal de cada backup quando ele termina. Se os heartbeats param, o alerta vem de
+            fora, e qual deles parou já estreita a causa.</p>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>Documentação como parte do sistema</h3>
+          <p class="text-justify">Toda a montagem vive num repositório Git hospedado no próprio GitLab do servidor:
+            arquivos Compose, scripts, units do systemd e, acima de tudo, documentação &mdash; uma referência
+            operacional, runbooks, relatos de incidentes e um documento de design antes de cada mudança não
+            trivial (dezenas deles até agora). Quando uma afirmação da documentação envelhece &mdash; uma máquina
+            descrita como offline que na verdade voltou, uma correção descrita como solução de um problema que
+            ela não resolveu &mdash; a correção é registrada explicitamente, em vez de reescrever a história em
+            silêncio.</p>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>O que ficou</h3>
+          <ul>
+            <li><strong>Medir antes de otimizar.</strong> O DNS já estava no piso físico; a medição me poupou de
+              três mudanças que só acrescentariam risco.</li>
+            <li><strong>Redundância precisa ser independente.</strong> Um fallback de DNS pelo mesmo provedor, ou
+              um monitor que mora na máquina que monitora, só parecem redundância.</li>
+            <li><strong>Sempre manter um caminho de volta.</strong> Um timer de reversão automática e um endereço
+              link-local transformaram mudanças de rede remotas arriscadas em rotina.</li>
+            <li><strong>Registrar os limites.</strong> Saber exatamente o que o bond <em>não</em> cobre é tão útil
+              quanto saber o que ele cobre.</li>
+          </ul>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>Links</h3>
+          <ul>
+            <li><a href="gpu_passthrough.html">GPU Passthrough no Mac Pro 6,1</a> &mdash; as VMs de desktop no monitor físico</li>
+            <li><a href="amdgpu_dpm_bug.html">A GPU que se recusava a trocar de marcha</a> &mdash; uma regressão do kernel encontrada neste mesmo servidor</li>
+            <li><a href="llms_locais.html">Aventuras com LLM local</a> &mdash; os modelos locais por trás do front-end de chat</li>
+          </ul>
+        </div>
+
+        <div class="col-md-12 text-center">
+          <hr>
+          <p class="text-muted"><small><em>Uma nota sobre como isto foi escrito:</em> a montagem, as decisões e as
+            medições descritas acima são minhas; boa parte da operação prática foi feita com o Claude Code como
+            assistente, sob minha direção. O texto em si foi redigido e editado com o auxílio de IA generativa
+            (Claude), a partir das minhas anotações e do histórico real do repositório.</small></p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <footer class="probootstrap-footer" role="contentinfo">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <p>Template do site desenvolvido por <a href="https://uicookies.com">uiCookies</a>.</p>
+          <ul class="probootstrap-social">
+            <li><a href="https://www.youtube.com/@lucaspwo"><i class="icon-youtube"></i></a></li>
+            <li><a href="https://www.linkedin.com/in/lucaspwo"><i class="icon-linkedin"></i></a></li>
+            <li><a href="https://github.com/lucaspwo"><i class="icon-github2"></i></a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <div class="gototop js-top">
+    <a href="#" class="js-gotop"><i class="icon-chevron-thin-up"></i></a>
+  </div>
+
+
+  <script src="../js/scripts.min.js"></script>
+  <script src="../js/main.min.js"></script>
+  <script src="../js/custom.js"></script>
+
+</body>
+</html>
