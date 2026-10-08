@@ -117,8 +117,8 @@
           <h3>How it got here</h3>
           <p class="text-justify">The first attempt ran on <strong>Smaug</strong>, a <a href="https://www.particle.io/tachyon/"><strong>Particle
             Tachyon</strong></a> &mdash; a single-board computer built around a Qualcomm QCM6490 (ARM) &mdash; with an
-            <strong>ADATA Legend 700</strong> NVMe drive attached through Pimoroni&rsquo;s <strong>NVMe
-            Base</strong>, a board that connects the drive over a PCIe flat cable. That cable turned out to be the
+            <strong>ADATA Legend 700</strong> NVMe drive attached through Pimoroni&rsquo;s <a href="https://shop.pimoroni.com/products/nvme-base?variant=41219587178579"><strong>NVMe
+            Base</strong></a>, a board that connects the drive over a PCIe flat cable. That cable turned out to be the
             weak point. The link ran on a single PCIe lane, and its marginal signal produced a steady stream of
             correctable PCIe errors; combined with ASPM, the link&rsquo;s power-saving mode, interrupts were
             occasionally lost, the drive stalled on I/O timeouts, and under heavy load (Docker, machine learning
