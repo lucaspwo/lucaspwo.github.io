@@ -129,8 +129,8 @@
             ARM the machine-learning side of my photo library ran under x86 emulation, so in
             June 2026 it moved again, to native x86 on Scatha. Nothing from the first attempt went to waste: the
             Legend 700 bought for the Tachyon followed every move and is now Scatha&rsquo;s fast disk, holding the
-            photo library and Docker&rsquo;s storage &mdash; and Smaug found a job it is good at, as the off-host
-            backup target described further down.</p>
+            photo library and Docker&rsquo;s storage &mdash; and Smaug found two jobs it is good at: cellular
+            fallback for the internet link and off-host backup target, both described further down.</p>
           <hr>
         </div>
 
@@ -185,7 +185,27 @@
           <p class="text-justify">It has known limits, written down rather than ignored: link monitoring
             (<code>miimon</code>) only notices a dead link, not a router that is alive but lost its uplink
             (ARP monitoring would catch that, at the cost of more complexity with the Proxmox bridge on
-            top); and the ONU itself remains a single point of failure, as it is with any single ISP.</p>
+            top); and the ONU itself remains a single point of failure for the LAN. For the internet link,
+            though, there is a way out.</p>
+
+          <h4>A cellular fallback for the internet link</h4>
+          <p class="text-justify">Smaug, the single-board computer from the first attempt, has a built-in <strong>LTE modem</strong>. When the wired ISP goes down, the server and its
+            two key containers (the main stack and the DNS) switch their default route to Smaug over the LAN,
+            and Smaug forwards that traffic through the modem with <strong>source-based policy routing</strong>
+            &mdash; only traffic coming from the server takes the cellular path. Measured: about
+            <strong>48 Mbps and 270 ms</strong>, enough for Tailscale to reconnect through the carrier and give
+            me remote access back while the home connection is dead.</p>
+          <p class="text-justify">The switch is automatic, because a manual one has an obvious hole: with
+            the house offline, I can&rsquo;t reach the server to flip it. A timer checks the uplink every two
+            minutes and only switches after <strong>three consecutive failures</strong> &mdash; consecutive, not
+            cumulative, so scattered hiccups over a day never add up to a false alarm. Going back is just as
+            deliberate: it happens when the wired ISP actually answers again, never after a fixed time, which
+            would only send the server back to a dead gateway. The caution has a reason: the cellular plan has
+            a data cap, and a nightly cloud backup or a container image pull would eat it without anyone
+            asking. Getting there meant clearing three traps along the way: ICMP redirects quietly steering
+            the server back to the dead gateway, a carrier that drops ICMP (so the connectivity test has to use
+            HTTPS), and a carrier-side gateway that changes, so it is read from Smaug every time instead of
+            hardcoded.</p>
 
           <h4>Remote access without opening ports</h4>
           <p class="text-justify">My ISP puts customers behind <strong>CGNAT</strong>: the public IPv4 address is

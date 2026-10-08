@@ -129,7 +129,8 @@
             emulação x86, então em junho de 2026 ele mudou de novo, para x86 nativo no Scatha. Nada da primeira
             tentativa foi desperdiçado: o Legend 700 comprado para o Tachyon acompanhou todas as mudanças e hoje
             é o disco rápido do Scatha, com a biblioteca de fotos e o armazenamento do Docker &mdash; e o Smaug
-            achou um trabalho em que é bom, como destino do backup externo descrito mais abaixo.</p>
+            achou dois trabalhos em que é bom: fallback celular do link de internet e destino do backup externo,
+            ambos descritos mais abaixo.</p>
           <hr>
         </div>
 
@@ -185,8 +186,27 @@
           <p class="text-justify">Ele tem limites conhecidos, registrados em vez de ignorados: o monitoramento de
             link (<code>miimon</code>) só percebe um link morto, não um roteador que está vivo mas perdeu o
             uplink (o monitoramento por ARP pegaria isso, ao custo de mais complexidade com a bridge do Proxmox
-            por cima); e a própria ONU continua sendo ponto único de falha, como acontece com qualquer provedor
-            único.</p>
+            por cima); e a própria ONU continua sendo ponto único de falha para a LAN. Para o link de internet,
+            porém, existe uma saída.</p>
+
+          <h4>Um fallback celular para o link de internet</h4>
+          <p class="text-justify">O Smaug, o computador de placa única da primeira tentativa, tem um <strong>modem LTE</strong> integrado. Quando o provedor cabeado cai, o servidor e
+            seus dois containers principais (o stack principal e o DNS) trocam a rota padrão para o Smaug pela
+            LAN, e o Smaug encaminha esse tráfego pelo modem com <strong>roteamento por política baseado na
+            origem</strong> &mdash; só o tráfego que vem do servidor sai pelo celular. Medido: cerca de
+            <strong>48 Mbps e 270 ms</strong>, o suficiente para o Tailscale se reconectar pela operadora e me
+            devolver o acesso remoto enquanto a conexão de casa está morta.</p>
+          <p class="text-justify">A troca é automática, porque a manual tem um furo óbvio: com a casa fora do
+            ar, eu não alcanço o servidor para acioná-la. Um timer checa o uplink a cada dois minutos e só
+            comuta depois de <strong>três falhas consecutivas</strong> &mdash; consecutivas, não acumuladas, para
+            que soluços espalhados ao longo do dia nunca somem um alarme falso. A volta é igualmente
+            cuidadosa: acontece quando o provedor cabeado responde de fato, nunca depois de um prazo fixo, que
+            só devolveria o servidor a um gateway morto. A cautela tem motivo: o plano celular tem franquia, e
+            um backup noturno para a nuvem ou o download de uma imagem de container a consumiriam sem ninguém
+            pedir. Chegar lá exigiu desarmar três armadilhas: redirecionamentos ICMP devolvendo o servidor em
+            silêncio ao gateway morto, uma operadora que descarta ICMP (então o teste de conectividade precisa
+            usar HTTPS) e um gateway do lado da operadora que muda, por isso ele é lido do Smaug a cada vez em
+            vez de fixado no código.</p>
 
           <h4>Acesso remoto sem abrir portas</h4>
           <p class="text-justify">Meu provedor coloca os clientes atrás de <strong>CGNAT</strong>: o IPv4 público é
