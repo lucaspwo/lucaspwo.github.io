@@ -78,9 +78,8 @@
             Git, mídia, automação residencial, alguns servidores de jogo &mdash; rodam no <strong>Scatha</strong>,
             um <strong>Mac Pro 6,1</strong> (Late 2013, a &ldquo;lixeirinha&rdquo;) rodando
             <strong>Proxmox VE</strong> direto no hardware. (Todas as minhas máquinas têm nome de dragão do
-            Tolkien.) Antes, tudo ficava num Mac Mini M2 com OrbStack, mas, em ARM, a parte de aprendizado de
-            máquina da minha biblioteca de fotos rodava sob emulação x86, então migrei para x86 nativo. Em
-            agosto o Mac Pro ganhou um <strong>Xeon E5-2697 v2</strong> (12 núcleos, 24 threads) e
+            Tolkien.) Ele é a terceira máquina a hospedar este stack &mdash; mais sobre isso abaixo. Em agosto o
+            Mac Pro ganhou um <strong>Xeon E5-2697 v2</strong> (12 núcleos, 24 threads) e
             <strong>64 GiB de RAM ECC</strong>.</p>
 
           <p class="text-justify">As duas GPUs FirePro D500 dele já renderam dois posts (o
@@ -111,6 +110,26 @@
               <p>commits no repositório que documenta tudo isso</p>
             </div>
           </div>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>Como chegou até aqui</h3>
+          <p class="text-justify">A primeira tentativa rodou no <strong>Smaug</strong>, um <strong>Particle
+            Tachyon</strong> &mdash; um computador de placa única com um Qualcomm QCM6490 (ARM) &mdash; com um NVMe
+            <strong>ADATA Legend 700</strong> ligado pela <strong>NVMe Base</strong> da Pimoroni, uma placa que
+            conecta o disco por um cabo flat PCIe. Esse cabo acabou sendo o ponto fraco. O link rodava numa única
+            lane PCIe, e o sinal marginal gerava um fluxo constante de erros PCIe corrigíveis; somados ao ASPM, o
+            modo de economia de energia do link, interrupções se perdiam de vez em quando, o disco travava em
+            timeouts de I/O e, sob carga pesada (Docker, aprendizado de máquina e upload de fotos ao mesmo
+            tempo), a placa reiniciava sozinha. Desabilitar o ASPM L1 e encurtar o timeout de I/O domou os
+            sintomas, mas os erros em si nunca sumiram: vinham do cabo, não do software.</p>
+          <p class="text-justify">Depois, o stack foi para um <strong>Mac Mini M2</strong> com OrbStack. Mas, em
+            ARM, a parte de aprendizado de máquina da minha biblioteca de fotos rodava sob
+            emulação x86, então em junho de 2026 ele mudou de novo, para x86 nativo no Scatha. Nada da primeira
+            tentativa foi desperdiçado: o Legend 700 comprado para o Tachyon acompanhou todas as mudanças e hoje
+            é o disco rápido do Scatha, com a biblioteca de fotos e o armazenamento do Docker &mdash; e o Smaug
+            achou um trabalho em que é bom, como destino do backup externo descrito mais abaixo.</p>
           <hr>
         </div>
 
@@ -229,7 +248,8 @@
               pequenos e caros de reconstruir. Ele tenta três vezes antes de alertar, porque um soluço de rede
               custava o backup do dia inteiro.</li>
             <li><strong>restic</strong>, toda noite, para o HD local, mais uma cópia diária para um servidor REST
-              <strong>append-only</strong> em outra máquina (um computador de placa única), via Tailscale.
+              <strong>append-only</strong> no Smaug, o computador de placa única da primeira tentativa, via
+              Tailscale.
               Append-only significa que, mesmo se o servidor principal fosse comprometido, ele não conseguiria
               apagar os snapshots remotos. Isso cobre os ~490 GB de fotos e acervo pessoal.</li>
           </ul>

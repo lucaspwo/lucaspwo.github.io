@@ -78,9 +78,8 @@
             Git, media, home automation, a few game servers &mdash; run on <strong>Scatha</strong>, a
             <strong>Mac Pro 6,1</strong> (Late 2013, the &ldquo;trashcan&rdquo;) running
             <strong>Proxmox VE</strong> on bare metal. (All my machines are named after Tolkien&rsquo;s
-            dragons.) Before that, everything lived on a Mac Mini M2 under OrbStack, but on ARM the
-            machine-learning side of my photo library ran under x86 emulation, so I moved to native x86.
-            In August the Mac Pro got a <strong>Xeon E5-2697 v2</strong> (12 cores, 24 threads) and
+            dragons.) It is the third machine to host this stack &mdash; more on that below. In August the
+            Mac Pro got a <strong>Xeon E5-2697 v2</strong> (12 cores, 24 threads) and
             <strong>64 GiB of ECC RAM</strong>.</p>
 
           <p class="text-justify">Its two FirePro D500 GPUs already got two posts of their own (the
@@ -111,6 +110,27 @@
               <p>commits in the repository that documents it all</p>
             </div>
           </div>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>How it got here</h3>
+          <p class="text-justify">The first attempt ran on <strong>Smaug</strong>, a <strong>Particle
+            Tachyon</strong> &mdash; a single-board computer built around a Qualcomm QCM6490 (ARM) &mdash; with an
+            <strong>ADATA Legend 700</strong> NVMe drive attached through Pimoroni&rsquo;s <strong>NVMe
+            Base</strong>, a board that connects the drive over a PCIe flat cable. That cable turned out to be the
+            weak point. The link ran on a single PCIe lane, and its marginal signal produced a steady stream of
+            correctable PCIe errors; combined with ASPM, the link&rsquo;s power-saving mode, interrupts were
+            occasionally lost, the drive stalled on I/O timeouts, and under heavy load (Docker, machine learning
+            and photo uploads at the same time) the board rebooted on its own. Disabling ASPM L1 and shortening
+            the I/O timeout tamed the symptoms, but the errors themselves never went away: they came from the
+            cable, not from the software.</p>
+          <p class="text-justify">The stack then moved to a <strong>Mac Mini M2</strong> under OrbStack. But on
+            ARM the machine-learning side of my photo library ran under x86 emulation, so in
+            June 2026 it moved again, to native x86 on Scatha. Nothing from the first attempt went to waste: the
+            Legend 700 bought for the Tachyon followed every move and is now Scatha&rsquo;s fast disk, holding the
+            photo library and Docker&rsquo;s storage &mdash; and Smaug found a job it is good at, as the off-host
+            backup target described further down.</p>
           <hr>
         </div>
 
@@ -225,8 +245,8 @@
               expensive to rebuild. It retries three times before alerting, because a network hiccup used to
               cost a whole day&rsquo;s backup.</li>
             <li><strong>restic</strong>, nightly, to the local HDD, plus a daily copy to an
-              <strong>append-only</strong> REST server on another machine (a single-board computer), over
-              Tailscale. Append-only means that even if the main server were compromised, it could not delete
+              <strong>append-only</strong> REST server on Smaug, the single-board computer from the first
+              attempt, over Tailscale. Append-only means that even if the main server were compromised, it could not delete
               the remote snapshots. This covers the ~490 GB of photos and personal archive.</li>
           </ul>
           <p class="text-justify">There is also a <strong>restore drill</strong>, because a backup that
