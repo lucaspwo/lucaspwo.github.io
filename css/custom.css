@@ -32,6 +32,20 @@
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9), 0 0 8px rgba(0, 0, 0, 0.6);
 }
 
+/* Faixa "Destaques" no topo da home: títulos de seção e cards mais baixos. */
+.home-section-title {
+  margin: 0.6em 0 0.8em;
+  font-size: 1.6em;
+}
+
+.img-bg.img-bg-featured {
+  height: 260px;
+}
+
+.img-bg-featured .title-main {
+  font-size: 1.15em;
+}
+
 /* Cards da home com logo/imagem de texto: mostra a imagem inteira (contain)
    em vez de cortar (cover). A cor de fundo vem inline no card, igual à da
    imagem; o padding de baixo reserva espaço para o título do card. */
@@ -69,4 +83,14 @@ pre code {
   color: inherit;
   padding: 0;
   font-size: 1em;
+}
+
+.img-bg.img-bg-featured.img-bg-contain {
+  padding: 20px 20px 100px;
+}
+
+/* Card de logo em coluna larga (col-md-12): estreita a área do logo para ele
+   não ocupar a largura toda. */
+.img-bg.img-bg-contain.img-bg-contain-wide {
+  padding: 50px 25% 150px;
 }
