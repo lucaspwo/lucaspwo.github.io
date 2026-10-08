@@ -5,6 +5,15 @@
   position: relative;
 }
 
+/* Cards da home com logo/imagem de texto: mostra a imagem inteira (contain)
+   em vez de cortar (cover). A cor de fundo vem inline no card, igual à da
+   imagem; o padding de baixo reserva espaço para o título do card. */
+.img-bg.img-bg-contain {
+  background-size: contain;
+  background-origin: content-box;
+  padding: 24px 24px 110px;
+}
+
 /* Code blocks — tutorial posts (GPU passthrough etc.) */
 pre {
   background: #1e1f23;
