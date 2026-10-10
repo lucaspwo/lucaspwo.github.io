@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 250" role="img" aria-labelledby="t">
+  <title id="t">Cadeia do sinal: PS5 para o Raspberry Pi 4 pela USB-C, depois para o MacBook pela rede com VBAN</title>
+  <defs>
+    <marker id="seta" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#333"/>
+    </marker>
+  </defs>
+  <rect width="1000" height="250" fill="#ffffff"/>
+  <g font-family="Helvetica, Arial, sans-serif" text-anchor="middle" fill="#222">
+    <rect x="20" y="70" width="200" height="110" rx="10" fill="#f2f2f2" stroke="#333" stroke-width="2"/>
+    <text x="120" y="118" font-size="24" font-weight="bold">PS5</text>
+    <text x="120" y="148" font-size="16">enxerga um headset USB</text>
+
+    <rect x="400" y="70" width="200" height="110" rx="10" fill="#e8f3e8" stroke="#333" stroke-width="2"/>
+    <text x="500" y="110" font-size="22" font-weight="bold">Raspberry Pi 4</text>
+    <text x="500" y="138" font-size="16">gadget USB UAC1</text>
+    <text x="500" y="160" font-size="16">vban_emitter</text>
+
+    <rect x="780" y="70" width="200" height="110" rx="10" fill="#f2f2f2" stroke="#333" stroke-width="2"/>
+    <text x="880" y="118" font-size="22" font-weight="bold">MacBook</text>
+    <text x="880" y="148" font-size="16">VBAN Receptor</text>
+
+    <line x1="222" y1="125" x2="396" y2="125" stroke="#333" stroke-width="2.5" marker-end="url(#seta)"/>
+    <text x="309" y="105" font-size="15">USB-C</text>
+    <text x="309" y="152" font-size="13">áudio 48 kHz + energia 5 V</text>
+
+    <line x1="602" y1="125" x2="776" y2="125" stroke="#333" stroke-width="2.5" marker-end="url(#seta)"/>
+    <text x="689" y="105" font-size="15">Ethernet / LAN</text>
+    <text x="689" y="152" font-size="13">VBAN, UDP 6980</text>
+
+    <text x="500" y="228" font-size="14" fill="#555">Sem PC Windows, sem DAC, sem etapa analógica: o áudio é digital de ponta a ponta</text>
+  </g>
+</svg>

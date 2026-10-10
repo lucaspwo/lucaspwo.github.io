@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Utilizando um Pi 4 como saída de áudio de um PS5</title>
+  <link href="https://fonts.googleapis.com/css?family=Abel" rel="stylesheet">
+  <link rel="stylesheet" href="../css/styles-merged.css">
+  <link rel="stylesheet" href="../css/style.min.css">
+  <link rel="stylesheet" href="../css/custom.css">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="https://lucaspwo.com/assets/favicon180x180.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://lucaspwo.com/assets/favicon16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://lucaspwo.com/assets/favicon32x32.png">
+  <link rel="icon" type="image/x-icon" href="https://lucaspwo.com/assets/favicon.png">
+
+  <meta property="og:title" content="Utilizando um Pi 4 como saída de áudio de um PS5" />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://lucaspwo.com/br/pi4_ps5_audio.html" />
+  <meta property="og:image" content="https://lucaspwo.com/projetos/pi4_ps5_audio/pi4_ps5_audio.jpg" />
+  <meta property="og:site_name" content="Lucas' Experiments Lab" />
+  <meta property="og:description" content="Um Raspberry Pi 4 ligado ao PS5 se passa por headset USB e manda o áudio do jogo para um MacBook pela rede, sem nenhum equipamento extra." />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:description" content="Um Raspberry Pi 4 ligado ao PS5 se passa por headset USB e manda o áudio do jogo para um MacBook pela rede, sem nenhum equipamento extra." />
+  <meta name="twitter:title" content="Utilizando um Pi 4 como saída de áudio de um PS5" />
+  <meta name="twitter:site" content="@lucaspwo" />
+  <meta name="twitter:creator" content="@lucaspwo" />
+  <meta name="twitter:image" content="https://lucaspwo.com/projetos/pi4_ps5_audio/pi4_ps5_audio.jpg" />
+</head>
+
+<body>
+
+  <!-- START: header -->
+  <div class="probootstrap-loader"></div>
+
+  <header role="banner" class="probootstrap-header">
+    <div class="container">
+      <a href="index.html" class="probootstrap-logo col-xs-8">Meu Laboratório de Experimentos</a>
+
+      <a href="#" class="probootstrap-burger-menu visible-xs"><i>Menu</i></a>
+      <div class="mobile-menu-overlay"></div>
+
+      <nav role="navigation" class="probootstrap-nav hidden-xs">
+        <ul class="probootstrap-main-nav">
+          <li class="active"><a href="index.html">Principal</a></li>
+          <li><a href="about.html">Sobre</a></li>
+          <li><a href="contact.html">Contato</a></li>
+          <li><a href="../pi4_ps5_audio.html">&#x1F1FA;&#x1F1F8;</a></li>
+        </ul>
+        <div class="extra-text visible-xs">
+          <a href="#" class="probootstrap-burger-menu"><i>Menu</i></a>
+          <h5>Conecte-se</h5>
+          <ul class="social-buttons">
+            <li><a href="https://www.youtube.com/@lucaspwo"><i class="icon-youtube"></i></a></li>
+            <li><a href="https://www.linkedin.com/in/lucaspwo"><i class="icon-linkedin"></i></a></li>
+            <li><a href="https://github.com/lucaspwo"><i class="icon-github2"></i></a></li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+  </header>
+  <!-- END: header -->
+
+  <div class="probootstrap-section">
+    <div class="container">
+
+      <div class="row">
+        <div class="col-md-8 col-md-offset-2 mb40 text-center">
+          <h2>Utilizando um Pi 4 como saída de áudio de um PS5</h2>
+          <p>Um Raspberry Pi que se passa por headset USB para levar o áudio do jogo até um MacBook pela rede</p>
+          <p>Publicado em 9 de outubro de 2026</p>
+        </div>
+
+        <div class="col-md-12">
+          <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+              <a href="../projetos/pi4_ps5_audio/pi4_ps5_audio.jpg" class="image-popup" style="margin-bottom: 1px;">
+                <img src="../projetos/pi4_ps5_audio/pi4_ps5_audio.jpg" class="img-responsive" alt="Um Raspberry Pi 4 em cima de um PS5, ligado à porta USB-C frontal do console e a um cabo Ethernet">
+              </a>
+              <p class="text-justify">A montagem inteira: um Raspberry Pi 4 em cima do PS5, um cabo USB-C até a
+                porta frontal do console (áudio e energia) e um cabo Ethernet.</p>
+            </div>
+          </div>
+
+          <p class="text-justify">Eu queria o áudio do PS5 no meu MacBook Pro. Parece trivial até você listar
+            as saídas de áudio do console: <strong>HDMI</strong>, <strong>USB</strong> (só para um aparelho
+            que aceite áudio digital) e a <strong>entrada P2 do controle</strong>. A entrada P2 do MacBook até
+            aceita sinal, mas é o microfone mono de um headset, então não serve para o áudio estéreo de um
+            jogo.</p>
+
+          <p class="text-justify">A montagem que funcionava até agora tinha quatro etapas: um DAC
+            <strong>Fosi Audio K7</strong> na USB do PS5, a saída RCA dele na <strong>entrada de linha do meu
+            desktop Windows</strong>, o <strong>Voicemeeter</strong> mandando isso pela rede com
+            <strong>VBAN</strong>, e o app VBAN Receptor tocando no Mac. Funciona, mas mantém um desktop
+            inteiro ligado só para levar o áudio de um lado do cômodo para o outro, e no caminho o sinal
+            passa de digital para analógico e volta.</p>
+
+          <p class="text-justify">A pergunta era se um Raspberry Pi conseguiria substituir o desktop usando só
+            o que já estava no meu escritório: alguns Pis, do Pi&nbsp;1&nbsp;B ao Pi&nbsp;4. Sem placa de
+            captura, sem cabo novo, sem fonte extra.</p>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>Números em resumo</h3>
+          <div class="row">
+            <div class="col-md-3 col-xs-6 text-center mb40">
+              <h2>0</h2>
+              <p>equipamentos comprados: só um Pi 4, um cartão SD e cabos que eu já tinha</p>
+            </div>
+            <div class="col-md-3 col-xs-6 text-center mb40">
+              <h2>48 kHz</h2>
+              <p>estéreo em 16 bits, digital do PS5 até o Mac</p>
+            </div>
+            <div class="col-md-3 col-xs-6 text-center mb40">
+              <h2>188</h2>
+              <p>pacotes VBAN por segundo na rede (48.000 amostras / 256 por pacote)</p>
+            </div>
+            <div class="col-md-3 col-xs-6 text-center mb40">
+              <h2>~35 s</h2>
+              <p>para o áudio voltar depois que o PS5 sai do repouso, sem nenhuma ação manual</p>
+            </div>
+          </div>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>A ideia: fazer o Pi parecer um headset</h3>
+          <p class="text-justify">O Pi não tem entrada de áudio analógica e as portas HDMI dele são só de
+            saída, então a saída RCA do K7 não tinha onde entrar. Sobrava um único caminho digital: a própria
+            USB do PS5. Se o Pi conseguisse <em>se apresentar ao console como uma placa de som USB</em>, o PS5
+            mandaria o áudio direto para ele, sem DAC e sem etapa analógica.</p>
+
+          <p class="text-justify">O Linux faz isso com o framework de <strong>gadget</strong> USB, que permite
+            a uma placa funcionar como dispositivo USB em vez de host. O hardware precisa suportar, e isso
+            eliminou todos os Pis menos um. Nos Pi&nbsp;1, 2 e 3 modelo&nbsp;B, o único controlador USB fica
+            atrás do hub interno. No <strong>Pi&nbsp;4</strong>, a porta USB-C (a que normalmente serve de
+            alimentação) está ligada a um controlador que funciona em modo device.</p>
+
+          <p class="text-justify">A segunda informação veio do próprio K7: ele só funciona no PS5 quando está
+            no modo <strong>USB Audio Class 1.0</strong> (UAC1). Ao que tudo indica, o PS5 ignora aparelhos
+            UAC2, e isso é um problema, porque o gadget de áudio pronto do Linux, o <code>g_audio</code>, sobe
+            como UAC2 por padrão. A saída é montar o gadget à mão via <code>configfs</code> com a função
+            <code>uac1</code>, e o kernel padrão do Raspberry Pi já vem com ela habilitada
+            (<code>CONFIG_USB_CONFIGFS_F_UAC1=y</code>), então não foi preciso recompilar nada.</p>
+
+          <div class="row">
+            <div class="col-md-10 col-md-offset-1">
+              <a href="../projetos/pi4_ps5_audio/diagrama_pt.svg" class="image-popup" style="margin-bottom: 1px;">
+                <img src="../projetos/pi4_ps5_audio/diagrama_pt.svg" class="img-responsive" alt="Cadeia do sinal: PS5 para o Raspberry Pi 4 pela USB-C, depois para o MacBook pela Ethernet com VBAN">
+              </a>
+              <p class="text-justify">A cadeia nova: o PS5 acha que está falando com um headset, e o Pi repassa
+                tudo para o Mac pela rede local.</p>
+            </div>
+          </div>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>Como ficou</h3>
+          <ul>
+            <li><strong>O gadget</strong> é um aparelho UAC1 com reprodução estéreo a 48&nbsp;kHz/16&nbsp;bits
+              e <strong>sem microfone</strong>, o mesmo perfil que o K7 apresenta ao console.</li>
+            <li><strong>O stream</strong> é enviado pelo <code>vban_emitter</code>, das ferramentas
+              open-source <a href="https://github.com/quiniouben/vban">quiniouben/vban</a>. Ele lê o gadget
+              como uma placa de captura ALSA comum e manda pacotes VBAN para o Mac, então o VBAN Receptor que
+              escutava o desktop Windows continua funcionando, só com a origem trocada.</li>
+            <li><strong>O destino é um nome, não um IP.</strong> O Pi envia para o nome mDNS do Mac
+              (<code>&lt;mac&gt;.local</code>) e resolve esse nome de novo a cada 30 segundos. Se o Mac pegar
+              outro endereço por DHCP, o emissor reinicia sozinho para o endereço novo. Testei simulando uma
+              troca de endereço, e o stream acompanhou em cerca de 18 segundos.</li>
+            <li><strong>O sistema</strong> é o Raspberry Pi OS Lite 64-bit, configurado no primeiro boot pelos
+              arquivos de <code>cloud-init</code> na partição de boot do cartão: usuário, chave SSH, pacotes,
+              a compilação do <code>vban</code> e dois serviços do systemd. Wi-Fi e Bluetooth ficam desligados
+              para economizar energia, então o Pi usa Ethernet.</li>
+            <li><strong>A energia vem do PS5</strong>, pelo mesmo cabo USB-C que leva o áudio. A porta USB-C
+              frontal segurou o Pi 4 sem nenhum alerta de subtensão (<code>vcgencmd get_throttled</code>
+              ficou em <code>0x0</code>), inclusive enquanto ele compilava o <code>vban</code> no primeiro
+              boot.</li>
+          </ul>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>O que deu errado no caminho</h3>
+          <p class="text-justify"><strong>Um cabo só de carga.</strong> O primeiro boot parecia certo: o Pi
+            estava ligado, o gadget registrado, os serviços no ar. Mas o controlador dizia
+            <code>not attached</code>, e o kernel nunca registrou nenhuma conexão vinda do host. O PS5 estava
+            alimentando o Pi sem nunca conversar com ele. Trocar o cabo USB-C por um que transmite dados
+            resolveu: <code>configured</code>, <code>high-speed</code>, endereço atribuído.</p>
+
+          <p class="text-justify"><strong>Uma opção que parece outra coisa.</strong> No
+            <code>vban_emitter</code>, <code>-c</code> não é o número de canais. É uma <em>lista de seleção
+            de canais</em>, então <code>-c2</code> mandaria só o canal 2, em mono, sem aviso. O número de
+            canais é <code>-n</code>, e a taxa padrão é 44,1&nbsp;kHz, então o <code>-r 48000</code> precisa
+            ser explícito. Ler o README antes de escrever o serviço pegou isso antes de chegar ao Mac.</p>
+
+          <p class="text-justify"><strong>Silêncio perfeito.</strong> Com a USB conectada, a captura estava
+            rodando e o Pi mandava seus 188 pacotes por segundo, mas uma gravação de três segundos deu zero
+            absoluto nos dois canais. O PS5 ainda não estava mandando o áudio para o aparelho USB, e ajustar a
+            saída de áudio do console resolveu. Duas configurações importam: o aparelho USB precisa ser a
+            saída selecionada, e <em>Saída para fones de ouvido</em> precisa estar em <em>Todo o áudio</em>;
+            senão só o chat de voz vai para o headset.</p>
+
+          <p class="text-justify"><strong>O repouso desliga o Pi. Duas vezes.</strong> Esse foi o achado mais
+            interessante. Mesmo com <em>Fornecer energia às portas USB</em> em <em>Sempre</em> no modo de
+            repouso, o PS5 corta a energia da USB-C frontal por um instante quando <strong>entra</strong> no
+            repouso e de novo quando <strong>acorda</strong>. Cronometrei um ciclo completo, com o Pi sendo
+            monitorado a cada dois segundos:</p>
+
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Momento</th>
+                <th>O que aconteceu com o Pi</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>PS5 começa a entrar em repouso</td>
+                <td>para de receber áudio; ~40 s depois <strong>perde energia</strong>, antes de o LED laranja ficar fixo</td>
+              </tr>
+              <tr>
+                <td>PS5 em repouso</td>
+                <td>a energia volta, ele faz o boot, e a conexão de dados USB fica desligada (<code>not attached</code>)</td>
+              </tr>
+              <tr>
+                <td>PS5 acorda</td>
+                <td><strong>perde energia de novo</strong> em até 4 s</td>
+              </tr>
+              <tr>
+                <td>~35 s depois de acordar</td>
+                <td>boot concluído, gadget <code>configured</code>, áudio tocando no Mac</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <p class="text-justify">Para quem usa, simplesmente funciona, porque o áudio volta sozinho. O custo
+            são dois cortes bruscos de energia por ciclo de repouso, todo dia, num cartão SD. A solução foi
+            deixar o sistema somente leitura: a raiz agora roda em <strong>overlayfs</strong> (as gravações vão
+            para a RAM e somem no reboot) e a partição de boot é montada só para leitura. Depois medi os
+            contadores de escrita do cartão: zero escritas durante a operação. Puxar o cabo USB no meio do
+            áudio virou um não evento: o Pi voltou a tocar cerca de meio minuto depois de o cabo ser
+            recolocado.</p>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>O que ficou em aberto</h3>
+          <p class="text-justify">Com o overlay ativo, todo boot registra
+            <code>EXT4-fs (mmcblk0p2): orphan cleanup on readonly fs</code>, e o kernel grava cerca de
+            8&nbsp;KB no cartão durante a montagem. Tentei a correção óbvia (um boot limpo com o overlay
+            desligado, para a limpeza ser gravada, e depois o overlay de volta) e o aviso continuou. O arquivo
+            de órfãos está vazio, o superbloco não tem lista de órfãos e um <code>e2fsck</code> somente leitura
+            não encontra nada. Não sei por que o kernel ainda segue esse caminho. Como são 8&nbsp;KB, com
+            journal, nos primeiros segundos do boot, deixei como um problema cosmético conhecido.</p>
+
+          <p class="text-justify">Também não medi a latência, então não há número para ela aqui. Se a
+            sincronia com a imagem importa para o que você joga, meça na sua própria rede antes de confiar.</p>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>Como reproduzir</h3>
+          <p class="text-justify"><strong>Você precisa de:</strong> um Raspberry Pi&nbsp;4 (tem que ser o
+            Pi 4, por causa do modo device na USB-C), um cabo USB-C <em>que transmita dados</em>, um cabo
+            Ethernet, um cartão SD e o VBAN Receptor (ou o Voicemeeter) no computador que vai tocar o
+            áudio.</p>
+
+          <p class="text-justify"><strong>1. Coloque a USB-C em modo device</strong>, no
+            <code>/boot/firmware/config.txt</code>:</p>
+<pre>
+[all]
+dtoverlay=dwc2,dr_mode=peripheral
+# opcional: economiza energia quando o Pi roda na USB do console
+dtoverlay=disable-wifi
+dtoverlay=disable-bt
+</pre>
+
+          <p class="text-justify"><strong>2. Crie o gadget UAC1</strong> via configfs (como root, a cada
+            boot; eu rodo isto num serviço <code>oneshot</code> do systemd depois do
+            <code>sys-kernel-config.mount</code>):</p>
+<pre>
+modprobe libcomposite
+G=/sys/kernel/config/usb_gadget/ps5audio
+mkdir -p $G &amp;&amp; cd $G
+echo 0x1d6b &gt; idVendor     # Linux Foundation
+echo 0x0104 &gt; idProduct    # Multifunction Composite Gadget
+echo 0x0200 &gt; bcdUSB
+mkdir -p strings/0x409 configs/c.1/strings/0x409
+echo "PS5 Audio Bridge" &gt; strings/0x409/product
+echo "UAC1" &gt; configs/c.1/strings/0x409/configuration
+mkdir -p functions/uac1.usb0
+echo 3     &gt; functions/uac1.usb0/c_chmask   # estéreo, host -&gt; Pi
+echo 48000 &gt; functions/uac1.usb0/c_srate
+echo 2     &gt; functions/uac1.usb0/c_ssize    # 16 bits
+echo 0     &gt; functions/uac1.usb0/p_chmask   # sem microfone, como o K7
+ln -s functions/uac1.usb0 configs/c.1/
+ls /sys/class/udc &gt; UDC
+</pre>
+
+          <p class="text-justify"><strong>3. Compile o <code>vban</code> e envie o stream.</strong> O gadget
+            aparece como a placa ALSA <code>UAC1Gadget</code>:</p>
+<pre>
+sudo apt install git build-essential autoconf automake pkgconf libasound2-dev
+git clone https://github.com/quiniouben/vban &amp;&amp; cd vban
+./autogen.sh &amp;&amp; ./configure --disable-pulseaudio --disable-jack &amp;&amp; make
+sudo install -m 0755 src/vban_emitter /usr/local/bin/
+
+vban_emitter -i &lt;ip-do-mac&gt; -p 6980 -s PS5 \
+  -d hw:CARD=UAC1Gadget,DEV=0 -r 48000 -n 2
+</pre>
+
+          <p class="text-justify">Sem host, ou enquanto o PS5 não manda áudio, a captura falha com
+            <code>Input/output error</code> e o emissor sai. No serviço do systemd, use
+            <code>Restart=always</code> e <code>StartLimitIntervalSec=0</code> para ele nunca desistir. Para
+            seguir o Mac pelo nome, coloque o comando num script que resolva <code>&lt;mac&gt;.local</code>
+            com <code>getent ahostsv4</code> e reinicie o emissor quando o endereço mudar.</p>
+
+          <p class="text-justify"><strong>4. No PS5:</strong> ligue o Pi na porta USB-C frontal e vá em
+            Configurações &rarr; Som &rarr; Saída de áudio, escolha o aparelho USB e coloque
+            <em>Saída para fones de ouvido</em> em <em>Todo o áudio</em>.</p>
+
+          <p class="text-justify"><strong>5. No Mac:</strong> no VBAN Receptor, selecione o stream
+            <code>PS5</code>, porta 6980. O app prende o stream ao IP do Pi, então, se o endereço do Pi
+            mudar, selecione o stream de novo.</p>
+
+          <p class="text-justify"><strong>6. Quando tudo funcionar,</strong> proteja o cartão:</p>
+<pre>
+sudo raspi-config nonint enable_bootro      # partição de boot só leitura (fazer antes)
+sudo raspi-config nonint enable_overlayfs   # raiz em overlayfs
+sudo reboot
+</pre>
+
+          <p class="text-justify"><strong>Quando algo falhar,</strong> três leituras apontam o culpado:</p>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Checagem</th>
+                <th>Esperado</th>
+                <th>Se não</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>cat /sys/class/udc/*/state</code></td>
+                <td><code>configured</code></td>
+                <td><code>not attached</code>: cabo sem dados, ou o PS5 está em repouso</td>
+              </tr>
+              <tr>
+                <td><code>/proc/asound/UAC1Gadget/pcm0c/sub0/status</code></td>
+                <td><code>state: RUNNING</code></td>
+                <td><code>closed</code>: o PS5 não está mandando áudio para o aparelho USB</td>
+              </tr>
+              <tr>
+                <td><code>tx_packets</code> da <code>eth0</code> em 5 s</td>
+                <td>~188 por segundo</td>
+                <td>emissor parado: <code>journalctl -u &lt;serviço&gt;</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>O que ficou comigo</h3>
+          <ul>
+            <li><strong>O hardware antigo tinha a resposta.</strong> O K7 só funcionar no modo UAC1 foi o
+              detalhe que decidiu o desenho todo. Sem ele, o <code>g_audio</code> padrão (UAC2) teria sido a
+              primeira tentativa, e o PS5 o teria ignorado.</li>
+            <li><strong>Confira o link antes do software.</strong> Energia sem enumeração apontou direto para o
+              cabo. Ler o estado do controlador USB levou segundos; depurar serviços teria levado muito
+              mais.</li>
+            <li><strong>"Sempre" não quer dizer "sem interrupção".</strong> A opção de energia faz exatamente o
+              que promete durante o repouso, mas não durante as transições, e só um teste cronometrado, com
+              anotações de quando cada coisa aconteceu, deixou isso visível.</li>
+            <li><strong>Silêncio também é medição.</strong> Gravar três segundos e contar as amostras separou
+              na hora "a cadeia está quebrada" de "o console está mandando o áudio para outro lugar".</li>
+          </ul>
+          <hr>
+        </div>
+
+        <div class="col-md-12">
+          <h3>Links</h3>
+          <ul>
+            <li>Ferramentas VBAN de linha de comando (emissor/receptor) para Linux: <a href="https://github.com/quiniouben/vban">github.com/quiniouben/vban</a></li>
+            <li>Protocolo VBAN e VBAN Receptor: <a href="https://vb-audio.com/Voicemeeter/vban.htm">vb-audio.com/Voicemeeter/vban.htm</a></li>
+            <li>Funções de gadget USB do Linux, incluindo a UAC1 e os atributos <code>c_*</code>/<code>p_*</code>: <a href="https://docs.kernel.org/usb/gadget-testing.html">docs.kernel.org/usb/gadget-testing.html</a></li>
+            <li><code>config.txt</code> e overlays do Raspberry Pi: <a href="https://www.raspberrypi.com/documentation/computers/config_txt.html">raspberrypi.com/documentation/computers/config_txt.html</a></li>
+          </ul>
+        </div>
+
+        <div class="col-md-12 text-center">
+          <hr>
+          <p class="text-muted"><small><em>Uma nota sobre como isto foi feito:</em> a investigação e a
+            implementação foram feitas em par com o Claude Code (o agente de programação com IA da Anthropic),
+            que pesquisou os limites do hardware, preparou a imagem do cartão SD, configurou o Pi por SSH e fez
+            as medições descritas acima. O objetivo, as decisões e os testes físicos (cabos, o console, os
+            ciclos de repouso) são meus. O texto também foi redigido com o Claude, a partir do histórico real
+            da sessão.</small></p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <footer class="probootstrap-footer" role="contentinfo">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <p>Template do site desenvolvido por <a href="https://uicookies.com">uiCookies</a>.</p>
+          <ul class="probootstrap-social">
+            <li><a href="https://www.youtube.com/@lucaspwo"><i class="icon-youtube"></i></a></li>
+            <li><a href="https://www.linkedin.com/in/lucaspwo"><i class="icon-linkedin"></i></a></li>
+            <li><a href="https://github.com/lucaspwo"><i class="icon-github2"></i></a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <div class="gototop js-top">
+    <a href="#" class="js-gotop"><i class="icon-chevron-thin-up"></i></a>
+  </div>
+
+
+  <script src="../js/scripts.min.js"></script>
+  <script src="../js/main.min.js"></script>
+  <script src="../js/custom.js"></script>
+
+</body>
+</html>
